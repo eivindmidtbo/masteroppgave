@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 
-BASE_PATH = "./dataset"
+BASE_PATH = "../dataset"
 
 
 class Process_data:

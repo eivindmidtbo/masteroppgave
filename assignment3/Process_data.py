@@ -4,7 +4,7 @@ import numpy as np
 import time
 import datetime as dt
 
-BASE_PATH = "./dataset"
+BASE_PATH = "../dataset"
 
 
 class Process_data:
