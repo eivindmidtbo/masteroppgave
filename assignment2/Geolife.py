@@ -1,16 +1,15 @@
-
 from DbConnector import DbConnector
 from Process_data import Process_data
 
 TABLES = {}
-TABLES['user'] = (
+TABLES["user"] = (
     "CREATE TABLE IF NOT EXISTS `user` ("
     "  `id` VARCHAR(5) NOT NULL,"
     "  `has_labels` BOOLEAN,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"
 )
-TABLES['activity'] = (
+TABLES["activity"] = (
     "CREATE TABLE IF NOT EXISTS `activity` ("
     "  `id` INT NOT NULL AUTO_INCREMENT,"
     "  `user_id` VARCHAR(5),"
@@ -21,7 +20,7 @@ TABLES['activity'] = (
     "  CONSTRAINT `user_fk` FOREIGN KEY(`user_id`) REFERENCES user(`id`) ON DELETE CASCADE"
     ") ENGINE=InnoDB"
 )
-TABLES['trackpoint'] = (
+TABLES["trackpoint"] = (
     "CREATE TABLE IF NOT EXISTS `trackpoint` ("
     "  `id` INT NOT NULL AUTO_INCREMENT,"
     "  `activity_id` INT,"
@@ -52,5 +51,6 @@ def main():
 
     # Inserting data
     process_data.process()
+
 
 main()

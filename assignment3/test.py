@@ -6,6 +6,7 @@ import os
 from pymongo import MongoClient
 import datetime
 import numpy as np
+
 URI = "mongodb://it2810-45.idi.ntnu.no:27017/webdev"
 
 
@@ -23,12 +24,14 @@ class DbConnector:
     PASSWORD = "test123" // The password you set for said user
     """
 
-    def __init__(self,
-                 DATABASE='assignment3_mongodb_1',
-                 HOST="localhost",
-                 PORT="27017",
-                 USER="gruppe13",
-                 PASSWORD=os.getenv('PASSWORD')):
+    def __init__(
+        self,
+        DATABASE="assignment3_mongodb_1",
+        HOST="localhost",
+        PORT="27017",
+        USER="gruppe13",
+        PASSWORD=os.getenv("PASSWORD"),
+    ):
         # uri = "mongodb://%s:%s@%s:%s/" % (USER, PASSWORD, HOST, PORT)
         uri = URI
         # Connect to the databases
@@ -51,7 +54,8 @@ class DbConnector:
 
     def update_field(self):
         movies = np.genfromtxt(
-            "netflix_titles.csv", skip_header=1, delimiter='""', dtype=str)
+            "netflix_titles.csv", skip_header=1, delimiter='""', dtype=str
+        )
         print(movies)
         print("test")
         print(self.db["movies"].find())

@@ -1,4 +1,5 @@
 import mysql.connector as mysql
+
 # from decouple import config
 import os
 from dotenv import load_dotenv
@@ -21,19 +22,22 @@ class DbConnector:
     PASSWORD = "test123" // The password you set for said user
     """
 
-    def __init__(self,
-                 # HOST="tdt4225-13.idi.ntnu.no",
-                 HOST="localhost",
-                 PORT=3306,
-                 DATABASE="exercise2",
-                 # USER="gruppe13",
-                 USER="root",
-                 PASSWORD=os.getenv('PASSWORD')):
+    def __init__(
+        self,
+        # HOST="tdt4225-13.idi.ntnu.no",
+        HOST="localhost",
+        PORT=3306,
+        DATABASE="exercise2",
+        # USER="gruppe13",
+        USER="root",
+        PASSWORD=os.getenv("PASSWORD"),
+    ):
         # Connect to the database
         try:
-            print("password: " + os.getenv('PASSWORD'))
+            print("password: " + os.getenv("PASSWORD"))
             self.db_connection = mysql.connect(
-                host=HOST, database=DATABASE, user=USER, password=PASSWORD, port=PORT)
+                host=HOST, database=DATABASE, user=USER, password=PASSWORD, port=PORT
+            )
         except Exception as e:
             print("ERROR: Failed to connect to db:", e)
 
@@ -54,8 +58,7 @@ class DbConnector:
         # close the DB connection
         self.db_connection.close()
         print("\n-----------------------------------------------")
-        print("Connection to %s is closed" %
-              self.db_connection.get_server_info())
+        print("Connection to %s is closed" % self.db_connection.get_server_info())
 
     def create_Table(self, query):
         self.cursor.execute(query)
@@ -74,41 +77,53 @@ class DbConnector:
 
     def get_last_inserted_id(self):
         return self.cursor.lastrowid
-    
-    def remove_invalid_altitudes(self):  
+
+    def remove_invalid_altitudes(self):
         query = """UPDATE trackpoint SET altitude = %s WHERE altitude = %s"""
         val = (int(), int(-777))
-        #query = """UPDATE trackpoint SET altitude = 0 WHERE altitude = IN(-777)"""
+        # query = """UPDATE trackpoint SET altitude = 0 WHERE altitude = IN(-777)"""
         self.cursor.execute(query, val)
-        self.db_connection.commit()  
+        self.db_connection.commit()
 
     def insert_activity_with_id(self, activity):
         try:
-            if(activity["transportation_mode"] != False):
+            if activity["transportation_mode"] != False:
                 query = "INSERT INTO activity (id, user_id, transportation_mode, start_date_time, end_date_time) VALUES ('%s', '%s', '%s', '%s', '%s')"
-                self.cursor.execute(query % (activity["id"], 
-                                            activity["user_id"], 
-                                            activity["transportation_mode"], 
-                                            activity["start_date_time"], 
-                                            activity["end_date_time"]))
-            else: 
+                self.cursor.execute(
+                    query
+                    % (
+                        activity["id"],
+                        activity["user_id"],
+                        activity["transportation_mode"],
+                        activity["start_date_time"],
+                        activity["end_date_time"],
+                    )
+                )
+            else:
                 query = "INSERT INTO activity (id, user_id, start_date_time, end_date_time) VALUES ('%s', '%s', '%s', '%s')"
-                self.cursor.execute(query % (activity["id"], 
-                                            activity["user_id"], 
-                                            activity["start_date_time"], 
-                                            activity["end_date_time"]))
+                self.cursor.execute(
+                    query
+                    % (
+                        activity["id"],
+                        activity["user_id"],
+                        activity["start_date_time"],
+                        activity["end_date_time"],
+                    )
+                )
             self.db_connection.commit()
         except Exception as e:
             print(e)
 
     def insert_trackpoints_with_id(self, trackpoints):
         try:
-            query = "INSERT INTO trackpoint (id, activity_id, lat, lon, altitude, date_days, date_time) VALUES {}".format(trackpoints)
+            query = "INSERT INTO trackpoint (id, activity_id, lat, lon, altitude, date_days, date_time) VALUES {}".format(
+                trackpoints
+            )
             self.cursor.execute(query)
             self.db_connection.commit()
         except Exception as e:
             print(e)
-    
+
     def update_activity_labels(self, labels):
         query = "UPDATE activity SET transportation_mode = null WHERE transportation_mode is not null"
         self.cursor.execute(query)
@@ -116,7 +131,15 @@ class DbConnector:
 
         for label in labels:
             query = "UPDATE activity SET transportation_mode = '%s' WHERE start_date_time = '%s' AND end_date_time = '%s' AND user_id = '%s'"
-            self.cursor.execute(query % (label["transportation_mode"], label["start_time"], label["end_time"], label["user_id"]))
+            self.cursor.execute(
+                query
+                % (
+                    label["transportation_mode"],
+                    label["start_time"],
+                    label["end_time"],
+                    label["user_id"],
+                )
+            )
             self.db_connection.commit()
 
     ########################################
@@ -131,12 +154,12 @@ class DbConnector:
         coordinates = self.cursor.fetchall()
         total_distance = 0
         for index in range(len(coordinates)):
-            if index == len(coordinates)-1:
+            if index == len(coordinates) - 1:
                 break
-            distance = haversine(coordinates[index], coordinates[index+1])
+            distance = haversine(coordinates[index], coordinates[index + 1])
             total_distance += distance
-        print(total_distance)    
-    
+        print(total_distance)
+
     def most_altitude_gained(self):
         query = """SELECT act1.user_id, SUM(altitude_gained) * 0.3048 
                 FROM 
@@ -154,8 +177,8 @@ class DbConnector:
         self.cursor.execute(query)
         distances = self.cursor.fetchall()
         for i, info in enumerate(distances):
-            print(i,"||", info[0],"|", info[1], "m")
-    
+            print(i, "||", info[0], "|", info[1], "m")
+
     def find_users_with_transportation_mode(self):
         query = """SELECT user_id, transportation_mode, COUNT(transportation_mode) 
                 FROM activity 
@@ -165,15 +188,18 @@ class DbConnector:
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         already_printed = []
-        print("id ","|", "transportation_mode")
+        print("id ", "|", "transportation_mode")
         print("----------------------------")
         for i, info in enumerate(result):
             if info[0] not in already_printed:
-                print(info[0],"|", info[1])
+                print(info[0], "|", info[1])
                 already_printed.append(info[0])
         return result
+
+
 def main():
     db_connector = DbConnector()
     db_connector.find_users_with_transportation_mode()
+
 
 main()

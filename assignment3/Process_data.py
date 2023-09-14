@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 import datetime as dt
+
 BASE_PATH = "./dataset"
 
 
@@ -20,7 +21,7 @@ class Process_data:
     def read_user(self, user_id):
         path = BASE_PATH + "/Data"
         self.users[user_id] = {}
-        for root, dirs, files in os.walk(path+"/"+user_id):
+        for root, dirs, files in os.walk(path + "/" + user_id):
             root = root.replace("\\", "/")  # For windows
             if "/Trajectory" in root:
                 userInfo = {
@@ -28,7 +29,7 @@ class Process_data:
                     "path": root,
                     "used_files": [],
                     "has_label": self.user_has_label(user_id),
-                    "labels": {}
+                    "labels": {},
                 }
                 self.users[user_id].update(userInfo)
 
@@ -38,36 +39,46 @@ class Process_data:
             if filename.endswith(".plt"):
                 path = user["path"] + "/" + filename
                 activity_trackpoints = np.genfromtxt(
-                    path, skip_header=6, delimiter=',', dtype=str, usecols=(0, 1, 3, 5, 6))
-                if (len(activity_trackpoints) > 2500):
+                    path,
+                    skip_header=6,
+                    delimiter=",",
+                    dtype=str,
+                    usecols=(0, 1, 3, 5, 6),
+                )
+                if len(activity_trackpoints) > 2500:
                     continue
                 res = self.match_label(activity_trackpoints, user)
-                activity = dict(_id=int(self.activity_id_counter),
-                                user_id=str(user_id),
-                                transportation_mode=res,
-                                start_date_time=self.string_to_datetime(activity_trackpoints[0][3] +
-                                " " + activity_trackpoints[0][4]),
-                                end_date_time=self.string_to_datetime(activity_trackpoints[-1][3] +
-                                " " + activity_trackpoints[-1][4])
-                                )
+                activity = dict(
+                    _id=int(self.activity_id_counter),
+                    user_id=str(user_id),
+                    transportation_mode=res,
+                    start_date_time=self.string_to_datetime(
+                        activity_trackpoints[0][3] + " " + activity_trackpoints[0][4]
+                    ),
+                    end_date_time=self.string_to_datetime(
+                        activity_trackpoints[-1][3] + " " + activity_trackpoints[-1][4]
+                    ),
+                )
                 self.activities.append(activity)
 
                 trackpoints = []
                 for trackpoint in activity_trackpoints:
-                    trackpoint_date_time = trackpoint[3] + \
-                        " " + trackpoint[4]
+                    trackpoint_date_time = trackpoint[3] + " " + trackpoint[4]
                     altitude = trackpoint[2]
 
                     # Fixing invalid altitudes
                     if altitude == -777:
                         altitude = 0
-                    formatted_trackpoint = dict(_id=int(self.trackpoint_id_counter),
-                                                activity_id=int(
-                                                    self.activity_id_counter),
-                                                location=dict(type="Point",
-                                                              coordinates=[float(trackpoint[1]), float(trackpoint[0])]),
-                                                altitude=int(float(altitude)),
-                                                date_time=self.string_to_datetime(trackpoint_date_time))
+                    formatted_trackpoint = dict(
+                        _id=int(self.trackpoint_id_counter),
+                        activity_id=int(self.activity_id_counter),
+                        location=dict(
+                            type="Point",
+                            coordinates=[float(trackpoint[1]), float(trackpoint[0])],
+                        ),
+                        altitude=int(float(altitude)),
+                        date_time=self.string_to_datetime(trackpoint_date_time),
+                    )
                     self.trackpoint_id_counter += 1
                     trackpoints.append(formatted_trackpoint)
                 self.db_connector.insert_trackpoints_with_id(trackpoints)
@@ -80,23 +91,20 @@ class Process_data:
         labeled_users = pd.read_csv(path, header=None).to_numpy()
         formatted = []
         for element in labeled_users:
-            formatted.append('{:03}'.format(element[0]))
+            formatted.append("{:03}".format(element[0]))
         self.users_with_labels = formatted
 
     # Take in labels and activity, check if finds a match
     def match_label(self, activity, user):
-        if (user["has_label"]):
+        if user["has_label"]:
             first_trackpoint = activity[0]
             last_trackpoint = activity[-1]
-            starttime = first_trackpoint[3] + \
-                " " + first_trackpoint[4]
-            endtime = last_trackpoint[3] + \
-                " " + last_trackpoint[4]
+            starttime = first_trackpoint[3] + " " + first_trackpoint[4]
+            endtime = last_trackpoint[3] + " " + last_trackpoint[4]
             labels = user["labels"]
             if starttime in labels:
                 if endtime == labels[starttime]["end_time"]:
-                    print("Found match " +
-                          labels[starttime]["transportation_mode"])
+                    print("Found match " + labels[starttime]["transportation_mode"])
                     return labels[starttime]["transportation_mode"]
         return None
 
@@ -111,13 +119,15 @@ class Process_data:
                     label = line.split()
                     start = self.convert_timeformat(label[0] + " " + label[1])
                     end = self.convert_timeformat(label[2] + " " + label[3])
-                    label_dict[start] = {"end_time": end,
-                                         "transportation_mode": label[4]}
+                    label_dict[start] = {
+                        "end_time": end,
+                        "transportation_mode": label[4],
+                    }
                     new_label = {
                         "start_time": start,
                         "end_time": end,
                         "transportation_mode": label[4],
-                        "user_id": user_id
+                        "user_id": user_id,
                     }
                     self.labels.append(new_label)
             self.users[user_id]["labels"] = label_dict
@@ -150,12 +160,13 @@ class Process_data:
         # Reformat users
         user_list = []
         for user in self.users.values():
-            if (user.get("_id")):
+            if user.get("_id"):
                 user_list.append(
-                    dict(_id=user["_id"], has_labels=int(user["has_label"])))
+                    dict(_id=user["_id"], has_labels=int(user["has_label"]))
+                )
 
         self.db_connector.batch_insert_users(user_list)
-        #shouldRead = False
+        # shouldRead = False
         for user in self.users.values():
             try:
                 # if user["_id"] == "024":
@@ -163,7 +174,7 @@ class Process_data:
                 # if shouldRead:
                 #    print(user)
                 print("reading user: " + user["_id"])
-                if (user["has_label"]):
+                if user["has_label"]:
                     self.read_labels(user["_id"])
                 self.read_user_activities(user["_id"])
             # Fixes error with empty user objects
@@ -172,5 +183,4 @@ class Process_data:
                 print(e)
         self.db_connector.batch_insert_activities_with_id(self.activities)
         self.db_connector.close_connection()
-        print("Finished processing in --- %s seconds ---" %
-              (time.time() - start_time))
+        print("Finished processing in --- %s seconds ---" % (time.time() - start_time))

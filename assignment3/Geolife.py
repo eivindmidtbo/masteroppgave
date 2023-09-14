@@ -20,12 +20,14 @@ def insert_data(db_connector):
     # Inserting data
     process_data.process()
 
+
 def check_if_invalid(date_time1, date_time2):
-    diff = (date_time2-date_time1).total_seconds()
+    diff = (date_time2 - date_time1).total_seconds()
     if diff >= 300:
         return True
     else:
         return False
+
 
 def main():
     db_connector = DbConnector()
@@ -72,12 +74,16 @@ def main():
             trackpoints = db_connector.find_trackpoints_of_activity(i["_id"])
             for tp in trackpoints:
                 if is_first:
-                    old = (tp["location"]["coordinates"][1],
-                           tp["location"]["coordinates"][0])
+                    old = (
+                        tp["location"]["coordinates"][1],
+                        tp["location"]["coordinates"][0],
+                    )
                     is_first = False
                 else:
-                    new = (tp["location"]["coordinates"][1],
-                           tp["location"]["coordinates"][0])
+                    new = (
+                        tp["location"]["coordinates"][1],
+                        tp["location"]["coordinates"][0],
+                    )
                     distance += haversine(old, new)
                     old = new
         print("TOTAL DISTANCE: ", distance)
@@ -88,8 +94,7 @@ def main():
         user_ids = db_connector.find_all_user_ids()
         user_activity_ids = {}
         for user in user_ids:
-            activities = db_connector.find_all_activity_ids_of_user(
-                user["_id"])
+            activities = db_connector.find_all_activity_ids_of_user(user["_id"])
             activity_ids = []
             for a in activities:
                 activity_ids.append(a["_id"])
@@ -112,11 +117,12 @@ def main():
                     if new_alt > old_alt:
                         activity_alt_gained += new_alt - old_alt
                     old_alt = new_alt
-                user_altitude[user] += activity_alt_gained*0.3048
+                user_altitude[user] += activity_alt_gained * 0.3048
                 activity_alt_gained = 0
-                
+
         sorted_user_altitudes = sorted(
-            user_altitude.items(), key=lambda x: x[1], reverse=True)
+            user_altitude.items(), key=lambda x: x[1], reverse=True
+        )
         print("User_id  | Altitude gained")
         count = 1
         for key, altitude in sorted_user_altitudes:
@@ -130,8 +136,7 @@ def main():
         user_invalid_activities = {}
         for user in user_ids:
             print("Finding invalid actitities for user: " + user["_id"])
-            activities = db_connector.find_all_activity_ids_of_user(
-                user["_id"])
+            activities = db_connector.find_all_activity_ids_of_user(user["_id"])
             user_invalid_activities[user["_id"]] = 0
             for a in activities:
                 prev_tp = "first"
@@ -139,12 +144,16 @@ def main():
                     if prev_tp == "first":
                         prev_tp = tp
                     else:
-                        if check_if_invalid(prev_tp["date_time"], tp["date_time"]) == True:
+                        if (
+                            check_if_invalid(prev_tp["date_time"], tp["date_time"])
+                            == True
+                        ):
                             user_invalid_activities[user["_id"]] += 1
                             break
                         prev_tp = tp
         sorted_user_invalid_activities = sorted(
-            user_invalid_activities.items(), key=lambda x: x[1], reverse=True)
+            user_invalid_activities.items(), key=lambda x: x[1], reverse=True
+        )
         print("User_id  | Invalid activities")
         for key, count in sorted_user_invalid_activities:
             if count != 0:
@@ -165,13 +174,15 @@ def main():
     # Uncomment to run task
     task_2()
     task_3()
-    #task_4()
-    #task_5()
-    #task_6a()
-    #task_6b()
-    #task_7()
-    #task_8()
-    #task_9()
-    #task_10()
-    #task_11()
+    # task_4()
+    # task_5()
+    # task_6a()
+    # task_6b()
+    # task_7()
+    # task_8()
+    # task_9()
+    # task_10()
+    # task_11()
+
+
 main()

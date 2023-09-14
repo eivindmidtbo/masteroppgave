@@ -3,7 +3,6 @@ from tabulate import tabulate
 
 
 class ExampleProgram:
-
     def __init__(self):
         self.connection = DbConnector()
         self.db_connection = self.connection.db_connection
@@ -19,7 +18,7 @@ class ExampleProgram:
         self.db_connection.commit()
 
     def insert_data(self, table_name):
-        names = ['Bobby', 'Mc', 'McSmack', 'Board']
+        names = ["Bobby", "Mc", "McSmack", "Board"]
         for name in names:
             # Take note that the name is wrapped in '' --> '%s' because it is a string,
             # while an int would be %s etc
@@ -66,5 +65,5 @@ def main():
             program.connection.close_connection()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
