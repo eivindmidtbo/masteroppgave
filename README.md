@@ -1,2 +1,2 @@
-# prosjektoppgave
-Repo for prosjektoppgave
+# masteroppgave
+Repo for masteroppgave
