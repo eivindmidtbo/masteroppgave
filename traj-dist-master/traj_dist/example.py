@@ -1,8 +1,9 @@
 import numpy as np
 import traj_dist.distance as tdist
 import pickle
+import os
 
-traj_list = pickle.load(open("/Users/bguillouet/These/trajectory_distance/data/benchmark_trajectories.pkl", "rb"))[:10]
+traj_list = pickle.load(open(os.getcwd()+"/traj-dist-master/data/benchmark_trajectories.pkl", "rb"), encoding="latin1")[:10]
 traj_A = traj_list[0]
 traj_B = traj_list[1]
 

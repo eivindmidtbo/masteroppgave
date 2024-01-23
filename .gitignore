@@ -211,6 +211,5 @@ pyrightconfig.json
 dataset/kolumbus/*.csv
 dataset/porto/*.csv
 dataset/rome/*.txt
+dataset/rome/*.csv
 porto/output/*
-
-#traj-dist-master/*
