@@ -213,3 +213,4 @@ dataset/porto/*.csv
 dataset/rome/*.txt
 porto/output/*
 
+#traj-dist-master/*
