@@ -22,7 +22,8 @@
 
 ### Porto
 
-- 50 trajectories = 17 sec
+- 50 trajectories = 13-17 sec
+- 100 trajectories = 41 sec
 
 ### Rome
 
