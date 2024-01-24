@@ -20,6 +20,10 @@
 
 ## Frechet
 
+### Porto
+
+- 50 trajectories = 17 sec
+
 ### Rome
 
 - 50 trajectories = 1 min, 8 sec
