@@ -28,4 +28,4 @@
 ### Rome
 
 - 50 trajectories = 1 min, 8 sec
-- 100 trajectories = 5 min, 7 sec
+- 100 trajectories = 4 - 5 min
