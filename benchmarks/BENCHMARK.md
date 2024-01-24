@@ -1,5 +1,7 @@
 # Runtimes for parallell benchmarks
 
+## DTW
+
 ### Kolumbus
 
 - 50 trajectories = 15 sec
@@ -15,3 +17,10 @@
 ### Rome
 
 - 1000 trajectories = 51 sec - 1 min 8 sec
+
+## Frechet
+
+### Rome
+
+- 50 trajectories = 1 min, 8 sec
+- 100 trajectories = 5 min, 7 sec
