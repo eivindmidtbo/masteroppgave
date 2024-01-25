@@ -20,6 +20,10 @@
 
 ## Frechet
 
+### Kolumbus
+
+- 50 trajectories = x sec
+
 ### Porto
 
 - 50 trajectories = 13-17 sec
