@@ -14,6 +14,10 @@
 
 - 1000 trajectories = 22-30 sec
 
+#### Time measuring
+
+- 1000 trajectories = 2 min
+
 ### Rome
 
 - 1000 trajectories = 51 sec - 1 min 8 sec
