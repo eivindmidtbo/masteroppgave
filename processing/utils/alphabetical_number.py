@@ -18,13 +18,7 @@ def increment_alphabetical(s: str) -> str:
 # Functions to get alphabetical numbers from normal numbers
 def _get_char_value(key: int, base: int) -> str:
     if key >= 676:
-        return "#"
-        # raise ValueError("Error: Too big number to be converted to alphabetic number")
-    # raise ValueError(
-    #     f"Error: Negative number to be converted to alphabetic number {base} key {key}"
-    # )
-    if key < 0:
-        return "&"
+        raise ValueError("Error: Too big number to be converted to alphabetic number")
     return chr(ord(base) + key // 26) + chr(ord(base) + key % 26)
 
 
