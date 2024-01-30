@@ -6,7 +6,7 @@ Script to be run from jupyter notebook to measure the efficiency of the disk-LSH
 
 from multiprocessing import Pool
 
-# from schemes.disk_lsh import DiskLSH
+from schemes.lsh_disk import DiskLSH
 from schemes.lsh_grid import GridLSH
 
 P_MAX_LON = -8.57
@@ -19,16 +19,16 @@ R_MIN_LON = 12.44
 R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
-PORTO_DATA = "../data/chosen_data/porto/"
-ROME_DATA = "../data/chosen_data/rome/"
+PORTO_DATA = "../../dataset/porto/output/"
+ROME_DATA = "../../dataset/rome/output/"
 
 # Defining some nescesary variables:
 
 # layers = 4
 # diameter = 1.5
 # num_disks = 50
-# meta_file_p = "../data/chosen_data/porto/META-1000.TXT"
-# meta_file_r = "../data/chosen_data/rome/META-1000.TXT"
+# meta_file_p = "../../dataset/porto/output/META-1000.TXT"
+# meta_file_r = "../../dataset/rome/output/META-1000.TXT"
 
 
 # Must define some wrapper functions that will be used by the pool processess in the notebook
@@ -42,7 +42,7 @@ def fun_wrapper_p_grid(args):
     """
 
     num_of_files, resolution, layers = args
-    meta_file_p = f"../data/chosen_data/porto/META-{num_of_files}.txt"
+    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
     grid = GridLSH(
         "Porto G1",
         P_MIN_LAT,
@@ -66,7 +66,7 @@ def fun_wrapper_r_grid(args):
     """
 
     num_of_files, resolution, layers = args
-    meta_file_r = f"../data/chosen_data/rome/META-{num_of_files}.txt"
+    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
     grid = GridLSH(
         "Porto G1",
         R_MIN_LAT,
@@ -93,7 +93,7 @@ def fun_wrapper_p_naive(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_p = f"../data/chosen_data/porto/META-{num_of_files}.txt"
+    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Porto D1",
         P_MIN_LAT,
@@ -118,7 +118,7 @@ def fun_wrapper_p_quadrants(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_p = f"../data/chosen_data/porto/META-{num_of_files}.txt"
+    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Porto D1",
         P_MIN_LAT,
@@ -143,7 +143,7 @@ def fun_wrapper_p_KD_tree(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_p = f"../data/chosen_data/porto/META-{num_of_files}.txt"
+    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Porto D1",
         P_MIN_LAT,
@@ -168,7 +168,7 @@ def fun_wrapper_r_naive(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../data/chosen_data/rome/META-{num_of_files}.txt"
+    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,
@@ -193,7 +193,7 @@ def fun_wrapper_r_quadrants(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../data/chosen_data/rome/META-{num_of_files}.txt"
+    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,
@@ -218,7 +218,7 @@ def fun_wrapper_r_KD_tree(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../data/chosen_data/rome/META-{num_of_files}.txt"
+    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,
