@@ -236,3 +236,8 @@ hashed_data/disk/rome/*.txt
 hashed_data/grid/rome/*.txt
 !hashed_data/grid/rome/META-*.txt
 
+hashed_data/disk/kolumbus/*.txt
+!hashed_data/disk/kolumbus/META-*.txt
+
+hashed_data/grid/kolumbus/*.txt
+!hashed_data/grid/kolumbus/META-*.txt
