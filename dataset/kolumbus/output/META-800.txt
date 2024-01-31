@@ -1,800 +1,800 @@
-R_BJD.txt
-R_ANS.txt
-R_ALA.txt
-R_AZX.txt
-R_AQS.txt
-R_AEX.txt
-R_ASM.txt
-R_BDP.txt
-R_AFY.txt
-R_ALG.txt
-R_BEM.txt
-R_AHV.txt
-R_AQA.txt
-R_ASQ.txt
-R_AAX.txt
-R_BLF.txt
-R_BET.txt
-R_AIW.txt
-R_BFF.txt
-R_ARZ.txt
-R_AYL.txt
-R_APX.txt
-R_AAG.txt
-R_AEW.txt
-R_AFS.txt
-R_BBI.txt
-R_BFT.txt
-R_BCS.txt
-R_BBM.txt
-R_BCZ.txt
-R_AUB.txt
-R_APD.txt
-R_ARK.txt
-R_AIG.txt
-R_ACE.txt
-R_BFY.txt
-R_ARC.txt
-R_BEZ.txt
-R_AEC.txt
-R_ALX.txt
-R_BGG.txt
-R_BFE.txt
-R_AFV.txt
-R_BKZ.txt
-R_ADW.txt
-R_BKD.txt
-R_BDC.txt
-R_BAX.txt
-R_ADN.txt
-R_BBW.txt
-R_AXF.txt
-R_AFH.txt
-R_BJQ.txt
-R_BBA.txt
-R_AHK.txt
-R_ARW.txt
-R_BAJ.txt
-R_AWG.txt
-R_AJU.txt
-R_BIL.txt
-R_ADO.txt
-R_ALB.txt
-R_AML.txt
-R_BLW.txt
-R_BGB.txt
-R_BAN.txt
-R_AXZ.txt
-R_ASI.txt
-R_AIH.txt
-R_AKQ.txt
-R_BER.txt
-R_AAR.txt
-R_BHH.txt
-R_BIV.txt
-R_AYP.txt
-R_AFI.txt
-R_AYZ.txt
-R_AUX.txt
-R_AUS.txt
-R_AFM.txt
-R_BED.txt
-R_AJD.txt
-R_AGZ.txt
-R_BIF.txt
-R_AWY.txt
-R_AXN.txt
-R_AES.txt
-R_BFR.txt
-R_ACW.txt
-R_AXE.txt
-R_AAW.txt
-R_AHR.txt
-R_ACN.txt
-R_AQC.txt
-R_AQR.txt
-R_BFI.txt
-R_ARY.txt
-R_AJY.txt
-R_BAL.txt
-R_ASY.txt
-R_BGX.txt
-R_AUC.txt
-R_AWP.txt
-R_AIB.txt
-R_ATX.txt
-R_AKX.txt
-R_ACM.txt
-R_AAU.txt
-R_BEC.txt
-R_AXL.txt
-R_AEY.txt
-R_BAI.txt
-R_ABH.txt
-R_BCO.txt
-R_BIU.txt
-R_AAQ.txt
-R_BFS.txt
-R_AKS.txt
-R_ATH.txt
-R_BJP.txt
-R_APA.txt
-R_AUH.txt
-R_BGY.txt
-R_AIR.txt
-R_BBY.txt
-R_BJX.txt
-R_AKV.txt
-R_AVW.txt
-R_AEJ.txt
-R_AKO.txt
-R_AED.txt
-R_ASV.txt
-R_AXS.txt
-R_AJX.txt
-R_AYJ.txt
-R_ATL.txt
-R_AUA.txt
-R_AMT.txt
-R_BEN.txt
-R_BEI.txt
-R_BCP.txt
-R_AQH.txt
-R_AZR.txt
-R_AIV.txt
-R_AZP.txt
-R_BGR.txt
-R_AER.txt
-R_BFZ.txt
-R_AWJ.txt
-R_AVA.txt
-R_AWN.txt
-R_BJK.txt
-R_ADF.txt
-R_AVB.txt
-R_ABD.txt
-R_APQ.txt
-R_ACR.txt
-R_AKB.txt
-R_AFR.txt
-R_ANV.txt
-R_BDX.txt
-R_AOY.txt
-R_ARM.txt
-R_AWT.txt
-R_BEH.txt
-R_AVZ.txt
-R_BIT.txt
-R_ALI.txt
-R_BMF.txt
-R_AIJ.txt
-R_BCB.txt
-R_AXH.txt
-R_BDH.txt
-R_ASD.txt
-R_BBP.txt
-R_BJT.txt
-R_AXX.txt
-R_AVM.txt
-R_AJJ.txt
-R_AQU.txt
-R_AII.txt
-R_AQT.txt
-R_BDB.txt
-R_ABK.txt
-R_AAN.txt
-R_AUF.txt
-R_BID.txt
-R_AWU.txt
-R_ABR.txt
-R_BAK.txt
-R_BAR.txt
-R_AHU.txt
-R_BAO.txt
-R_ADA.txt
-R_AEV.txt
-R_ATD.txt
-R_BHV.txt
-R_AHS.txt
-R_AKI.txt
-R_AUE.txt
-R_AZK.txt
-R_BIZ.txt
-R_AQI.txt
-R_AUD.txt
-R_AWO.txt
-R_AUT.txt
-R_AOE.txt
-R_ARV.txt
-R_BAV.txt
-R_AJM.txt
-R_AVK.txt
-R_AJO.txt
-R_BKO.txt
-R_BBF.txt
-R_BEY.txt
-R_AYD.txt
-R_AFB.txt
-R_AIK.txt
-R_AHQ.txt
-R_AKE.txt
-R_ANN.txt
-R_ACJ.txt
-R_AEQ.txt
-R_ALZ.txt
-R_AHO.txt
-R_BCV.txt
-R_ATK.txt
-R_BAH.txt
-R_BEQ.txt
-R_ANC.txt
-R_ACB.txt
-R_ARO.txt
-R_ACT.txt
-R_BGJ.txt
-R_BKV.txt
-R_AVR.txt
-R_ABI.txt
-R_AOI.txt
-R_AFW.txt
-R_APL.txt
-R_AIL.txt
-R_AXK.txt
-R_ABP.txt
-R_AJZ.txt
-R_AIA.txt
-R_BFC.txt
-R_BEG.txt
-R_BCG.txt
-R_AYS.txt
-R_AXT.txt
-R_ADU.txt
-R_BDD.txt
-R_BFV.txt
-R_AKJ.txt
-R_ANG.txt
-R_ABT.txt
-R_AZF.txt
-R_BLC.txt
-R_ADD.txt
-R_BEX.txt
-R_BJU.txt
-R_ACY.txt
-R_AOT.txt
-R_AJN.txt
-R_BLD.txt
-R_ALT.txt
-R_AAP.txt
-R_BAW.txt
-R_ATB.txt
-R_AGJ.txt
-R_AVV.txt
-R_BLM.txt
-R_AZT.txt
-R_APP.txt
-R_BFM.txt
-R_ADV.txt
-R_AYA.txt
-R_AET.txt
-R_AVJ.txt
-R_AGD.txt
-R_AGE.txt
-R_BHP.txt
-R_AQM.txt
-R_BHE.txt
-R_BKG.txt
-R_BAC.txt
-R_BJH.txt
-R_AVL.txt
-R_BIM.txt
-R_APM.txt
-R_BCE.txt
-R_AOA.txt
-R_BLL.txt
-R_AVU.txt
-R_AIC.txt
-R_AMF.txt
-R_AUW.txt
-R_BKC.txt
-R_AYR.txt
-R_BCM.txt
-R_ANL.txt
-R_BKA.txt
-R_AUV.txt
-R_BAP.txt
-R_BHK.txt
-R_AFN.txt
-R_AVE.txt
-R_BLG.txt
-R_ADH.txt
-R_AMY.txt
-R_AMN.txt
-R_AJP.txt
-R_AXP.txt
-R_APN.txt
-R_BIA.txt
-R_BJO.txt
-R_BIS.txt
-R_AQQ.txt
-R_AGA.txt
-R_BEB.txt
-R_BCF.txt
-R_BLE.txt
-R_AZV.txt
-R_ADQ.txt
-R_ATC.txt
-R_BEJ.txt
-R_AJL.txt
-R_AYE.txt
-R_AGG.txt
-R_BDY.txt
-R_ABV.txt
-R_BDM.txt
-R_AWK.txt
-R_AXU.txt
-R_AHM.txt
-R_BFB.txt
-R_AMW.txt
-R_BIP.txt
-R_BCA.txt
-R_AXB.txt
-R_BIW.txt
-R_BAY.txt
-R_BCJ.txt
-R_ALF.txt
-R_BIE.txt
-R_BJL.txt
-R_BGL.txt
-R_AEZ.txt
-R_BIG.txt
-R_ASK.txt
-R_AGN.txt
-R_ARH.txt
-R_BJR.txt
-R_ARP.txt
-R_BMK.txt
-R_AGU.txt
-R_ATV.txt
-R_BAZ.txt
-R_AIX.txt
-R_AIE.txt
-R_BLP.txt
-R_AFF.txt
-R_AVH.txt
-R_ABE.txt
-R_BJB.txt
-R_AVG.txt
-R_APK.txt
-R_AJR.txt
-R_ABU.txt
-R_BKH.txt
-R_AWW.txt
-R_AKW.txt
-R_AHT.txt
-R_BLU.txt
-R_BBC.txt
-R_BDG.txt
-R_AOH.txt
-R_BLX.txt
-R_BDW.txt
-R_AUJ.txt
-R_AEE.txt
-R_AMD.txt
-R_BFO.txt
-R_AJE.txt
-R_BHS.txt
-R_AQW.txt
-R_AUY.txt
-R_AQN.txt
-R_BCC.txt
-R_ARG.txt
-R_BFG.txt
-R_AYF.txt
-R_AYO.txt
-R_ATF.txt
-R_BMA.txt
-R_BKN.txt
-R_AMZ.txt
-R_BJW.txt
-R_AXJ.txt
-R_AFE.txt
-R_BCU.txt
-R_AAA.txt
-R_BBL.txt
-R_AOV.txt
-R_ARE.txt
-R_BCT.txt
-R_BFL.txt
-R_AAB.txt
-R_ADT.txt
-R_AMC.txt
-R_BBB.txt
-R_ABA.txt
-R_BAF.txt
-R_ANX.txt
-R_AXI.txt
-R_BDK.txt
-R_AXY.txt
-R_ANK.txt
-R_AHW.txt
-R_AKY.txt
-R_BFA.txt
-R_BGP.txt
-R_BBN.txt
-R_AWE.txt
-R_AZB.txt
-R_AOU.txt
-R_ASO.txt
-R_AQB.txt
-R_ADR.txt
-R_AGQ.txt
-R_ATT.txt
-R_ACD.txt
-R_ATU.txt
-R_ASN.txt
-R_AJS.txt
-R_BGE.txt
-R_AMU.txt
-R_APG.txt
-R_AJV.txt
-R_BKF.txt
-R_ADJ.txt
-R_BJF.txt
-R_APW.txt
-R_ABB.txt
-R_AKL.txt
-R_ALP.txt
-R_BLY.txt
-R_ACA.txt
-R_AKM.txt
-R_BJG.txt
-R_AWS.txt
-R_BKL.txt
-R_ACX.txt
-R_AWC.txt
-R_APS.txt
-R_BKQ.txt
-R_ATR.txt
-R_ANU.txt
-R_BIY.txt
-R_BEE.txt
-R_BIQ.txt
-R_ARQ.txt
-R_AQO.txt
-R_BLH.txt
-R_ABQ.txt
-R_BGS.txt
-R_AYV.txt
-R_ASC.txt
-R_ABN.txt
-R_BDZ.txt
-R_BFK.txt
-R_BKJ.txt
-R_AVT.txt
-R_BEF.txt
-R_AIO.txt
-R_BLN.txt
-R_BLS.txt
-R_AWL.txt
-R_BKY.txt
-R_AAK.txt
-R_BLO.txt
-R_AYN.txt
-R_BMI.txt
-R_BML.txt
-R_ADG.txt
-R_AUL.txt
-R_AAO.txt
-R_BKK.txt
-R_BHJ.txt
-R_BIN.txt
-R_APZ.txt
 R_AOO.txt
-R_BKW.txt
-R_BGM.txt
-R_AXV.txt
-R_AUU.txt
-R_BDF.txt
-R_BHZ.txt
-R_BBU.txt
-R_BJS.txt
-R_BHI.txt
-R_AJW.txt
-R_AEB.txt
-R_ANQ.txt
-R_ADC.txt
-R_ABX.txt
-R_AUO.txt
-R_AHP.txt
-R_ANI.txt
-R_AGC.txt
-R_AMQ.txt
-R_AJB.txt
-R_BGD.txt
-R_BLB.txt
-R_BGA.txt
-R_AKN.txt
-R_AMA.txt
-R_AVO.txt
-R_ATN.txt
-R_BEL.txt
-R_AQY.txt
-R_ACZ.txt
-R_AEO.txt
-R_BHQ.txt
-R_BDR.txt
-R_AQV.txt
-R_ARS.txt
-R_AAE.txt
-R_AZU.txt
-R_AFQ.txt
-R_ADY.txt
-R_AIZ.txt
-R_AEK.txt
-R_AIU.txt
-R_BHN.txt
-R_AHD.txt
-R_BFU.txt
-R_AGO.txt
-R_ALC.txt
-R_ACC.txt
-R_BKP.txt
-R_AMB.txt
-R_BME.txt
-R_BGI.txt
-R_AVP.txt
-R_AMG.txt
-R_AVQ.txt
-R_BKU.txt
-R_BKB.txt
-R_AYX.txt
-R_AFZ.txt
-R_AZY.txt
-R_BMD.txt
-R_ATP.txt
-R_AJI.txt
-R_AST.txt
-R_ALN.txt
-R_AFG.txt
-R_BGC.txt
-R_AMR.txt
-R_AUP.txt
-R_AZZ.txt
-R_ATG.txt
-R_BBT.txt
-R_ARJ.txt
-R_AJA.txt
-R_AEL.txt
-R_AAV.txt
-R_AYT.txt
-R_AAI.txt
-R_AVC.txt
-R_APV.txt
-R_APR.txt
-R_BJA.txt
-R_BBK.txt
-R_AOB.txt
-R_BEP.txt
-R_AVF.txt
-R_AHC.txt
-R_ABM.txt
-R_BBQ.txt
-R_AGH.txt
-R_ADE.txt
-R_BDS.txt
-R_AEI.txt
-R_AQD.txt
-R_AWZ.txt
-R_ASX.txt
-R_ADP.txt
-R_ARB.txt
-R_ARN.txt
-R_AAT.txt
-R_BHL.txt
-R_BIK.txt
-R_ABO.txt
-R_AZL.txt
-R_AQX.txt
-R_AHN.txt
-R_AUZ.txt
-R_AIP.txt
-R_AWH.txt
-R_ALW.txt
-R_ADI.txt
-R_ATI.txt
-R_ALL.txt
-R_AEA.txt
-R_BBE.txt
-R_AFK.txt
-R_AMS.txt
-R_AZC.txt
-R_BKI.txt
-R_AVD.txt
-R_AZM.txt
-R_AHY.txt
-R_AQL.txt
-R_BJY.txt
-R_BKX.txt
-R_ASG.txt
-R_AOW.txt
-R_BBJ.txt
-R_AIN.txt
-R_AXD.txt
-R_ANM.txt
-R_ANR.txt
-R_AFO.txt
-R_BIC.txt
-R_AFX.txt
-R_AOP.txt
-R_BJN.txt
-R_AZS.txt
-R_BCR.txt
-R_BCL.txt
-R_BFP.txt
-R_AFA.txt
-R_BLI.txt
-R_ACK.txt
-R_AUI.txt
-R_AWD.txt
-R_BFX.txt
-R_AJH.txt
-R_AYK.txt
-R_APH.txt
-R_BIB.txt
-R_ABZ.txt
-R_AGL.txt
-R_AKU.txt
-R_BKT.txt
-R_AUQ.txt
-R_AZD.txt
-R_AVY.txt
-R_ACL.txt
-R_BCD.txt
-R_AQG.txt
-R_AMV.txt
-R_AVN.txt
-R_ALE.txt
-R_ANF.txt
-R_BKM.txt
-R_BLA.txt
-R_ASE.txt
-R_AMX.txt
-R_AZW.txt
-R_ABC.txt
-R_ART.txt
-R_AWI.txt
-R_ADB.txt
-R_AKK.txt
-R_BLZ.txt
-R_ADS.txt
-R_BGN.txt
-R_ABF.txt
-R_ARD.txt
-R_AMH.txt
-R_AAY.txt
-R_APB.txt
-R_AGF.txt
-R_AQZ.txt
-R_BCI.txt
-R_AHL.txt
-R_AKD.txt
-R_BDT.txt
-R_AJT.txt
-R_BHG.txt
-R_AOZ.txt
-R_BHX.txt
-R_AYI.txt
-R_BHD.txt
-R_ALM.txt
-R_BKE.txt
-R_ASZ.txt
-R_BAB.txt
+R_ASL 2.txt
+R_AZF 2.txt
+R_BIQ.txt
+R_AZO.txt
+R_ADM.txt
+R_BFM 2.txt
+R_BCW 2.txt
 R_AOM.txt
-R_BGO.txt
-R_ASW.txt
-R_ALH.txt
-R_ADL.txt
-R_AGB.txt
-R_BJV.txt
-R_ALY.txt
-R_ABW.txt
-R_BHO.txt
-R_BHY.txt
-R_ATJ.txt
-R_BBO.txt
-R_AIF.txt
-R_BBV.txt
-R_AHX.txt
-R_AOJ.txt
-R_ATE.txt
-R_AZA.txt
-R_BDE.txt
-R_ACI.txt
-R_AHB.txt
-R_AOD.txt
-R_AEH.txt
-R_AVX.txt
-R_AHE.txt
-R_BHC.txt
-R_AMO.txt
-R_BJE.txt
-R_BJZ.txt
-R_AGT.txt
-R_BCN.txt
-R_APT.txt
-R_ASS.txt
-R_ARA.txt
-R_AMM.txt
-R_AYH.txt
-R_BFQ.txt
-R_BBH.txt
-R_AIT.txt
-R_BAS.txt
-R_ANB.txt
-R_APF.txt
-R_AAD.txt
-R_BIJ.txt
+R_AWM 2.txt
+R_AQA.txt
+R_AQR 2.txt
+R_ABZ 3.txt
+R_BIU 2.txt
+R_ATQ 2.txt
+R_ALG 2.txt
+R_AQV 2.txt
+R_AAR 2.txt
+R_BLN.txt
+R_AUF 2.txt
+R_BBA 2.txt
 R_ACS.txt
-R_BFW.txt
-R_BDO.txt
-R_AME.txt
-R_BES.txt
-R_BJC.txt
-R_AEM.txt
-R_AAJ.txt
-R_ANZ.txt
-R_AID.txt
-R_ACQ.txt
-R_ACP.txt
-R_AKG.txt
-R_AKF.txt
-R_BIR.txt
-R_BCW.txt
-R_ATW.txt
-R_AVI.txt
-R_BBR.txt
-R_BCY.txt
-R_BBG.txt
-R_AAH.txt
-R_AKZ.txt
-R_BJM.txt
-R_AOF.txt
-R_BKR.txt
-R_AGK.txt
-R_ATO.txt
-R_AFC.txt
-R_AIY.txt
-R_AGP.txt
-R_AUG.txt
-R_AZE.txt
-R_AKR.txt
-R_BKS.txt
-R_BCH.txt
-R_ASU.txt
-R_AZQ.txt
-R_ANW.txt
-R_BDA.txt
-R_AFJ.txt
-R_AGM.txt
-R_AWR.txt
-R_ASH.txt
-R_AXR.txt
-R_BMH.txt
-R_ATZ.txt
-R_BBX.txt
-R_AQE.txt
-R_ANE.txt
-R_BMJ.txt
-R_ATA.txt
+R_ACL 3.txt
+R_ADD 2.txt
+R_ATP.txt
+R_BLG 2.txt
+R_BIK.txt
+R_AKQ.txt
+R_ATG.txt
+R_AHX 2.txt
+R_AGN 2.txt
+R_APH 2.txt
+R_BHN 2.txt
+R_AFT.txt
+R_BKM 2.txt
+R_AEL 3.txt
+R_AHG.txt
+R_ABX 3.txt
+R_BEU 2.txt
+R_APW 2.txt
+R_AVE 2.txt
+R_BFY 2.txt
+R_AIR.txt
+R_ABP.txt
+R_AMQ.txt
+R_ARQ.txt
+R_AJU 2.txt
+R_AMY 2.txt
+R_AUX.txt
+R_AFP 2.txt
+R_AIB 3.txt
+R_ACQ 3.txt
+R_AOL.txt
+R_ADI 3.txt
+R_AVJ 2.txt
+R_BKS 2.txt
+R_BLW 2.txt
+R_ABU 2.txt
+R_ASB 2.txt
+R_BFD.txt
+R_BBI 2.txt
+R_ART.txt
+R_BDU.txt
+R_AEZ.txt
+R_ACW 2.txt
+R_BGT 2.txt
+R_AMY.txt
+R_ANA 2.txt
+R_AJS 2.txt
+R_ASH 2.txt
+R_AHQ 3.txt
+R_AWA 2.txt
+R_BBS 2.txt
+R_AHF 2.txt
+R_ACK.txt
+R_AFN.txt
+R_APK.txt
+R_AVR 2.txt
+R_BHR.txt
+R_AKX 2.txt
+R_BGM 2.txt
+R_ADK 3.txt
+R_BME.txt
+R_BEK 2.txt
+R_AHO.txt
+R_AXL.txt
+R_BDB 2.txt
 R_BAT.txt
-R_ABJ.txt
+R_AFP 3.txt
+R_AOW.txt
+R_AXH 2.txt
+R_AZV 2.txt
+R_APQ.txt
+R_ANE 2.txt
+R_AND.txt
+R_ACF.txt
+R_ADR 3.txt
+R_AQX 2.txt
+R_AIH.txt
+R_BHH 2.txt
+R_BCL.txt
+R_BLF 2.txt
+R_AGS.txt
+R_AFB 3.txt
+R_ASO 2.txt
+R_BGU.txt
+R_ABF.txt
+R_AUD.txt
+R_AFZ 3.txt
+R_AOC.txt
+R_ATA 2.txt
+R_ATJ 2.txt
+R_AWK 2.txt
+R_AGR 2.txt
+R_BJH 2.txt
+R_BFP 2.txt
+R_AKH 2.txt
+R_ABW 2.txt
+R_ASD 2.txt
+R_BBH.txt
+R_BHQ 2.txt
+R_BHV.txt
+R_BAL.txt
+R_BDX 2.txt
+R_ABA 2.txt
+R_BKO 2.txt
+R_AHH 2.txt
+R_AKH.txt
+R_AUP 2.txt
+R_AJD 2.txt
+R_BKO.txt
+R_BGV 2.txt
+R_BMC 2.txt
+R_BFW.txt
+R_AJG 2.txt
+R_AZK 2.txt
+R_BCN.txt
+R_ATZ 2.txt
+R_APF.txt
+R_ADZ 3.txt
+R_ALW 2.txt
+R_ANQ 2.txt
+R_ASA.txt
+R_AOY 2.txt
+R_BGW 2.txt
+R_AZZ 2.txt
+R_ACG 3.txt
+R_AKD.txt
+R_AWO.txt
+R_AAJ 3.txt
+R_AVD.txt
+R_AEE.txt
+R_AWW.txt
+R_AUN 2.txt
+R_BAV.txt
+R_BLL.txt
+R_ABX 2.txt
+R_AEQ 2.txt
+R_ADH.txt
+R_AUI.txt
+R_ADB 3.txt
+R_AVO.txt
+R_ACM.txt
+R_AMN 2.txt
+R_BJP 2.txt
+R_BEI 2.txt
+R_BLQ.txt
+R_ANP 2.txt
+R_AFX.txt
+R_ABY 3.txt
+R_AAC 3.txt
+R_BLY.txt
+R_AAV.txt
+R_AFH.txt
+R_AXR 2.txt
+R_AOY.txt
+R_ADL 3.txt
+R_BGZ.txt
+R_ALP.txt
+R_AVU 2.txt
+R_ASR 2.txt
+R_AYA 2.txt
+R_AQS 2.txt
+R_AWO 2.txt
+R_ACV.txt
+R_AFJ.txt
+R_AIA.txt
+R_AAL 2.txt
+R_ALA.txt
+R_AIG 2.txt
+R_BEQ.txt
+R_AJE 2.txt
+R_AQN.txt
+R_AGI 3.txt
+R_BLL 2.txt
+R_BCR.txt
+R_ADI 2.txt
+R_BGK.txt
+R_BEB 2.txt
+R_BFF.txt
+R_ALL.txt
+R_AFS.txt
+R_BLF.txt
+R_AAG 2.txt
+R_ASY 2.txt
+R_AWI 2.txt
+R_AEB 2.txt
+R_BKW 2.txt
+R_BCP 2.txt
+R_BLB.txt
+R_AZD.txt
+R_ANM 2.txt
+R_AOS.txt
+R_ANH.txt
+R_ADU 2.txt
+R_ACR.txt
+R_ANT 2.txt
+R_AAK 2.txt
+R_BCA 2.txt
+R_AAY 3.txt
+R_BJM.txt
+R_BEY 2.txt
+R_AGE.txt
+R_ARD.txt
+R_BKR.txt
+R_AAG 3.txt
+R_AHZ 2.txt
+R_ARP 2.txt
+R_BBR 2.txt
+R_APB.txt
+R_AXL 2.txt
+R_AUK.txt
+R_BHT.txt
+R_AFW 3.txt
+R_ARW 2.txt
+R_BDC 2.txt
+R_AQM 2.txt
+R_AEQ 3.txt
+R_ATX 2.txt
+R_BIF 2.txt
+R_BLH.txt
+R_ACG.txt
+R_AUE 2.txt
+R_BBD 2.txt
+R_AMF.txt
 R_BJI.txt
-R_AXA.txt
-R_BAE.txt
-R_BDV.txt
-R_APU.txt
-R_AQF.txt
+R_BLI.txt
+R_AJV 2.txt
+R_AOG 2.txt
+R_ACD 2.txt
+R_AKP.txt
+R_BGJ 2.txt
+R_AAS 2.txt
+R_BFN.txt
+R_AGA 3.txt
+R_AUA.txt
+R_AMB 2.txt
+R_AXP 2.txt
+R_BCW.txt
+R_ANO.txt
+R_AXB 2.txt
+R_BKJ 2.txt
+R_AOA 2.txt
+R_AJQ 2.txt
+R_BGX.txt
+R_AWF 2.txt
+R_AKT 2.txt
+R_ACF 2.txt
+R_BDZ.txt
+R_BMF.txt
+R_ACR 3.txt
+R_AJQ.txt
+R_AHF.txt
+R_BJE.txt
+R_BLJ 2.txt
+R_ARN.txt
+R_ANG 2.txt
+R_AHT 3.txt
+R_BBE.txt
+R_AWN.txt
+R_ACC 2.txt
+R_AAB 3.txt
+R_BDG 2.txt
+R_BAV 2.txt
+R_ATU 2.txt
+R_AQQ.txt
+R_BMJ.txt
+R_AKP 2.txt
+R_AJH.txt
+R_ANW 2.txt
+R_AAW.txt
+R_AWD 2.txt
+R_APY.txt
+R_AEO 2.txt
+R_AEO.txt
+R_BBZ 2.txt
+R_BIV 2.txt
+R_ADR 2.txt
+R_ASI 2.txt
+R_AKN 2.txt
+R_AUJ.txt
+R_ACY.txt
+R_AKF.txt
+R_AMO.txt
+R_BCA.txt
+R_ASK.txt
+R_AET 2.txt
+R_AMG.txt
+R_AYQ 2.txt
+R_ALK 2.txt
+R_AGF.txt
+R_ALY.txt
+R_ADV.txt
+R_BER.txt
+R_BKT.txt
+R_AZE.txt
+R_BEM.txt
+R_BFJ.txt
+R_ARO.txt
+R_APV.txt
+R_BIX 2.txt
+R_BDR 2.txt
+R_ARI 2.txt
+R_AMC 2.txt
+R_AAA 3.txt
+R_ASJ.txt
+R_ASY.txt
+R_BFU.txt
+R_ABO 3.txt
+R_AOR 2.txt
+R_AEG.txt
+R_BKV 2.txt
+R_ATO 2.txt
+R_ATK.txt
+R_BHZ 2.txt
+R_BEQ 2.txt
+R_BKV.txt
+R_AZR.txt
+R_AAB 2.txt
+R_ACB 2.txt
+R_AEA 3.txt
+R_ACT 3.txt
+R_ABL 2.txt
+R_ANY.txt
+R_AFZ 2.txt
+R_AQU 2.txt
+R_AEM 3.txt
+R_AFY.txt
+R_BHD 2.txt
+R_ANV 2.txt
+R_AQO.txt
+R_BIP.txt
+R_AXO 2.txt
+R_ANK.txt
+R_AKL 2.txt
+R_BDA 2.txt
+R_AFC 2.txt
+R_BKS.txt
+R_AYG.txt
+R_BCZ 2.txt
+R_AXI.txt
+R_AIN 2.txt
+R_BDO 2.txt
+R_AYR 2.txt
+R_ASG.txt
+R_AHH 3.txt
+R_ACM 3.txt
+R_AMQ 2.txt
+R_AYR.txt
+R_BES 2.txt
+R_BFT.txt
+R_AYL 2.txt
+R_AHB.txt
+R_AUE.txt
+R_AGO 2.txt
+R_AIZ.txt
+R_BCI.txt
+R_AXP.txt
+R_APW.txt
+R_AKL.txt
+R_ADV 3.txt
+R_BJZ 2.txt
+R_BDK.txt
+R_BEO 2.txt
+R_BFB 2.txt
+R_AIX 2.txt
+R_AAU 3.txt
+R_AGC 2.txt
+R_BMI 2.txt
+R_BJO.txt
+R_AKV 2.txt
+R_AEC 3.txt
+R_BAG 2.txt
+R_BDQ.txt
+R_BBW.txt
+R_BIB.txt
+R_BEN 2.txt
+R_APE.txt
+R_BAC 2.txt
+R_AFX 2.txt
+R_ARM.txt
+R_BEA 2.txt
+R_AWV.txt
+R_AEP 2.txt
+R_BKM.txt
+R_ACH.txt
+R_AKG.txt
+R_ASM.txt
+R_ACA.txt
+R_AHW 3.txt
+R_AWQ 2.txt
+R_BBV.txt
+R_ACN.txt
+R_AYJ 2.txt
+R_AQD 2.txt
+R_AUF.txt
+R_BCK 2.txt
+R_AVH 2.txt
+R_BKL.txt
+R_AJF.txt
+R_ABD 2.txt
+R_AOI.txt
+R_ACP.txt
+R_ARR.txt
+R_AIN.txt
+R_BAW 2.txt
+R_AQM.txt
+R_BFZ 2.txt
+R_ATZ.txt
+R_AXF.txt
+R_ASQ.txt
+R_ABQ 3.txt
+R_BGO 2.txt
+R_BJW 2.txt
+R_BJR.txt
+R_ADL.txt
+R_AEJ 2.txt
+R_AAU 2.txt
+R_APS 2.txt
+R_BHU.txt
+R_AFC 3.txt
+R_BJU.txt
+R_AGW.txt
+R_AWX 2.txt
+R_AVQ.txt
+R_AWB.txt
+R_AJT.txt
+R_AAQ 3.txt
+R_BCN 2.txt
+R_AKZ.txt
+R_ACS 2.txt
+R_ABS 3.txt
+R_AYE.txt
+R_AQE.txt
+R_BCO.txt
+R_AUG.txt
+R_AEK 3.txt
+R_AYJ.txt
+R_BHW.txt
+R_ALC 2.txt
+R_BCT.txt
+R_BIY.txt
+R_BET.txt
+R_BKN 2.txt
+R_AEE 2.txt
+R_BDP 2.txt
+R_ACA 2.txt
+R_AJZ 2.txt
+R_AAW 3.txt
+R_AIY.txt
+R_BET 2.txt
+R_AOT.txt
+R_AAM 2.txt
+R_BCY.txt
+R_BCS.txt
+R_AKW.txt
+R_AXT 2.txt
+R_BLA 2.txt
+R_ABJ.txt
+R_AFR.txt
+R_BHT 2.txt
+R_APO.txt
+R_AQR.txt
+R_AFH 3.txt
+R_AJF 2.txt
+R_AIF 3.txt
+R_BIF.txt
+R_AID 2.txt
+R_ACZ 3.txt
+R_AXD 2.txt
+R_AYM 2.txt
+R_AOB 2.txt
+R_ABF 2.txt
+R_AUB 2.txt
+R_AXV 2.txt
+R_BMB 2.txt
+R_BED.txt
+R_AOU 2.txt
+R_ANI 2.txt
+R_BFX 2.txt
+R_APU 2.txt
+R_APS.txt
+R_AFK 2.txt
+R_ACV 3.txt
+R_AGI 2.txt
+R_BFW 2.txt
+R_ADT 3.txt
+R_AGH 2.txt
+R_BLU 2.txt
+R_BCU 2.txt
+R_AAT 2.txt
+R_AQW.txt
+R_ADA 3.txt
+R_AOI 2.txt
+R_AYZ 2.txt
+R_AOE 2.txt
+R_AKR.txt
+R_BKF.txt
+R_ADB 2.txt
+R_AJC.txt
+R_ADF.txt
+R_ANS.txt
+R_AIP 2.txt
+R_AGX 2.txt
+R_AKO.txt
+R_AOH.txt
+R_ADO.txt
+R_AGM.txt
+R_BFE 2.txt
+R_BAI 2.txt
+R_ACY 2.txt
+R_AIF.txt
+R_AGZ 2.txt
+R_ACJ.txt
+R_AOP.txt
+R_ALM 2.txt
+R_AWE 2.txt
+R_AWC.txt
+R_BGW.txt
+R_ALP 2.txt
+R_BKL 2.txt
+R_AQY 2.txt
+R_AAJ 2.txt
+R_ADH 2.txt
+R_ANZ.txt
+R_AQH 2.txt
+R_AWE.txt
+R_AUL 2.txt
+R_AGQ 2.txt
+R_ABI 2.txt
+R_AJH 2.txt
+R_ADJ 2.txt
+R_AKI.txt
+R_BAK 2.txt
+R_AFT 2.txt
+R_AYH 2.txt
+R_BKD 2.txt
+R_APX 2.txt
+R_AGJ 3.txt
+R_AUA 2.txt
+R_AEM 2.txt
+R_AXS 2.txt
+R_AZN.txt
+R_AVZ.txt
+R_ALQ.txt
+R_AMT 2.txt
+R_AAE 2.txt
+R_AKB.txt
+R_BMH 2.txt
+R_BBP.txt
+R_AOD 2.txt
+R_AOW 2.txt
+R_BFK.txt
+R_AYY.txt
+R_BAD 2.txt
+R_BLM 2.txt
+R_AYI 2.txt
+R_AVO 2.txt
+R_ARN 2.txt
+R_AKY 2.txt
+R_BEW.txt
+R_AUV.txt
+R_BIQ 2.txt
+R_AIK.txt
+R_ARK.txt
+R_AJK 2.txt
+R_BAN 2.txt
+R_BGE 2.txt
+R_BIA.txt
+R_ATK 2.txt
+R_AZT.txt
+R_BDL.txt
+R_BFY.txt
+R_BJP.txt
+R_AAA 2.txt
+R_AHY.txt
+R_BLD 2.txt
+R_AHT.txt
+R_AOJ.txt
+R_AIL 2.txt
+R_BKN.txt
+R_AOR.txt
+R_AMD 2.txt
+R_ACP 2.txt
+R_BKP 2.txt
+R_BIV.txt
+R_AVD 2.txt
+R_ACW.txt
+R_ABE 2.txt
+R_BCX 2.txt
+R_AQD.txt
+R_AEU.txt
+R_AAI.txt
+R_AES.txt
+R_BKB.txt
+R_AEH.txt
+R_BMK.txt
+R_AKD 2.txt
+R_AYP 2.txt
+R_AGN.txt
+R_AMK.txt
+R_AGM 3.txt
+R_BES.txt
+R_AHC.txt
+R_ABV 3.txt
+R_AWT 2.txt
+R_ABR 3.txt
+R_AUH.txt
+R_AGS 3.txt
+R_BHP 2.txt
+R_ABW 3.txt
+R_AZV.txt
+R_AAN 3.txt
+R_ATW 2.txt
+R_ATS.txt
+R_AFC.txt
+R_AYY 2.txt
+R_AQH.txt
+R_AAP 3.txt
+R_APJ.txt
+R_AEV 3.txt
+R_ABB 2.txt
+R_ACI.txt
+R_AAZ.txt
+R_AEI 2.txt
+R_ALV 2.txt
+R_ABN 2.txt
+R_AAV 3.txt
+R_AXN 2.txt
+R_BJU 2.txt
+R_AHE 3.txt
+R_AZT 2.txt
+R_AGH 3.txt
+R_APP.txt
+R_BGX 2.txt
+R_AFQ.txt
+R_AJJ 2.txt
+R_AYO 2.txt
+R_AKS.txt
+R_AWL 2.txt
+R_BLX.txt
+R_ABE 3.txt
+R_BJM 2.txt
+R_AOX.txt
+R_AAC 2.txt
+R_BLZ 2.txt
+R_BIL.txt
+R_AFQ 2.txt
+R_BIH 2.txt
+R_ATR.txt
+R_AHN 3.txt
+R_ASC.txt
+R_AGD 2.txt
+R_AYB 2.txt
+R_AEO 3.txt
+R_AXZ.txt
+R_AGW 3.txt
+R_ABW.txt
+R_BJD 2.txt
+R_BAG.txt
+R_BMA.txt
+R_AHD 2.txt
+R_AWG.txt
+R_AGB 3.txt
+R_AEU 3.txt
+R_AIM.txt
+R_AIC 3.txt
+R_BHO.txt
+R_BKG.txt
+R_AFV 2.txt
+R_AEZ 3.txt
+R_AVS 2.txt
+R_BEC.txt
+R_AFZ.txt
+R_ACV 2.txt
+R_AMW.txt
+R_ALI 2.txt
+R_BJT 2.txt
+R_APG 2.txt
+R_AKB 2.txt
+R_ABB.txt
+R_AEW 2.txt
+R_ADG 2.txt
+R_AWU 2.txt
+R_ATO.txt
+R_ALO.txt
+R_AAN.txt
+R_BDH.txt
+R_AHI.txt
+R_BJC 2.txt
+R_BCF 2.txt
+R_ADD.txt
+R_AXR.txt
+R_AHU 2.txt
+R_BFG 2.txt
+R_BLV 2.txt
+R_BKI.txt
+R_AFB.txt
+R_BBN.txt
+R_AKQ 2.txt
+R_ALS 2.txt
+R_BDP.txt
+R_AUP.txt
+R_ARG 2.txt
+R_BKH.txt
+R_BFS.txt
+R_AVK.txt
+R_AAT 3.txt
+R_APR.txt
+R_AHF 3.txt
+R_AYD.txt
+R_ANE.txt
+R_BCV 2.txt
+R_AKJ.txt
+R_BJR 2.txt
+R_ALX.txt
+R_AJT 2.txt
+R_ARZ 2.txt
+R_BCX.txt
+R_ACT 2.txt
+R_APL 2.txt
+R_BGR.txt
+R_BHS 2.txt
+R_BBO 2.txt
+R_BFZ.txt
+R_AYN.txt
+R_AHB 2.txt
+R_ADQ 2.txt
+R_AXH.txt
+R_AJZ.txt
+R_ANH 2.txt
+R_ARA.txt
+R_BJK.txt
+R_AGG 2.txt
 R_AMI.txt
-R_BDJ.txt
-R_AXG.txt
-R_ARU.txt
+R_APA.txt
+R_BDI.txt
+R_AYZ.txt
+R_BKC.txt
+R_AMU.txt
+R_ABO 2.txt
+R_BLC 2.txt
+R_APM 2.txt
+R_AXW.txt
+R_AEL.txt
+R_AGT.txt
+R_BEA.txt
+R_AED 2.txt
+R_AYS.txt
+R_AUO 2.txt
+R_BJC.txt
+R_BLR 2.txt
+R_ASF.txt
+R_AJW.txt
+R_BHU 2.txt
+R_BJL.txt
+R_BEZ.txt
+R_AOK.txt
+R_ALG.txt
+R_AJM 2.txt
+R_BFQ.txt
+R_BFO 2.txt
+R_ADG 3.txt
+R_AUS 2.txt
+R_ATD.txt
+R_AEQ.txt
+R_ABN 3.txt
+R_APF 2.txt
+R_BMF 2.txt
+R_BAY.txt
+R_ANQ.txt
+R_AZU.txt
+R_ANC 2.txt
+R_BGY 2.txt
+R_AGO 3.txt
+R_BHM.txt
+R_AVC.txt
+R_AVG 2.txt
+R_AWH 2.txt
+R_ARI.txt
