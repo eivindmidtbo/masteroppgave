@@ -46,7 +46,7 @@ def compute_correlation_similarity(city: str, scheme: str, runs: int):
 
     true_sims = {
         "porto": {"dtw": porto_dtw, "fre": porto_fre},
-        "rome": {"dtw": rome_dtw, "fre": rome_fre},
+        # "rome": {"dtw": rome_dtw, "fre": rome_fre},
     }
 
     # Computing similarities n times:
@@ -71,6 +71,8 @@ def compute_correlation_similarity(city: str, scheme: str, runs: int):
         h_sims = _mirrorDiagonal(hash_sims).flatten()
         correlation_dtw.append(np.corrcoef(h_sims, true_sims[city]["dtw"])[0][1])
         correlation_fre.append(np.corrcoef(h_sims, true_sims[city]["fre"])[0][1])
+        print("DTW: ", np.corrcoef(h_sims, true_sims[city]["dtw"])[0][1])
+        print("Frechet: ", np.corrcoef(h_sims, true_sims[city]["fre"])[0][1])
 
     print(city, scheme, ": (min, max, avg, std)")
     print(
