@@ -4,13 +4,8 @@ File for a grid-based LSH scheme class in python.
 Takes min/max lat/lon as argument -> Could potentially make this integrated in the future
 """
 import random
+import os, sys
 
-from .lsh_interface import LSHInterface
-
-from processing.utils import trajectory_distance as td
-from processing.utils import alphabetical_number as an
-from processing.utils import metafile_handler as mfh
-from processing.utils import file_handler as fh
 
 from colorama import init as colorama_init, Fore, Style
 
@@ -18,6 +13,18 @@ from itertools import groupby
 
 import timeit as ti
 import time
+
+
+currentdir = os.path.dirname(os.path.abspath("__file__"))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+
+from utils.helpers import trajectory_distance as td
+from utils.helpers import alphabetical_number as an
+from utils.helpers import metafile_handler as mfh
+from utils.helpers import file_handler as fh
+from .lsh_interface import LSHInterface
 
 
 class GridLSH(LSHInterface):

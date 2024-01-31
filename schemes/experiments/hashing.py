@@ -5,9 +5,14 @@ Script to be run from jupyter notebook to measure the efficiency of the disk-LSH
 """
 
 from multiprocessing import Pool
+import os, sys
 
-from schemes.lsh_disk import DiskLSH
-from schemes.lsh_grid import GridLSH
+currentdir = os.path.dirname(os.path.abspath("__file__"))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+from schemes.helpers.lsh_disk import DiskLSH
+from schemes.helpers.lsh_grid import GridLSH
 
 P_MAX_LON = -8.57
 P_MIN_LON = -8.66
