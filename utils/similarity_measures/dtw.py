@@ -6,6 +6,11 @@ import collections as co
 
 from traj_dist.pydist.dtw import e_dtw as p_dtw
 from traj_dist.distance import dtw as c_dtw
+# import sys, os
+# currentdir = os.path.dirname(os.path.abspath("__file__"))
+# parentdir = os.path.dirname(currentdir)
+# sys.path.append(parentdir)
+from utils.helpers import trajectory_distance as td
 
 from multiprocessing import Pool
 import timeit as ti
