@@ -31,11 +31,19 @@ R_MIN_LON = 12.44
 R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
+K_MAX_LON = 5.80
+K_MIN_LON = 5.70
+K_MAX_LAT = 59.10
+K_MIN_LAT = 58.85
+
 PORTO_CHOSEN_DATA = "../dataset/porto/output/"
 # PORTO_HASHED_DATA = "../hashed_data/grid/porto/"
 
-# ROME_CHOSEN_DATA = "../data/chosen_data/rome/"
+ROME_CHOSEN_DATA = "../dataset/rome/output/"
 # ROME_HASHED_DATA = "../data/hashed_data/grid/rome/"
+
+KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
+# KOLUMBUS_HASHED_DATA = "../data/hashed_data/grid/kolumbus/"
 
 
 def PORTO_META(size: int):
@@ -43,7 +51,13 @@ def PORTO_META(size: int):
     return f"../dataset/porto/output/META-{size}.txt"
 
 
-# def ROME_META(size: int): return f"../data/hashed_data/grid/rome/META-{size}.TXT"
+def ROME_META(size: int):
+    return f"../dataset/rome/output/META-{size}.txt"
+
+
+def KOLUMBUS_META(size: int):
+    return f"../dataset/kolumbus/output/META-{size}.txt"
+
 
 MEASURE = {
     # "ed" : py_ed,
@@ -65,8 +79,30 @@ def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
             PORTO_META(size),
             PORTO_CHOSEN_DATA,
         )
-    # elif city.lower() == "rome":
-    #     return GridLSH(f"GR_{layers}-{'{:.2f}'.format(res)}", R_MIN_LAT, R_MAX_LAT, R_MIN_LON, R_MAX_LON, res, layers, ROME_META(size), ROME_CHOSEN_DATA)
+    elif city.lower() == "rome":
+        return GridLSH(
+            f"GR_{layers}-{'{:.2f}'.format(res)}",
+            R_MIN_LAT,
+            R_MAX_LAT,
+            R_MIN_LON,
+            R_MAX_LON,
+            res,
+            layers,
+            ROME_META(size),
+            ROME_CHOSEN_DATA,
+        )
+    elif city.lower() == "kolumbus":
+        return GridLSH(
+            f"GK_{layers}-{'{:.2f}'.format(res)}",
+            K_MIN_LAT,
+            K_MAX_LAT,
+            K_MIN_LON,
+            K_MAX_LON,
+            res,
+            layers,
+            KOLUMBUS_META(size),
+            KOLUMBUS_CHOSEN_DATA,
+        )
     else:
         raise ValueError("City argument must be either porto or rome")
 

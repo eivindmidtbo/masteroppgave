@@ -39,14 +39,25 @@ P_MIN_LON = -8.66
 P_MAX_LAT = 41.19
 P_MIN_LAT = 41.14
 
-# ROME_CHOSEN_DATA = "../data/chosen_data/rome/"
+ROME_CHOSEN_DATA = "../dataset/rome/output/"
 # ROME_HASHED_DATA = "../data/hashed_data/grid/rome/"
 # ROME_META_TEST = "../data/hashed_data/grid/rome/META-50.TXT"
+ROME_META_TEST = "../dataset/rome/output/META-50.TXT"
 
-# R_MAX_LON = 12.53
-# R_MIN_LON = 12.44
-# R_MAX_LAT = 41.93
-# R_MIN_LAT = 41.88
+R_MAX_LON = 12.53
+R_MIN_LON = 12.44
+R_MAX_LAT = 41.93
+R_MIN_LAT = 41.88
+
+KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
+# KOLUMBUS_HASHED_DATA = "../data/hashed_data/grid/kolumbus/"
+# KOLUMBUS_META_TEST = "../data/hashed_data/grid/kolumbus/META-50.TXT"
+KOLUMBUS_META_TEST = "../dataset/kolumbus/output/META-50.TXT"
+
+K_MAX_LON = 5.80
+K_MIN_LON = 5.70
+K_MAX_LAT = 59.10
+K_MIN_LAT = 58.85
 
 MEASURE = {
     "py_ed": py_ed,
@@ -75,18 +86,30 @@ def _constructGrid(city: str, res: float, layers: int) -> GridLSH:
             PORTO_META_TEST,
             PORTO_CHOSEN_DATA,
         )
-    # elif city.lower() == "rome":
-    #     return GridLSH(
-    #         f"GR_{layers}-{'{:.2f}'.format(res)}",
-    #         R_MIN_LAT,
-    #         R_MAX_LAT,
-    #         R_MIN_LON,
-    #         R_MAX_LON,
-    #         res,
-    #         layers,
-    #         ROME_META_TEST,
-    #         ROME_CHOSEN_DATA,
-    #     )
+    elif city.lower() == "rome":
+        return GridLSH(
+            f"GR_{layers}-{'{:.2f}'.format(res)}",
+            R_MIN_LAT,
+            R_MAX_LAT,
+            R_MIN_LON,
+            R_MAX_LON,
+            res,
+            layers,
+            ROME_META_TEST,
+            ROME_CHOSEN_DATA,
+        )
+    elif city.lower() == "kolumbus":
+        return GridLSH(
+            f"GK_{layers}-{'{:.2f}'.format(res)}",
+            K_MIN_LAT,
+            K_MAX_LAT,
+            K_MIN_LON,
+            K_MAX_LON,
+            res,
+            layers,
+            KOLUMBUS_META_TEST,
+            KOLUMBUS_CHOSEN_DATA,
+        )
     else:
         raise ValueError("City argument must be either porto or rome")
 
@@ -102,11 +125,22 @@ P_FRE = _mirrorDiagonal(
     )
 ).flatten()  # .stack().values
 
-# R_DTW = _mirrorDiagonal(
-#     pd.read_csv("./benchmarks/similarities/rome-dtw-test.csv", index_col=0)
-# ).flatten()  # .stack().values
-# R_FRE = _mirrorDiagonal(
-#     pd.read_csv("./benchmarks/similarities/rome-frechet-test.csv", index_col=0)
+R_DTW = _mirrorDiagonal(
+    pd.read_csv("../benchmarks/similarities/rome/rome-dtw-testset.csv", index_col=0)
+).flatten()  # .stack().values
+R_FRE = _mirrorDiagonal(
+    pd.read_csv("../benchmarks/similarities/rome/rome-frechet-testset.csv", index_col=0)
+).flatten()  # .stack().values
+
+K_DTW = _mirrorDiagonal(
+    pd.read_csv(
+        "../benchmarks/similarities/kolumbus/kolumbus-dtw-testset.csv", index_col=0
+    )
+).flatten()  # .stack().values
+# K_FRE = _mirrorDiagonal(
+#     pd.read_csv(
+#         "../benchmarks/similarities/kolumbus/kolumbus-frechet-testset.csv", index_col=0
+#     )
 # ).flatten()  # .stack().values
 
 # P_dtw_mirrored = mirrorDiagonal(P_dtw).flatten()
@@ -115,8 +149,10 @@ P_FRE = _mirrorDiagonal(
 REFERENCE = {
     "portodtw": P_DTW,
     "portofrechet": P_FRE,
-    # "romedtw": R_DTW,
-    # "romefrechet": R_FRE,
+    "romedtw": R_DTW,
+    "romefrechet": R_FRE,
+    "kolumbusdtw": K_DTW,
+    # "kolumbusfrechet": K_FRE,
 }
 
 DISTANCE_FUNC = {
