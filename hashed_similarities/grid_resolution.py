@@ -27,8 +27,6 @@ from utils.similarity_measures.distance import py_edit_distance_penalty as py_ed
 
 
 PORTO_CHOSEN_DATA = "../dataset/porto/output/"
-# PORTO_HASHED_DATA = "../hashed_data/grid/porto/"
-# PORTO_META_TEST = "../hashed_data/grid/porto/META-50.TXT"
 PORTO_META_TEST = "../dataset/porto/output/META-50.TXT"
 
 P_MAX_LON = -8.57
@@ -37,8 +35,6 @@ P_MAX_LAT = 41.19
 P_MIN_LAT = 41.14
 
 ROME_CHOSEN_DATA = "../dataset/rome/output/"
-# ROME_HASHED_DATA = "../data/hashed_data/grid/rome/"
-# ROME_META_TEST = "../data/hashed_data/grid/rome/META-50.TXT"
 ROME_META_TEST = "../dataset/rome/output/META-50.TXT"
 
 R_MAX_LON = 12.53
@@ -47,8 +43,6 @@ R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
 KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
-# KOLUMBUS_HASHED_DATA = "../data/hashed_data/grid/kolumbus/"
-# KOLUMBUS_META_TEST = "../data/hashed_data/grid/kolumbus/META-50.TXT"
 KOLUMBUS_META_TEST = "../dataset/kolumbus/output/META-50.TXT"
 
 K_MAX_LON = 5.80
@@ -154,7 +148,7 @@ def _constructGrid(city: str, res: float, layers: int) -> GridLSH:
             KOLUMBUS_CHOSEN_DATA,
         )
     else:
-        raise ValueError("City argument must be either porto or rome")
+        raise ValueError(f"City/dataset argument {city} not supported")
 
 
 def _fun_wrapper_corr(args):

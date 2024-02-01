@@ -37,17 +37,11 @@ K_MAX_LAT = 59.10
 K_MIN_LAT = 58.85
 
 PORTO_CHOSEN_DATA = "../dataset/porto/output/"
-# PORTO_HASHED_DATA = "../hashed_data/grid/porto/"
-
 ROME_CHOSEN_DATA = "../dataset/rome/output/"
-# ROME_HASHED_DATA = "../data/hashed_data/grid/rome/"
-
 KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
-# KOLUMBUS_HASHED_DATA = "../data/hashed_data/grid/kolumbus/"
 
 
 def PORTO_META(size: int):
-    # return f"../hashed_data/grid/porto/META-{size}.txt"
     return f"../dataset/porto/output/META-{size}.txt"
 
 
