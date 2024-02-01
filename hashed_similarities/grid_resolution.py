@@ -16,9 +16,6 @@ currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-# from utils import file_handler as fh
-# from utils import metafile_handler as mfh
-
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
 from schemes.helpers.lsh_grid import GridLSH
@@ -64,54 +61,11 @@ MEASURE = {
     "py_edp": py_edp,
 }
 
+
 # Defining helper functions:
-
-
 def _mirrorDiagonal(M: np.ndarray) -> np.ndarray:
     """Flips and mirrors a two-dimenional np.array"""
     return M.values + np.rot90(np.fliplr(M.values))
-
-
-def _constructGrid(city: str, res: float, layers: int) -> GridLSH:
-    """Constructs a grid hash object over the given city"""
-    if city.lower() == "porto":
-        return GridLSH(
-            f"GP_{layers}-{'{:.2f}'.format(res)}",
-            P_MIN_LAT,
-            P_MAX_LAT,
-            P_MIN_LON,
-            P_MAX_LON,
-            res,
-            layers,
-            PORTO_META_TEST,
-            PORTO_CHOSEN_DATA,
-        )
-    elif city.lower() == "rome":
-        return GridLSH(
-            f"GR_{layers}-{'{:.2f}'.format(res)}",
-            R_MIN_LAT,
-            R_MAX_LAT,
-            R_MIN_LON,
-            R_MAX_LON,
-            res,
-            layers,
-            ROME_META_TEST,
-            ROME_CHOSEN_DATA,
-        )
-    elif city.lower() == "kolumbus":
-        return GridLSH(
-            f"GK_{layers}-{'{:.2f}'.format(res)}",
-            K_MIN_LAT,
-            K_MAX_LAT,
-            K_MIN_LON,
-            K_MAX_LON,
-            res,
-            layers,
-            KOLUMBUS_META_TEST,
-            KOLUMBUS_CHOSEN_DATA,
-        )
-    else:
-        raise ValueError("City argument must be either porto or rome")
 
 
 # True similarities:
@@ -159,6 +113,48 @@ DISTANCE_FUNC = {
     "py_ed": "ED",
     "py_edp": "DTW",
 }
+
+
+def _constructGrid(city: str, res: float, layers: int) -> GridLSH:
+    """Constructs a grid hash object over the given city"""
+    if city.lower() == "porto":
+        return GridLSH(
+            f"GP_{layers}-{'{:.2f}'.format(res)}",
+            P_MIN_LAT,
+            P_MAX_LAT,
+            P_MIN_LON,
+            P_MAX_LON,
+            res,
+            layers,
+            PORTO_META_TEST,
+            PORTO_CHOSEN_DATA,
+        )
+    elif city.lower() == "rome":
+        return GridLSH(
+            f"GR_{layers}-{'{:.2f}'.format(res)}",
+            R_MIN_LAT,
+            R_MAX_LAT,
+            R_MIN_LON,
+            R_MAX_LON,
+            res,
+            layers,
+            ROME_META_TEST,
+            ROME_CHOSEN_DATA,
+        )
+    elif city.lower() == "kolumbus":
+        return GridLSH(
+            f"GK_{layers}-{'{:.2f}'.format(res)}",
+            K_MIN_LAT,
+            K_MAX_LAT,
+            K_MIN_LON,
+            K_MAX_LON,
+            res,
+            layers,
+            KOLUMBUS_META_TEST,
+            KOLUMBUS_CHOSEN_DATA,
+        )
+    else:
+        raise ValueError("City argument must be either porto or rome")
 
 
 def _fun_wrapper_corr(args):
