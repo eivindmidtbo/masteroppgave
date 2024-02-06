@@ -8,7 +8,6 @@ import sys, os
 
 from matplotlib import pyplot as plt
 from matplotlib import lines
-from matplotlib import collections as mc
 
 from colorama import init as colorama_init, Fore, Style
 from scipy import spatial as sp
@@ -23,7 +22,6 @@ sys.path.append(parentdir)
 
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
-from utils.similarity_measures import dtw
 
 
 from utils.helpers import trajectory_distance as td
@@ -36,7 +34,7 @@ from .lsh_interface import LSHInterface
 
 class DiskLSH(LSHInterface):
     """
-    A class for a grid-based LSH function for trajectory data
+    A class for a disk-based LSH function for trajectory data
     """
 
     def __init__(
@@ -56,15 +54,15 @@ class DiskLSH(LSHInterface):
         Parameters
         ----------
         name : str
-            The name of the grid
+            The name of the disk
         min_lat : float
             The minimum latitude coordinate in the dataset
         max_lat : float
             The maximum latitude coordinate in the dataset
         min_lon : float
-            The minimum lontitude coordinate in the dataset
+            The minimum longitude coordinate in the dataset
         max_lon : float
-            The maximum lontitude coordinate in the dataset
+            The maximum longitude coordinate in the dataset
         disks : int
             The number of disks at each layer
         layers: int
@@ -77,7 +75,7 @@ class DiskLSH(LSHInterface):
             The folder where the trajectories are stored
         """
 
-        # First, intializing the direct variables
+        # First, initializing the direct variables
 
         self.name = name
         self.min_lat = min_lat
@@ -107,7 +105,7 @@ class DiskLSH(LSHInterface):
         self.split_lon = (self.min_lon + self.max_lon) / 2
         self.disks_qt = self._instantiate_disks_qt(self.layers, self.num_disks)
 
-        # Attributes for utilising a KD-tree during disk against point matching
+        # Attributes for utilizing a KD-tree during disk against point matching
         self.KDTrees = self._instantiate_KD_tree(self.layers)
 
     def __str__(self) -> str:
@@ -146,8 +144,6 @@ class DiskLSH(LSHInterface):
         for layer in range(layers):
             disks_list = [[], [], [], []]
             for i, disk in enumerate(self.disks[layer]):
-                # lat = random.uniform(self.min_lat, self.max_lat)
-                # lon = random.uniform(self.min_lon, self.max_lon)
                 lat, lon = disk
                 Dsk = Disk(i, lat, lon)
 
@@ -266,10 +262,6 @@ class DiskLSH(LSHInterface):
                     case _:
                         raise Exception("Somethin went wrong during init of quad-disks")
             disks[layer] = disks_list
-
-        # Controlling the structure
-        # for key in disks:
-        #    print([len(quadrant) for quadrant in disks[key]], len(sum(disks[key], [])), len(set(sum(disks[key], []))))
 
         return disks
 
@@ -512,7 +504,6 @@ class DiskLSH(LSHInterface):
         hashes = dict()
         for key in trajectories:
             hashes[key] = self._create_trajectory_hash_with_KD_tree(trajectories[key])
-            # print(hashes[key])
 
         return hashes
 
@@ -531,7 +522,7 @@ class DiskLSH(LSHInterface):
         return hashes
 
     def measure_hash_computation(self, number: int, repeat: int) -> list[list, int]:
-        """Method for measuring the computation time of the grid hashes. Does not change the object nor its attributes."""
+        """Method for measuring the computation time of the disk hashes. Does not change the object nor its attributes."""
         files = mfh.read_meta_file(self.meta_file)
         trajectories = fh.load_trajectory_files(files, self.data_path)
         hashes = dict()
@@ -552,7 +543,7 @@ class DiskLSH(LSHInterface):
     def measure_hash_computation_numerical(
         self, number: int, repeat: int
     ) -> list[list, int]:
-        """Method for measuring the computation time of the grid hashes. Does not change the object nor its attributes."""
+        """Method for measuring the computation time of the disk hashes. Does not change the object nor its attributes."""
         files = mfh.read_meta_file(self.meta_file)
         trajectories = fh.load_trajectory_files(files, self.data_path)
         hashes = dict()
@@ -691,7 +682,7 @@ class DiskLSH(LSHInterface):
             fig, ax = plt.subplots()
             for disk in self.disks[layer]:
                 x, y = disk
-                # print(disk, radius)
+
                 ax.add_patch(plt.Circle((y, x), radius, fill=False))
 
             if trajectory:

@@ -26,9 +26,9 @@ def py_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
 
     sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
-    num_trajectoris = len(sorted_trajectories)
+    num_trajectories = len(sorted_trajectories)
 
-    M = np.zeros((num_trajectoris, num_trajectoris))
+    M = np.zeros((num_trajectories, num_trajectories))
     
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
@@ -49,7 +49,6 @@ def measure_py_frechet(args):
     """ Method for measuring time efficiency using py_dtw """
     trajectories, number, repeat = args
 
-    #print(trajectories)
     measures = ti.repeat(lambda: py_frechet(trajectories), number=number, repeat=repeat, timer=time.process_time)
     return measures
 
@@ -70,9 +69,9 @@ def cy_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
 
     sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
-    num_trajectoris = len(sorted_trajectories)
+    num_trajectories = len(sorted_trajectories)
 
-    M = np.zeros((num_trajectoris, num_trajectoris))
+    M = np.zeros((num_trajectories, num_trajectories))
     
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
@@ -106,14 +105,15 @@ def cy_frechet_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     Same as above, but using a pool of procesess for speedup
     """
     sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
-    num_trajectoris = len(sorted_trajectories)
+    num_trajectories = len(sorted_trajectories)
 
-    M = np.zeros((num_trajectoris, num_trajectoris))  
+    M = np.zeros((num_trajectories, num_trajectories))  
         
     pool = Pool(12)
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
-        print(f"Cy Pool Frehet: {i}/1000")
+        if (i % 5) == 0:
+            print(f"Cy Pool Frehet: {i}/{num_trajectories}")
         frech_elements = pool.map(_fun_wrapper, [(np.array(sorted_trajectories[traj_i]), np.array(sorted_trajectories[traj_j]), j) for j, traj_j in enumerate(sorted_trajectories.keys()) if i >= j])
 
         for element in frech_elements:

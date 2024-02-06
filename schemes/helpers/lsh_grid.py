@@ -54,9 +54,9 @@ class GridLSH(LSHInterface):
         max_lat : float
             The maximum latitude coordinate in the dataset
         min_lon : float
-            The minimum lontitude coordinate in the dataset
+            The minimum longitude coordinate in the dataset
         max_lon : float
-            The maximum lontitude coordinate in the dataset
+            The maximum longitude coordinate in the dataset
         resolution: float
             The preferred resolution for the grid (km)
         layers: int
@@ -91,7 +91,7 @@ class GridLSH(LSHInterface):
         self.lon_res = td.get_longitude_difference(self.resolution, self.min_lat)
 
         self.distortion = self._compute_grid_distortion(
-            self.lat_len, self.lon_len, self.resolution, self.layers
+            self.resolution, self.layers
         )
 
         self.hashes = dict()
@@ -116,7 +116,7 @@ class GridLSH(LSHInterface):
         self.meta_file = meta_file
 
     def _compute_grid_distortion(
-        self, lat_len: float, lon_len: float, resolution: float, layers: int
+        self, resolution: float, layers: int
     ) -> list[float]:
         """Compute a random grid distortion off the resolution for the number of layers"""
 
@@ -135,17 +135,16 @@ class GridLSH(LSHInterface):
             lat_distort = td.get_latitude_difference(distortion)
             lon_distort = td.get_longitude_difference(distortion, self.min_lat)
             hash = []
-            # print(lat_res, lon_res)
             for coordinate in trajectory:
                 lat, lon = coordinate
 
-                # Normalise the coordinate over 0 and compute the corresponding cell in for eac direction
+                # Normalise the coordinate over 0 and compute the corresponding cell in for each direction
                 lat_hash = int((lat + lat_distort - self.min_lat) // self.lat_res)
                 lon_hash = int((lon + lon_distort - self.min_lon) // self.lon_res)
                 hash.append(an.get_alphabetical_value([lat_hash, lon_hash]))
             hashes.append(hash)
 
-        # Then remove consecutive duplicats and return result:
+        # Then remove consecutive duplicates and return result:
         result = []
         for hash in hashes:
             result.append([el[0] for el in groupby(hash)])
@@ -180,7 +179,6 @@ class GridLSH(LSHInterface):
         hashes = dict()
 
         def compute_hashes(trajectories, hashes):
-            # self.hashes.clear()
             for key in trajectories:
                 hashes[key] = self._create_trajectory_hash(trajectories[key])
             return

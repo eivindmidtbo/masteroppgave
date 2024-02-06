@@ -5,7 +5,6 @@ import collections as co
 from multiprocessing import Pool
 import timeit as ti
 import time
-import os, sys
 
 from .py.edit_distance import edit_distance as p_ed
 from .py.edit_distance_penalty import edit_distance_penalty as p_edp

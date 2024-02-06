@@ -16,8 +16,6 @@ currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.helpers import metafile_handler as mfh
-from utils.helpers import file_handler as fh
 from schemes.helpers.lsh_grid import GridLSH
 
 from utils.similarity_measures.distance import py_edit_distance as py_ed
