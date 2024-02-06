@@ -21,32 +21,37 @@ from schemes.helpers.lsh_grid import GridLSH
 from utils.similarity_measures.distance import py_edit_distance as py_ed
 from utils.similarity_measures.distance import py_edit_distance_penalty as py_edp
 
+from constants import (
+    PORTO_OUTPUT_FOLDER,
+    ROME_OUTPUT_FOLDER,
+    KOLUMBUS_OUTPUT_FOLDER,
+    P_MAX_LAT,
+    P_MIN_LAT,
+    P_MAX_LON,
+    P_MIN_LON,
+    R_MAX_LAT,
+    R_MIN_LAT,
+    R_MAX_LON,
+    R_MIN_LON,
+    K_MAX_LAT,
+    K_MIN_LAT,
+    K_MAX_LON,
+    K_MIN_LON,
+    SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS,
+    SIMILARITIES_OUTPUT_FOLDER_PORTO,
+    SIMILARITIES_OUTPUT_FOLDER_ROME,
+)
+
 # Defining some constants
 
+PORTO_CHOSEN_DATA = f"../{PORTO_OUTPUT_FOLDER}/"
+PORTO_META_TEST = f"../{PORTO_OUTPUT_FOLDER}/META-50.TXT"
 
-PORTO_CHOSEN_DATA = "../dataset/porto/output/"
-PORTO_META_TEST = "../dataset/porto/output/META-50.TXT"
+ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
+ROME_META_TEST = f"../{ROME_OUTPUT_FOLDER}/META-50.TXT"
 
-P_MAX_LON = -8.57
-P_MIN_LON = -8.66
-P_MAX_LAT = 41.19
-P_MIN_LAT = 41.14
-
-ROME_CHOSEN_DATA = "../dataset/rome/output/"
-ROME_META_TEST = "../dataset/rome/output/META-50.TXT"
-
-R_MAX_LON = 12.53
-R_MIN_LON = 12.44
-R_MAX_LAT = 41.93
-R_MIN_LAT = 41.88
-
-KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
-KOLUMBUS_META_TEST = "../dataset/kolumbus/output/META-50.TXT"
-
-K_MAX_LON = 5.80
-K_MIN_LON = 5.70
-K_MAX_LAT = 59.10
-K_MIN_LAT = 58.85
+KOLUMBUS_CHOSEN_DATA = f"../{KOLUMBUS_OUTPUT_FOLDER}/"
+KOLUMBUS_META_TEST = f"../{KOLUMBUS_OUTPUT_FOLDER}/META-50.TXT"
 
 MEASURE = {
     "py_ed": py_ed,
@@ -63,24 +68,31 @@ def _mirrorDiagonal(M: np.ndarray) -> np.ndarray:
 # True similarities:
 
 P_DTW = _mirrorDiagonal(
-    pd.read_csv("../benchmarks/similarities/porto/porto-dtw-testset.csv", index_col=0)
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-dtw-testset.csv", index_col=0
+    )
 ).flatten()  # .stack().values
 P_FRE = _mirrorDiagonal(
     pd.read_csv(
-        "../benchmarks/similarities/porto/porto-frechet-testset.csv", index_col=0
+        f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-testset.csv", index_col=0
     )
 ).flatten()  # .stack().values
 
 R_DTW = _mirrorDiagonal(
-    pd.read_csv("../benchmarks/similarities/rome/rome-dtw-testset.csv", index_col=0)
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-dtw-testset.csv", index_col=0
+    )
 ).flatten()  # .stack().values
 R_FRE = _mirrorDiagonal(
-    pd.read_csv("../benchmarks/similarities/rome/rome-frechet-testset.csv", index_col=0)
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-frechet-testset.csv", index_col=0
+    )
 ).flatten()  # .stack().values
 
 K_DTW = _mirrorDiagonal(
     pd.read_csv(
-        "../benchmarks/similarities/kolumbus/kolumbus-dtw-testset.csv", index_col=0
+        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-dtw-testset.csv",
+        index_col=0,
     )
 ).flatten()  # .stack().values
 # K_FRE = _mirrorDiagonal(

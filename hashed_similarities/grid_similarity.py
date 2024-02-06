@@ -21,36 +21,39 @@ from utils.similarity_measures.distance import (
     py_edit_distance_penalty_parallell as py_edp_parallell,
 )
 
-P_MAX_LON = -8.57
-P_MIN_LON = -8.66
-P_MAX_LAT = 41.19
-P_MIN_LAT = 41.14
+from constants import (
+    PORTO_OUTPUT_FOLDER,
+    ROME_OUTPUT_FOLDER,
+    KOLUMBUS_OUTPUT_FOLDER,
+    P_MAX_LAT,
+    P_MIN_LAT,
+    P_MAX_LON,
+    P_MIN_LON,
+    R_MAX_LAT,
+    R_MIN_LAT,
+    R_MAX_LON,
+    R_MIN_LON,
+    K_MAX_LAT,
+    K_MIN_LAT,
+    K_MAX_LON,
+    K_MIN_LON,
+)
 
-R_MAX_LON = 12.53
-R_MIN_LON = 12.44
-R_MAX_LAT = 41.93
-R_MIN_LAT = 41.88
-
-K_MAX_LON = 5.80
-K_MIN_LON = 5.70
-K_MAX_LAT = 59.10
-K_MIN_LAT = 58.85
-
-PORTO_CHOSEN_DATA = "../dataset/porto/output/"
-ROME_CHOSEN_DATA = "../dataset/rome/output/"
-KOLUMBUS_CHOSEN_DATA = "../dataset/kolumbus/output/"
+PORTO_CHOSEN_DATA = f"../{PORTO_OUTPUT_FOLDER}/"
+ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
+KOLUMBUS_CHOSEN_DATA = f"../{KOLUMBUS_OUTPUT_FOLDER}/"
 
 
 def PORTO_META(size: int):
-    return f"../dataset/porto/output/META-{size}.txt"
+    return f"../{PORTO_OUTPUT_FOLDER}/META-{size}.txt"
 
 
 def ROME_META(size: int):
-    return f"../dataset/rome/output/META-{size}.txt"
+    return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
 
 
 def KOLUMBUS_META(size: int):
-    return f"../dataset/kolumbus/output/META-{size}.txt"
+    return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
 
 
 MEASURE = {

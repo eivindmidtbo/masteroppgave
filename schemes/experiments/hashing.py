@@ -14,18 +14,21 @@ sys.path.append(parentdir)
 from schemes.helpers.lsh_disk import DiskLSH
 from schemes.helpers.lsh_grid import GridLSH
 
-P_MAX_LON = -8.57
-P_MIN_LON = -8.66
-P_MAX_LAT = 41.19
-P_MIN_LAT = 41.14
+from constants import (
+    P_MAX_LON,
+    P_MIN_LON,
+    P_MAX_LAT,
+    P_MIN_LAT,
+    R_MAX_LON,
+    R_MIN_LON,
+    R_MAX_LAT,
+    R_MIN_LAT,
+    PORTO_OUTPUT_FOLDER,
+    ROME_OUTPUT_FOLDER,
+)
 
-R_MAX_LON = 12.53
-R_MIN_LON = 12.44
-R_MAX_LAT = 41.93
-R_MIN_LAT = 41.88
-
-PORTO_DATA = "../../dataset/porto/output/"
-ROME_DATA = "../../dataset/rome/output/"
+PORTO_DATA = f"../../{PORTO_OUTPUT_FOLDER}/"
+ROME_DATA = f"../../{ROME_OUTPUT_FOLDER}/"
 
 # Defining some nescesary variables:
 
@@ -98,7 +101,7 @@ def fun_wrapper_p_naive(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
+    meta_file_p = f"../../{PORTO_OUTPUT_FOLDER}/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Porto D1",
         P_MIN_LAT,
@@ -148,7 +151,7 @@ def fun_wrapper_p_KD_tree(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_p = f"../../dataset/porto/output/META-{num_of_files}.txt"
+    meta_file_p = f"../../{PORTO_OUTPUT_FOLDER}/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Porto D1",
         P_MIN_LAT,
@@ -173,7 +176,7 @@ def fun_wrapper_r_naive(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
+    meta_file_r = f"../../{ROME_OUTPUT_FOLDER}/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,
@@ -198,7 +201,7 @@ def fun_wrapper_r_quadrants(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
+    meta_file_r = f"../../{ROME_OUTPUT_FOLDER}/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,
@@ -223,7 +226,7 @@ def fun_wrapper_r_KD_tree(args):
     """
 
     num_of_files, num_disks, layers, diameter = args
-    meta_file_r = f"../../dataset/rome/output/META-{num_of_files}.txt"
+    meta_file_r = f"../../{ROME_OUTPUT_FOLDER}/META-{num_of_files}.txt"
     disk = DiskLSH(
         "Rome D1",
         R_MIN_LAT,

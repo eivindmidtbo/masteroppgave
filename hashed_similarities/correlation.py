@@ -5,6 +5,7 @@ import os
 from grid_similarity import generate_grid_hash_similarity
 
 # from experiments.disk_similarity import generate_disk_hash_similarity
+from constants import SIMILARITIES_OUTPUT_FOLDER_PORTO, SIMILARITIES_OUTPUT_FOLDER_ROME
 
 
 def compute_correlation_similarity(city: str, scheme: str, runs: int):
@@ -18,14 +19,16 @@ def compute_correlation_similarity(city: str, scheme: str, runs: int):
 
     porto_dtw = _mirrorDiagonal(
         pd.read_csv(
-            os.path.abspath("../benchmarks/similarities/porto/porto-dtw-testset.csv"),
+            os.path.abspath(
+                f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-dtw-testset.csv"
+            ),
             index_col=0,
         )
     ).flatten()
     porto_fre = _mirrorDiagonal(
         pd.read_csv(
             os.path.abspath(
-                "../benchmarks/similarities/porto/porto-frechet-testset.csv"
+                f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-testset.csv"
             ),
             index_col=0,
         )
