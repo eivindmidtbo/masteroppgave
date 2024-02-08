@@ -152,7 +152,7 @@ def measure_grid_hash_similarity_computation_time(
 def generate_grid_hash_similarity(city: str, res: float, layers: int) -> pd.DataFrame:
     """Generates the full grid hash similarities and saves it as a dataframe"""
 
-    Grid = _constructGrid(city, res, layers, 50)
+    Grid = _constructGrid(city, res, layers, 1000)
     hashes = Grid.compute_dataset_hashes()
     similarities = py_edp_parallell(hashes)
 
