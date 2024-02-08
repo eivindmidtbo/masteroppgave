@@ -3,6 +3,7 @@ Sheet containing methods for reading trajectories
 """
 
 import os, re
+import shutil
 
 
 def read_trajectory_file(file_path: str) -> list[list[float]]:
@@ -138,3 +139,17 @@ def load_trajectory_hashes(files: list[str], folder_path: str) -> dict:
         hashes[key] = hash
 
     return hashes
+
+
+def delete_old_files(output_folder: str, file_prefix_to_keep: str = None) -> None:
+    for filename in os.listdir(output_folder):
+        if file_prefix_to_keep is not None and filename.startswith(file_prefix_to_keep):
+            continue
+        file_path = os.path.join(output_folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print("Failed to remove %s. Reason: %s" % (file_path, e))
