@@ -14,3 +14,12 @@ def save_current_trajectory(
             file.write("%s, %s\n" % (lat, lon))
         file.close()
         return
+
+
+# Saving the hashes to files
+def save_trajectory_hashes(output_folder: str, hashes: dict[str, list]) -> None:
+    for key in hashes:
+        with open(f"{output_folder}/{key}.txt", "w") as file:
+            for hash in hashes[key]:
+                file.write("%s\n" % hash)
+            file.close()
