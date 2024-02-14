@@ -6,9 +6,11 @@ from multiprocessing import Pool
 import timeit as ti
 import time
 
+from collections import OrderedDict
 from .py.edit_distance import edit_distance as p_ed
 from .py.edit_distance_penalty import edit_distance_penalty as p_edp
 from .py.hashed_dtw import dtw as p_dtw
+from utils.similarity_measures.frechet import cy_frechet_pool, cy_frechet
 
 
 def py_edit_distance(hashes: dict[str, list[list[str]]]) -> pd.DataFrame:
@@ -120,6 +122,31 @@ def py_dtw(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     df = pd.DataFrame(M, index=sorted_hashes.keys(), columns=sorted_hashes.keys())
 
     return df
+
+
+def transform_frechet_disk(hashes: dict[str, list[list[float]]]) -> OrderedDict:
+    """Transforms the numerical disk hashes to a format that fits the true frechet similarity measure (non numpy input)"""
+    transformed_data = OrderedDict()
+    for key, layer in hashes.items():
+        transformed_points = []
+        for points in layer:
+            transformed_traj = [point.tolist() for point in points]
+            for point in transformed_traj:
+                transformed_points.append(point)
+        transformed_data[key] = transformed_points
+    return transformed_data
+
+
+def py_frechet_disk(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """Frechet distance for disk hashes(Used for correlation computation due to parallell jobs)"""
+    transformed_data = transform_frechet_disk(hashes)
+    return cy_frechet(transformed_data)
+
+
+def py_frechet_disk_parallell(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """Frechet distance for disk hashes computed in parallell"""
+    transformed_data = transform_frechet_disk(hashes)
+    return cy_frechet_pool(transformed_data)
 
 
 def _fun_wrapper_dtw(args):

@@ -3,6 +3,7 @@ This file contains methods for finding an optimal/working number of disks and th
 
 Each experiment will be run in 20 parallell jobs
 """
+
 # Importing nescessary modules
 
 import numpy as np
@@ -10,7 +11,6 @@ import pandas as pd
 import sys, os
 from matplotlib import pyplot as plt
 from multiprocessing import Pool
-
 
 currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
@@ -20,6 +20,7 @@ from schemes.helpers.lsh_disk import DiskLSH
 
 from utils.similarity_measures.distance import py_edit_distance as py_ed
 from utils.similarity_measures.distance import py_dtw
+from utils.similarity_measures.distance import py_frechet_disk as py_frechet
 
 # Some constants
 
@@ -86,6 +87,7 @@ K_DTW = _mirrorDiagonal(
 MEASURE = {
     "py_ed": py_ed,
     "py_dtw": py_dtw,
+    "py_frechet": py_frechet,
 }
 
 REFERENCE = {
@@ -99,6 +101,7 @@ REFERENCE = {
 DISTANCE_FUNC = {
     "py_ed": "ED",
     "py_dtw": "DTW",
+    "py_frechet": "Frechet",
 }
 
 
@@ -150,7 +153,7 @@ def _constructDisk(city: str, diameter: float, layers: int, disks: int = 50) -> 
 def _compute_hashes(disk: DiskLSH, measure: str = "py_ed") -> dict[str, list]:
     if measure == "py_ed":
         return disk.compute_dataset_hashes_with_KD_tree()
-    elif measure == "py_dtw":
+    elif measure == "py_dtw" or measure == "py_frechet":
         return disk.compute_dataset_hashes_with_KD_tree_numerical()
     else:
         raise ValueError("Preferred similarity measure not supported")
@@ -160,7 +163,6 @@ def _fun_wrapper_corr(args):
     city, dia, lay, measure, reference = args
     Disk = _constructDisk(city, dia, lay)
     hashes = _compute_hashes(Disk, measure)
-
     edits = _mirrorDiagonal(MEASURE[measure](hashes)).flatten()
     corr = np.corrcoef(edits, REFERENCE[city.lower() + reference.lower()])[0][1]
     return corr

@@ -20,7 +20,7 @@ from schemes.helpers.lsh_disk import DiskLSH
 from utils.similarity_measures.distance import py_edit_distance as py_ed
 from utils.similarity_measures.distance import py_dtw
 from utils.similarity_measures.distance import py_dtw_parallell
-from utils.similarity_measures import frechet
+from utils.similarity_measures.distance import py_frechet_disk_parallell
 
 P_MAX_LON = -8.57
 P_MIN_LON = -8.66
@@ -176,26 +176,22 @@ def measure_disk_hash_similarity_computation_time(
 
 
 def generate_disk_hash_similarity(
-    city: str, diameter: float, layers: int, disks: int, measure: str = "dtw"
+    city: str,
+    diameter: float,
+    layers: int,
+    disks: int,
+    measure: str = "dtw",
+    size: int = 50,
 ) -> pd.DataFrame:
     """Generates the full disk hash similarities and saves it as a dataframe"""
 
-    Disk = _constructDisk(city, diameter, layers, disks, 50)
+    Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
 
     if measure == "dtw":
         similarities = py_dtw_parallell(hashes)
     elif measure == "frechet":
-        transformed_data = OrderedDict()
-        for key, layer in hashes.items():
-            transformed_points = []
-            for points in layer:
-                transformed_traj = [point.tolist() for point in points]
-                for point in transformed_traj:
-                    transformed_points.append(point)
-            transformed_data[key] = transformed_points
-        # print("Transformed: ", transformed_data)
-        similarities = frechet.cy_frechet_pool(transformed_data)
+        similarities = py_frechet_disk_parallell(hashes)
     else:
         raise ValueError(f"Measure must be either 'dtw' or 'frechet', not {measure}")
 
