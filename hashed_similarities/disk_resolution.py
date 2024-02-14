@@ -20,7 +20,7 @@ from schemes.helpers.lsh_disk import DiskLSH
 
 from utils.similarity_measures.distance import py_edit_distance as py_ed
 from utils.similarity_measures.distance import py_dtw
-from utils.similarity_measures.distance import py_frechet_disk as py_frechet
+from utils.similarity_measures.distance import frechet_disk
 
 # Some constants
 
@@ -87,7 +87,7 @@ K_DTW = _mirrorDiagonal(
 MEASURE = {
     "py_ed": py_ed,
     "py_dtw": py_dtw,
-    "py_frechet": py_frechet,
+    "py_frechet": frechet_disk,
 }
 
 REFERENCE = {

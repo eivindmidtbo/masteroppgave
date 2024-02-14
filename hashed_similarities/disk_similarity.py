@@ -20,7 +20,7 @@ from schemes.helpers.lsh_disk import DiskLSH
 from utils.similarity_measures.distance import py_edit_distance as py_ed
 from utils.similarity_measures.distance import py_dtw
 from utils.similarity_measures.distance import py_dtw_parallell
-from utils.similarity_measures.distance import py_frechet_disk_parallell
+from utils.similarity_measures.distance import frechet_disk_parallell
 
 P_MAX_LON = -8.57
 P_MIN_LON = -8.66
@@ -191,7 +191,7 @@ def generate_disk_hash_similarity(
     if measure == "dtw":
         similarities = py_dtw_parallell(hashes)
     elif measure == "frechet":
-        similarities = py_frechet_disk_parallell(hashes)
+        similarities = frechet_disk_parallell(hashes)
     else:
         raise ValueError(f"Measure must be either 'dtw' or 'frechet', not {measure}")
 

@@ -137,13 +137,13 @@ def transform_frechet_disk(hashes: dict[str, list[list[float]]]) -> OrderedDict:
     return transformed_data
 
 
-def py_frechet_disk(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+def frechet_disk(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     """Frechet distance for disk hashes(Used for correlation computation due to parallell jobs)"""
     transformed_data = transform_frechet_disk(hashes)
     return cy_frechet(transformed_data)
 
 
-def py_frechet_disk_parallell(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+def frechet_disk_parallell(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     """Frechet distance for disk hashes computed in parallell"""
     transformed_data = transform_frechet_disk(hashes)
     return cy_frechet_pool(transformed_data)
