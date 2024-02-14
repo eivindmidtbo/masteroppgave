@@ -17,10 +17,10 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from schemes.helpers.lsh_disk import DiskLSH
 
-from utils.similarity_measures.distance import py_edit_distance as py_ed
-from utils.similarity_measures.distance import py_dtw
-from utils.similarity_measures.distance import py_dtw_parallell
-from utils.similarity_measures.distance import frechet_disk_parallell
+# from utils.similarity_measures.distance import py_edit_distance as py_ed
+# from utils.similarity_measures.distance import py_dtw
+from utils.similarity_measures.distance import dtw_disk_parallel
+from utils.similarity_measures.distance import frechet_disk_parallel
 
 P_MAX_LON = -8.57
 P_MIN_LON = -8.66
@@ -56,8 +56,9 @@ def KOLUMBUS_META(size: int):
 
 
 MEASURE = {
-    "ed": py_ed,
-    "dtw": py_dtw,
+    # "ed": py_ed,
+    "dtw": dtw_disk_parallel,
+    "frechet": frechet_disk_parallel,
 }
 
 
@@ -189,9 +190,9 @@ def generate_disk_hash_similarity(
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
 
     if measure == "dtw":
-        similarities = py_dtw_parallell(hashes)
+        similarities = dtw_disk_parallel(hashes)
     elif measure == "frechet":
-        similarities = frechet_disk_parallell(hashes)
+        similarities = frechet_disk_parallel(hashes)
     else:
         raise ValueError(f"Measure must be either 'dtw' or 'frechet', not {measure}")
 
