@@ -88,32 +88,9 @@ def py_dtw_euclidean(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     return df
 
 
-def transform_frechet_disk(hashes: dict[str, list[list[float]]]) -> OrderedDict:
-    """Transforms the numerical disk hashes to a format that fits the true frechet similarity measure (non numpy input)"""
-    transformed_data = OrderedDict()
-    for key, layer in hashes.items():
-        transformed_points = []
-        for points in layer:
-            transformed_traj = [point.tolist() for point in points]
-            for point in transformed_traj:
-                transformed_points.append(point)
-        transformed_data[key] = transformed_points
-    return transformed_data
-
-
-def frechet_disk(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
-    """Frechet distance for disk hashes(Used for correlation computation due to parallell jobs)"""
-    transformed_data = transform_frechet_disk(hashes)
-    return cy_frechet(transformed_data)
-
-
-def frechet_disk_parallel(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
-    """Frechet distance for disk hashes computed in parallell"""
-    transformed_data = transform_frechet_disk(hashes)
-    return cy_frechet_pool(transformed_data)
-
-
-def transform_dtw_disk(hashes: dict[str, list[list[float]]]) -> OrderedDict:
+def transform_np_numerical_disk_hashes_to_non_np(
+    hashes: dict[str, list[list[float]]]
+) -> OrderedDict:
     """Transforms the numerical disk hashes to a format that fits the true dtw similarity measure (non numpy input)"""
     transformed_data = OrderedDict()
     for key, layer in hashes.items():
@@ -126,7 +103,19 @@ def transform_dtw_disk(hashes: dict[str, list[list[float]]]) -> OrderedDict:
     return transformed_data
 
 
+def frechet_disk(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """Frechet distance for disk hashes (Used for correlation computation due to parallell jobs)"""
+    transformed_data = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    return cy_frechet(transformed_data)
+
+
+def frechet_disk_parallel(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """Frechet distance for disk hashes computed in parallell"""
+    transformed_data = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    return cy_frechet_pool(transformed_data)
+
+
 def dtw_disk_parallel(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     """DTW distance for disk hashes computed in parallell"""
-    transformed_data = transform_dtw_disk(hashes)
+    transformed_data = transform_np_numerical_disk_hashes_to_non_np(hashes)
     return cy_dtw_pool(transformed_data)
