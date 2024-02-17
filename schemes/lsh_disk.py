@@ -3,6 +3,7 @@ File for a disk-based LSH scheme class in python.
 
 Takes min/max lat/lon as argument -> Could potentially make this integrated in the future
 """
+
 import random
 import sys, os
 
@@ -28,8 +29,16 @@ from utils.helpers import trajectory_distance as td
 from utils.helpers import alphabetical_number as an
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
-from utils.schemes.disk import Disk
 from .lsh_interface import LSHInterface
+
+
+class Disk:
+    """Class structure for disk-based LSH"""
+
+    def __init__(self, name: int, lat: float, lon: float) -> None:
+        self.name = name
+        self.lat = lat
+        self.lon = lon
 
 
 class DiskLSH(LSHInterface):

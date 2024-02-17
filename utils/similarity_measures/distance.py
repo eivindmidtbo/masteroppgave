@@ -7,8 +7,8 @@ import timeit as ti
 import time
 
 from collections import OrderedDict
-from .py.hashed_dtw import dtw_euclidean
-from .py.hashed_dtw import dtw_manhattan
+from .hashed_dtw import dtw_euclidean
+from .hashed_dtw import dtw_manhattan
 from utils.similarity_measures.frechet import cy_frechet_pool, cy_frechet
 from utils.similarity_measures.dtw import cy_dtw_pool
 
