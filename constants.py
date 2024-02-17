@@ -23,12 +23,12 @@ K_MIN_LAT = 58.85
 
 # Porto data paths
 PORTO_OUTPUT_FOLDER = "dataset/porto/output"
-SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/similarities/porto"
+SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/true_similarities/porto"
 
 # Rome data paths
 ROME_OUTPUT_FOLDER = "dataset/rome/output"
-SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/similarities/rome"
+SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/true_similarities/rome"
 
 # Kolumbus data paths
 KOLUMBUS_OUTPUT_FOLDER = "dataset/kolumbus/output"
-SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS = "benchmarks/similarities/kolumbus"
+SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS = "benchmarks/true_similarities/kolumbus"

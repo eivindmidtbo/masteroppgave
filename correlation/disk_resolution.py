@@ -92,11 +92,12 @@ K_DTW = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
-# K_FRE = _mirrorDiagonal(
-#     pd.read_csv(
-#         f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-testset.csv", index_col=0
-#     )
-# ).flatten()
+K_FRE = _mirrorDiagonal(
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-testset.csv",
+        index_col=0,
+    )
+).flatten()
 
 MEASURE = {
     "py_dtw_euclidean": py_dtw_euclidean,
@@ -109,6 +110,7 @@ REFERENCE = {
     "romedtw": R_DTW,
     "romefrechet": R_FRE,
     "kolumbusdtw": K_DTW,
+    "kolumbusfrechet": K_FRE,
 }
 
 DISTANCE_FUNC = {

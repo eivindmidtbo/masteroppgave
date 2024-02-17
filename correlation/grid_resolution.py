@@ -61,41 +61,42 @@ def _mirrorDiagonal(M: np.ndarray) -> np.ndarray:
     return M.values + np.rot90(np.fliplr(M.values))
 
 
+# NOTE: Check .stack().values meaning
 # True similarities:
 
 P_DTW = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-dtw-testset.csv", index_col=0
     )
-).flatten()  # .stack().values
+).flatten()
 P_FRE = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-testset.csv", index_col=0
     )
-).flatten()  # .stack().values
+).flatten()
 
 R_DTW = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-dtw-testset.csv", index_col=0
     )
-).flatten()  # .stack().values
+).flatten()
 R_FRE = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-frechet-testset.csv", index_col=0
     )
-).flatten()  # .stack().values
+).flatten()
 
 K_DTW = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-dtw-testset.csv",
         index_col=0,
     )
-).flatten()  # .stack().values
-# K_FRE = _mirrorDiagonal(
-#     pd.read_csv(
-#         "../benchmarks/similarities/kolumbus/kolumbus-frechet-testset.csv", index_col=0
-#     )
-# ).flatten()  # .stack().values
+).flatten()
+K_FRE = _mirrorDiagonal(
+    pd.read_csv(
+        "../benchmarks/similarities/kolumbus/kolumbus-frechet-testset.csv", index_col=0
+    )
+).flatten()
 
 # P_dtw_mirrored = mirrorDiagonal(P_dtw).flatten()
 # P_fre_mirrored = mirrorDiagonal(P_fre).flatten()
@@ -106,7 +107,7 @@ REFERENCE = {
     "romedtw": R_DTW,
     "romefrechet": R_FRE,
     "kolumbusdtw": K_DTW,
-    # "kolumbusfrechet": K_FRE,
+    "kolumbusfrechet": K_FRE,
 }
 
 DISTANCE_FUNC = {
