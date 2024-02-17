@@ -15,7 +15,7 @@ import numpy as np
 currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
-from schemes.helpers.lsh_disk import DiskLSH
+from schemes.lsh_disk import DiskLSH
 
 from utils.similarity_measures.distance import dtw_disk_parallel
 from utils.similarity_measures.distance import frechet_disk_parallel
