@@ -223,21 +223,21 @@ dataset/kolumbus/output/*.txt
 
 
 #HASHES
-hashed_data/disk/porto/*.txt
-hashed_data/disk/porto/META-*.txt
+dataset/hashed_data/disk/porto/*.txt
+dataset/hashed_data/disk/porto/META-*.txt
 
-hashed_data/grid/porto/*.txt
-hashed_data/grid/porto/META-*.txt
+dataset/hashed_data/grid/porto/*.txt
+dataset/hashed_data/grid/porto/META-*.txt
 
 
-hashed_data/disk/rome/*.txt
-hashed_data/disk/rome/META-*.txt
+dataset/hashed_data/disk/rome/*.txt
+dataset/hashed_data/disk/rome/META-*.txt
 
-hashed_data/grid/rome/*.txt
-hashed_data/grid/rome/META-*.txt
+dataset/hashed_data/grid/rome/*.txt
+dataset/hashed_data/grid/rome/META-*.txt
 
-hashed_data/disk/kolumbus/*.txt
-hashed_data/disk/kolumbus/META-*.txt
+dataset/hashed_data/disk/kolumbus/*.txt
+dataset/hashed_data/disk/kolumbus/META-*.txt
 
-hashed_data/grid/kolumbus/*.txt
-hashed_data/grid/kolumbus/META-*.txt
+dataset/hashed_data/grid/kolumbus/*.txt
+dataset/hashed_data/grid/kolumbus/META-*.txt
