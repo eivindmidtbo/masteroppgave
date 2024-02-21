@@ -17,7 +17,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from schemes.lsh_disk import DiskLSH
 
-from utils.similarity_measures.distance import dtw_disk_parallel
+from utils.similarity_measures.distance import disk_coordinates, dtw_disk_parallel
 from utils.similarity_measures.distance import frechet_disk_parallel
 
 from constants import (
@@ -196,3 +196,22 @@ def generate_disk_hash_similarity(
         raise ValueError(f"Measure must be either 'dtw' or 'frechet', not {measure}")
 
     return similarities
+
+
+def generate_disk_hash_similarity_coordinates(
+    city: str,
+    diameter: float,
+    layers: int,
+    disks: int,
+    measure: str = "dtw",
+    size: int = 50,
+) -> any:
+    """Generates the full disk hash similarities and saves it as a dataframe"""
+
+    Disk = _constructDisk(city, diameter, layers, disks, size)
+    hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
+    # Disk.print_disks()
+    hashed_coordinates = disk_coordinates(hashes)
+    all_disks_coordinates = Disk.disks
+
+    return hashed_coordinates, all_disks_coordinates
