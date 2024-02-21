@@ -3,11 +3,8 @@
 import numpy as np
 import pandas as pd
 import collections as co
-
 from traj_dist.pydist.dtw import e_dtw as p_dtw
 from traj_dist.distance import dtw as c_dtw
-
-from utils.helpers import trajectory_distance as td
 
 from multiprocessing import Pool
 import timeit as ti
@@ -49,24 +46,6 @@ def py_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     return df
 
 
-def measure_py_dtw(args):
-    """Method for measuring time efficiency using py_dtw
-
-    Params
-    ---
-    args : (trajectories: dict[str, list[list[float]]], number: int, repeat: int) list
-    """
-    trajectories, number, repeat = args
-
-    measures = ti.repeat(
-        lambda: py_dtw(trajectories),
-        number=number,
-        repeat=repeat,
-        timer=time.process_time,
-    )
-    return measures
-
-
 def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
     Method for computing DTW similarity between all trajectories in a given dataset using cython.
@@ -100,20 +79,6 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     )
 
     return df
-
-
-def measure_cy_dtw(args):
-    """Method for measuring time efficiency using py_dtw"""
-
-    trajectories, number, repeat = args
-
-    measures = ti.repeat(
-        lambda: cy_dtw(trajectories),
-        number=number,
-        repeat=repeat,
-        timer=time.process_time,
-    )
-    return measures
 
 
 # Helper function for dtw parallell programming for speedy computations
@@ -158,3 +123,35 @@ def cy_dtw_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     )
 
     return df
+
+
+def measure_cy_dtw(args):
+    """Method for measuring time efficiency using py_dtw"""
+
+    trajectories, number, repeat = args
+
+    measures = ti.repeat(
+        lambda: cy_dtw(trajectories),
+        number=number,
+        repeat=repeat,
+        timer=time.process_time,
+    )
+    return measures
+
+
+def measure_py_dtw(args):
+    """Method for measuring time efficiency using py_dtw
+
+    Params
+    ---
+    args : (trajectories: dict[str, list[list[float]]], number: int, repeat: int) list
+    """
+    trajectories, number, repeat = args
+
+    measures = ti.repeat(
+        lambda: py_dtw(trajectories),
+        number=number,
+        repeat=repeat,
+        timer=time.process_time,
+    )
+    return measures

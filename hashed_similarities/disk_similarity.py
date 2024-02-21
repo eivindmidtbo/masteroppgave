@@ -4,21 +4,17 @@ Sheet that will be used to measure the time needed to generate similarities of t
 Will run N processess in parallell to measure time efficiency
 """
 
-from collections import OrderedDict
-from multiprocessing import Pool
 import time
 import timeit as ti
 import pandas as pd
 import os, sys
-import numpy as np
 
 currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from schemes.lsh_disk import DiskLSH
 
-from utils.similarity_measures.distance import disk_coordinates, dtw_disk_parallel
-from utils.similarity_measures.distance import frechet_disk_parallel
+from utils.similarity_measures.distance import compute_hash_similarity, disk_coordinates
 
 from constants import (
     PORTO_OUTPUT_FOLDER,
@@ -53,12 +49,6 @@ def ROME_META(size: int):
 
 def KOLUMBUS_META(size: int):
     return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
-
-
-MEASURE = {
-    "dtw": dtw_disk_parallel,
-    "frechet": frechet_disk_parallel,
-}
 
 
 def _constructDisk(
@@ -108,73 +98,6 @@ def _constructDisk(
         raise ValueError("City argument must be either porto or rome")
 
 
-def _computeSimilarities(args) -> list:
-    hashes, measure = args
-    elapsed_time = ti.timeit(
-        lambda: MEASURE[measure](hashes), number=1, timer=time.process_time
-    )
-    return elapsed_time
-
-
-def measure_disk_hash_similarity_computation_time(
-    city: str,
-    size: int,
-    diameter: float,
-    layers: int,
-    disks: int,
-    hashtype: str,
-    measure: str = "dtw",
-    parallell_jobs: int = 10,
-) -> list:
-    """
-    Method to measure the execution time of similarity computation of the hashes
-
-    Param
-    ---
-    city : str
-        Either "porto" or "rome"
-    size : int
-        The dataset-size that will be computed
-    diameter : float
-        The disks diameter
-    layers : int
-        The number of layers that will be used
-    disks : int
-        The number of disks that will be used at each layer
-    hashtype : str
-        "normal" | "quadrants" | "kd"
-    measure : str (Either "ed" or "dtw" - "dtw" default)
-        The measure that will be used for computation
-    parallell_jobs : int
-        The number of jobs that will be run
-    """
-
-    execution_times = []
-
-    with Pool(parallell_jobs) as pool:
-        Disk = _constructDisk(city, diameter, layers, disks, size)
-
-        if measure == "dtw" and hashtype == "kd":
-            hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-        elif measure == "ed" and hashtype == "normal":
-            hashes = Disk.compute_dataset_hashes()
-        elif measure == "ed" and hashtype == "quadrants":
-            hashes = Disk.compute_dataset_hashes_with_quad_tree()
-        elif measure == "ed" and hashtype == "kd":
-            hashes = Disk.compute_dataset_hashes_with_KD_tree()
-        else:
-            raise ValueError(
-                "Cannot construct disk hashes as input parameters are uncertain"
-            )
-
-        time_measurement = pool.map(
-            _computeSimilarities, [(hashes, measure) for _ in range(parallell_jobs)]
-        )
-        execution_times.extend(time_measurement)
-
-    return execution_times
-
-
 def generate_disk_hash_similarity(
     city: str,
     diameter: float,
@@ -187,13 +110,9 @@ def generate_disk_hash_similarity(
 
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-
-    if measure == "dtw":
-        similarities = dtw_disk_parallel(hashes)
-    elif measure == "frechet":
-        similarities = frechet_disk_parallel(hashes)
-    else:
-        raise ValueError(f"Measure must be either 'dtw' or 'frechet', not {measure}")
+    similarities = compute_hash_similarity(
+        hashes=hashes, scheme="disk", measure=measure, parallel=True
+    )
 
     return similarities
 
@@ -215,3 +134,71 @@ def generate_disk_hash_similarity_coordinates(
     all_disks_coordinates = Disk.disks
 
     return hashed_coordinates, all_disks_coordinates
+
+
+# TODO - measure computation time
+# def _computeSimilarities(args) -> list:
+#     hashes, measure = args
+#     elapsed_time = ti.timeit(
+#         lambda: MEASURE[measure](hashes), number=1, timer=time.process_time
+#     )
+#     return elapsed_time
+
+
+# def measure_disk_hash_similarity_computation_time(
+#     city: str,
+#     size: int,
+#     diameter: float,
+#     layers: int,
+#     disks: int,
+#     hashtype: str,
+#     measure: str = "dtw",
+#     parallell_jobs: int = 10,
+# ) -> list:
+#     """
+#     Method to measure the execution time of similarity computation of the hashes
+
+#     Param
+#     ---
+#     city : str
+#         Either "porto" or "rome"
+#     size : int
+#         The dataset-size that will be computed
+#     diameter : float
+#         The disks diameter
+#     layers : int
+#         The number of layers that will be used
+#     disks : int
+#         The number of disks that will be used at each layer
+#     hashtype : str
+#         "normal" | "quadrants" | "kd"
+#     measure : str (Either "ed" or "dtw" - "dtw" default)
+#         The measure that will be used for computation
+#     parallell_jobs : int
+#         The number of jobs that will be run
+#     """
+
+#     execution_times = []
+
+#     with Pool(parallell_jobs) as pool:
+#         Disk = _constructDisk(city, diameter, layers, disks, size)
+
+#         if measure == "dtw" and hashtype == "kd":
+#             hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
+#         elif measure == "ed" and hashtype == "normal":
+#             hashes = Disk.compute_dataset_hashes()
+#         elif measure == "ed" and hashtype == "quadrants":
+#             hashes = Disk.compute_dataset_hashes_with_quad_tree()
+#         elif measure == "ed" and hashtype == "kd":
+#             hashes = Disk.compute_dataset_hashes_with_KD_tree()
+#         else:
+#             raise ValueError(
+#                 "Cannot construct disk hashes as input parameters are uncertain"
+#             )
+
+#         time_measurement = pool.map(
+#             _computeSimilarities, [(hashes, measure) for _ in range(parallell_jobs)]
+#         )
+#         execution_times.extend(time_measurement)
+
+#     return execution_times
