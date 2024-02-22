@@ -28,7 +28,8 @@ def compute_hash_similarity(
     # NOTE - if scheme =="grid" then the hashes are already in the correct format, I.E non numpy
     if measure == "dtw":
         if parallel:
-            return cy_dtw_hashes_pool(hashes)
+            # Change back to pool, just single-threaded for print/debugging
+            return cy_dtw_hashes(hashes)
         else:
             return cy_dtw_hashes(hashes)
     elif measure == "frechet":
