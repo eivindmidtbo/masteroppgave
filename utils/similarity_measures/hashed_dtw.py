@@ -5,6 +5,8 @@ from traj_dist.distance import dtw as c_dtw
 
 from multiprocessing import Pool
 
+from utils.helpers.validators import is_invalid_hashed_trajectories
+
 
 def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
     """
@@ -30,16 +32,19 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
             for layer_i, layer_j in zip(
                 sorted_trajectories[traj_i], sorted_trajectories[traj_j]
             ):
+                if is_invalid_hashed_trajectories(layer_i=layer_i, layer_j=layer_j):
+                    continue
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
-                dtw = c_dtw(
-                    X, Y
-                )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
-                total_dtw += dtw
+                # Ensure both X and Y are not empty and have the correct shape
+                if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
+                    dtw = c_dtw(
+                        X, Y
+                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    total_dtw += dtw
             M[i, j] = total_dtw
             if i == j:
                 break  # This optimizes by not recalculating for identical trajectories
-
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
@@ -49,7 +54,12 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
 
 def _fun_wrapper_hashes(args):
     x_layers, y_layers, j = args
-    dtw_sum = sum(c_dtw(np.array(x), np.array(y)) for x, y in zip(x_layers, y_layers))
+    filtered_x_layers = [x for x in x_layers if x]  # Filter out empty lists
+    filtered_y_layers = [y for y in y_layers if y]  # Filter out empty lists
+    dtw_sum = sum(
+        c_dtw(np.array(x), np.array(y))
+        for x, y in zip(filtered_x_layers, filtered_y_layers)
+    )
     return dtw_sum, j
 
 
