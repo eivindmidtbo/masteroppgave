@@ -5,8 +5,6 @@ from traj_dist.distance import dtw as c_dtw
 
 from multiprocessing import Pool
 
-from utils.helpers.validators import is_invalid_hashed_trajectories
-
 
 def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
     """
@@ -25,52 +23,33 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
     num_trajectories = len(sorted_trajectories)
 
     M = np.zeros((num_trajectories, num_trajectories))
-    print("Length of sorted_trajectories", len(sorted_trajectories))
-    # print("R_ATG", sorted_trajectories["R_ATG"])
-    # print("R_ATG", len(sorted_trajectories["R_ATG"]))
-    total_coordinates_r_atg = 0
-    for value in sorted_trajectories["R_ATG"]:
-        # print("Value", value)
-        # print("Value", len(value))
-        total_coordinates_r_atg += len(value)
-    print("Total disk/hash coordinates for R_ATG", total_coordinates_r_atg)
 
-    total_comparisons = 0
-    total_skipped_comparisons = 0
+    # total_comparisons = 0
+    # total_skipped_comparisons = 0
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
-        # print("Traj_i", traj_i)
-        # print("i", i)
         for j, traj_j in enumerate(sorted_trajectories.keys()):
-            # print("Traj_j", traj_j)
-            # print("j", j)
             total_dtw = 0  # Initialize total DTW similarity for this pair
             for layer_i, layer_j in zip(
                 sorted_trajectories[traj_i], sorted_trajectories[traj_j]
             ):
-                # print("Layer_i", layer_i)
-                # print("Layer_j", layer_j)
-                # if is_invalid_hashed_trajectories(layer_i=layer_i, layer_j=layer_j):
-                #     continue
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
                 # Ensure both X and Y are not empty and have the correct shape
-                total_comparisons += 1
+                # NOTE: If the calculation is skipped, either X or Y (or both) is empty.
+                # This usually occurs for comparisons starting on the second half of the trajectories for unknown reasons.
+                # We normally use sizes so big that the number of skipped comparisons can be neglected as it does not affect the correlation.
                 if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
                     dtw = c_dtw(
                         X, Y
                     )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
                     total_dtw += dtw
-                else:
-                    # print("X", X)
-                    # print("Y", Y)
-                    total_skipped_comparisons += 1
             M[i, j] = total_dtw
             if i == j:
                 break  # This optimizes by not recalculating for identical trajectories
 
-    print("Total comparisons", total_comparisons)
-    print("Total skipped comparisons", total_skipped_comparisons)
+    # print("Total comparisons", total_comparisons)
+    # print("Total skipped comparisons", total_skipped_comparisons)
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
