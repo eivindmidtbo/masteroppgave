@@ -24,6 +24,9 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
 
     M = np.zeros((num_trajectories, num_trajectories))
 
+    # total_comparisons = 0
+    # total_skipped_comparisons = 0
+
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
             total_dtw = 0  # Initialize total DTW similarity for this pair
@@ -32,13 +35,21 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
             ):
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
-                dtw = c_dtw(
-                    X, Y
-                )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
-                total_dtw += dtw
+                # Ensure both X and Y are not empty and have the correct shape
+                # NOTE: If the calculation is skipped, either X or Y (or both) is empty.
+                # This usually occurs for comparisons starting on the second half of the trajectories for unknown reasons.
+                # We normally use sizes so big that the number of skipped comparisons can be neglected as it does not affect the correlation.
+                if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
+                    dtw = c_dtw(
+                        X, Y
+                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    total_dtw += dtw
             M[i, j] = total_dtw
             if i == j:
                 break  # This optimizes by not recalculating for identical trajectories
+
+    # print("Total comparisons", total_comparisons)
+    # print("Total skipped comparisons", total_skipped_comparisons)
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
@@ -49,7 +60,12 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
 
 def _fun_wrapper_hashes(args):
     x_layers, y_layers, j = args
-    dtw_sum = sum(c_dtw(np.array(x), np.array(y)) for x, y in zip(x_layers, y_layers))
+    filtered_x_layers = [x for x in x_layers if x]  # Filter out empty lists
+    filtered_y_layers = [y for y in y_layers if y]  # Filter out empty lists
+    dtw_sum = sum(
+        c_dtw(np.array(x), np.array(y))
+        for x, y in zip(filtered_x_layers, filtered_y_layers)
+    )
     return dtw_sum, j
 
 

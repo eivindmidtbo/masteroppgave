@@ -30,12 +30,16 @@ def cy_frechet_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFram
             for layer_i, layer_j in zip(
                 sorted_trajectories[traj_i], sorted_trajectories[traj_j]
             ):
+
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
-                dtw = c_frechet(
-                    X, Y
-                )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
-                total_dtw += dtw
+
+                # Ensure both X and Y are not empty and have the correct shape
+                if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
+                    dtw = c_frechet(
+                        X, Y
+                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    total_dtw += dtw
             M[i, j] = total_dtw
             if i == j:
                 break  # This optimizes by not recalculating for identical trajectories
@@ -49,8 +53,11 @@ def cy_frechet_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFram
 
 def _fun_wrapper_hashes(args):
     x_layers, y_layers, j = args
+    filtered_x_layers = [x for x in x_layers if x]  # Filter out empty lists
+    filtered_y_layers = [y for y in y_layers if y]  # Filter out empty lists
     frechet_sum = sum(
-        c_frechet(np.array(x), np.array(y)) for x, y in zip(x_layers, y_layers)
+        c_frechet(np.array(x), np.array(y))
+        for x, y in zip(filtered_x_layers, filtered_y_layers)
     )
     return frechet_sum, j
 
