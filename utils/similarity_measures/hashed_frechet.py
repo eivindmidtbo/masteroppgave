@@ -4,7 +4,6 @@ import collections as co
 
 from multiprocessing import Pool
 from traj_dist.distance import frechet as c_frechet
-from utils.helpers.validators import is_invalid_hashed_trajectories
 
 
 def cy_frechet_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
@@ -31,8 +30,6 @@ def cy_frechet_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFram
             for layer_i, layer_j in zip(
                 sorted_trajectories[traj_i], sorted_trajectories[traj_j]
             ):
-                if is_invalid_hashed_trajectories(layer_i=layer_i, layer_j=layer_j):
-                    continue
 
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
