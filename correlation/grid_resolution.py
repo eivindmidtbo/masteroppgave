@@ -270,7 +270,7 @@ def plot_grid_res_layers(
     ax2.text(
         0.99,
         0.99,
-        f"{city.capitalize()}: {measure.upper()} (Grid) - {reference.upper()} True",
+        f"{city.capitalize()}: {measure.upper()} (Grid) - {reference.upper()} True\nSize: {NUMBER_OF_TRAJECTORIES}\nJobs: {parallel_jobs} ",
         ha="right",
         va="top",
         transform=ax2.transAxes,

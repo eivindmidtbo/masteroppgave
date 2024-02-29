@@ -308,10 +308,10 @@ def plot_disk_dia_layers(
         columnspacing=1,
     )
     ax2.text(
+        0.01,
         0.99,
-        0.99,
-        f"{city.capitalize()}: {measure.upper()} (Disk) - {reference.upper()} True",
-        ha="right",
+        f"{city.capitalize()}: {measure.upper()} (Disk) - {reference.upper()} True\nSize: {NUMBER_OF_TRAJECTORIES}\nDisks: {disks}\nJobs: {parallel_jobs} ",
+        ha="left",
         va="top",
         transform=ax2.transAxes,
         fontsize=14,
