@@ -1,14 +1,16 @@
 """ Sheet that contains methods to draw certain figures """
+
 from matplotlib import pyplot as plt
 from matplotlib import colors
 import pandas as pd
 import numpy as np
 import os
-from constants import NUMBER_OF_TRAJECTORIES
 
 COLOR_GRID_HASH = "#69b3a2"
 COLOR_DISK_HASH = "violet"
 COLOR_TRUE = "#3399e6"
+
+NUMBER_OF_TRAJECTORIES = 500
 
 
 def draw_hash_similarity_runtime(path: str, path_to_reference: str = "") -> None:
@@ -100,7 +102,7 @@ def draw_hash_similarity_runtime_logarithmic(
     disk_data_sizes = disk_mean_timing.index.to_numpy(int)
     disk_data_runtimes = disk_mean_timing.values
 
-    fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
+    fig, ax = plt.subplots(figsize=(5, 4), dpi=100)
 
     rd = reference_data.mean(axis=0)
     r_sizes = rd.index.to_numpy(int)
@@ -295,15 +297,20 @@ def draw_similarity_correlation(
 
 
 if __name__ == "__main__":
-    # hash_sim_porto = os.path.abspath("./code/experiments/similarities/grid_porto.csv")
-    hash_sim_porto = os.path.abspath(
-        "../prosjektoppgave/hashed_similarities/output/grid/porto/grid_porto.csv"
+
+    dtw_true_sim_porto_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-500_step-100.csv"
     )
-    dtw_sim_porto = os.path.abspath(
-        f"../prosjektoppgave/benchmarks/similarities/porto/porto-dtw-{NUMBER_OF_TRAJECTORIES}.csv"
+    dtw_grid_sim_porto_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_porto_start-100_end-500_step-100.csv"
+    )
+    dtw_disk_sim_porto_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_porto_start-100_end-500_step-100.csv"
     )
 
-    print(hash_sim_porto)
-    print(dtw_sim_porto)
-
-    draw_similarity_correlation(hash_sim_porto, "porto", "grid", "dtw")
+    draw_hash_similarity_runtime_logarithmic(
+        "porto",
+        dtw_grid_sim_porto_runtime,
+        dtw_disk_sim_porto_runtime,
+        dtw_true_sim_porto_runtime,
+    )

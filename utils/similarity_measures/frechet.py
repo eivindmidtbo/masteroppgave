@@ -139,13 +139,13 @@ def cy_frechet_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     return df
 
 
-# def measure_cy_frechet(args):
-#     """Method for measuring time efficiency using py_dtw"""
-#     trajectories, number, repeat = args
-#     measures = ti.repeat(
-#         lambda: cy_frechet(trajectories),
-#         number=number,
-#         repeat=repeat,
-#         timer=time.process_time,
-#     )
-#     return measures
+def measure_cy_frechet(args):
+    """Method for measuring time efficiency using cy_frechet"""
+    trajectories, number, repeat = args
+    measures = ti.repeat(
+        lambda: cy_frechet(trajectories),
+        number=number,
+        repeat=repeat,
+        timer=time.process_time,
+    )
+    return measures

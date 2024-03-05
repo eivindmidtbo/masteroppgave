@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import collections as co
+import timeit as ti
+import time
 
 from multiprocessing import Pool
 from traj_dist.distance import frechet as c_frechet
@@ -99,3 +101,10 @@ def cy_frechet_hashes_pool(
     )
 
     return df
+
+
+def measure_hashed_cy_frechet(hashes: dict[str, list[list[list[float]]]]):
+    measures = ti.repeat(
+        lambda: cy_frechet_hashes(hashes), number=1, repeat=1, timer=time.process_time
+    )
+    return measures

@@ -4,6 +4,8 @@ import collections as co
 from traj_dist.distance import dtw as c_dtw
 
 from multiprocessing import Pool
+import timeit as ti
+import time
 
 
 def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
@@ -106,3 +108,11 @@ def cy_dtw_hashes_pool(
     )
 
     return df
+
+
+def measure_hashed_cy_dtw(hashes: dict[str, list[list[list[float]]]]):
+    """Method for measuring time efficiency using cy_dtw_hashes"""
+    measures = ti.repeat(
+        lambda: cy_dtw_hashes(hashes), number=1, repeat=1, timer=time.process_time
+    )
+    return measures
