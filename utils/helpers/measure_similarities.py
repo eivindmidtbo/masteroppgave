@@ -57,10 +57,12 @@ def compute_true_similarity_runtimes(
     data_folder = get_dataset_path(city)
 
     """Writes the runtimes of the similarity measures to a csv file"""
-    data_sets = range(data_start_size, data_end_size, data_step_size)
+    data_sets = range(data_start_size, data_end_size + 1, data_step_size)
+    print("data_end_size", data_end_size)
+    print("data sets", data_sets)
 
     output_folder = "../benchmarks/similarities_runtimes/"
-    file_name = f"similarity_runtimes_{measure}_porto_start-{data_start_size}_end-{data_end_size}-_step-{data_step_size}.csv"
+    file_name = f"similarity_runtimes_{measure}_porto_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
 
     df = pd.DataFrame(
         index=[f"run_{x+1}" for x in range(parallel_jobs)],
@@ -118,7 +120,7 @@ def compute_hashed_similarity_runtimes(
     data_step_size: int = 100,
 ):
     """Writes the runtimes of the similarity measures to a csv file"""
-    data_sets = range(data_start_size, data_end_size, data_step_size)
+    data_sets = range(data_start_size, data_end_size + 1, data_step_size)
 
     output_folder = "../benchmarks/similarities_runtimes/"
     file_name = f"similarity_runtimes_{measure}_porto_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
