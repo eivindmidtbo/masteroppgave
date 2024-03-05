@@ -297,20 +297,30 @@ def draw_similarity_correlation(
 
 
 if __name__ == "__main__":
-
+    # Porto
     dtw_true_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-500_step-100.csv"
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-3000_end-3000_step-100.csv"
     )
     dtw_grid_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_porto_start-100_end-500_step-100.csv"
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_porto_start-3000_end-3000_step-100.csv"
     )
     dtw_disk_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_porto_start-100_end-500_step-100.csv"
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_porto_start-3000_end-3000_step-500.csv"
+    )
+    # Rome
+    dtw_true_sim_rome_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_rome_start-100_end-500_step-100.csv"
+    )
+    dtw_grid_sim_rome_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_rome_start-100_end-500_step-100.csv"
+    )
+    dtw_disk_sim_rome_runtime = os.path.abspath(
+        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_rome_start-100_end-500_step-100.csv"
     )
 
     draw_hash_similarity_runtime_logarithmic(
-        "porto",
-        dtw_grid_sim_porto_runtime,
-        dtw_disk_sim_porto_runtime,
-        dtw_true_sim_porto_runtime,
+        city="porto",
+        path_grid=dtw_grid_sim_porto_runtime,
+        path_disk=dtw_disk_sim_porto_runtime,
+        path_to_reference=dtw_true_sim_porto_runtime,
     )
