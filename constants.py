@@ -33,4 +33,14 @@ SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/true_similarities/rome"
 KOLUMBUS_OUTPUT_FOLDER = "dataset/kolumbus/output"
 SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS = "benchmarks/true_similarities/kolumbus"
 
-NUMBER_OF_TRAJECTORIES = 500
+NUMBER_OF_TRAJECTORIES = 100
+COLOR_MAP = {
+    1: "blue",
+    2: "green",
+    3: "red",
+    4: "cyan",
+    5: "magenta",
+    6: "darkorange",
+    7: "darkviolet",
+    8: "yellow",
+}

@@ -42,6 +42,7 @@ from constants import (
     SIMILARITIES_OUTPUT_FOLDER_PORTO,
     SIMILARITIES_OUTPUT_FOLDER_ROME,
     NUMBER_OF_TRAJECTORIES,
+    COLOR_MAP,
 )
 
 # Defining some constants
@@ -285,14 +286,16 @@ def plot_disk_dia_layers(
         corre = np.array(corre)
         dia = np.array(dia)
         std = np.array(std)
+        color = COLOR_MAP[layer]
+
         ax1.plot(
             dia,
             corre,
-            c=cmap(float(layer - 1) / (1.2 * N)),
+            c=color,
             label=f"{layer} layers",
             lw=2,
         )
-        ax2.plot(dia, std, c=cmap(float(layer - 1) / (1.2 * N)), ls="dashed")
+        ax2.plot(dia, std, c=color, alpha=0.3, ls="dashed")
         # plt.fill_between(res, np.array(corre)+np.array(std), np.array(corre)-np.array(std))
 
     # Now styling the figure
@@ -314,14 +317,16 @@ def plot_disk_dia_layers(
         ha="left",
         va="top",
         transform=ax2.transAxes,
-        fontsize=14,
-        color="grey",
+        fontsize=11,
+        color="black",
     )
     ax1.set_xlabel("Disk diameter (km)", fontsize=18)
     ax1.set_ylabel("Pearson correlation coefficient - Solid lines", fontsize=18)
-    ax1.set_ylim([ax1.get_ylim()[0] * 0.8, ax1.get_ylim()[1]])
-    ax2.set_ylabel("Standard deviation \- Dashed lines", fontsize=18)
+    ax1.set_ylim([0, 1.0])
+    ax2.set_ylabel("Standard deviation \- Dashed lines", fontsize=16)
+    # Dynamic y-axis limits based on values
     ax2.set_ylim([0, ax2.get_ylim()[1] * 2])
+    # ax2.set_ylim([0.0, 0.1])
     ax1.tick_params(axis="both", which="major", labelsize=16)
     ax2.tick_params(axis="both", which="major", labelsize=16)
 
