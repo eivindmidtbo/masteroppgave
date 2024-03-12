@@ -123,7 +123,10 @@ def compute_hashed_similarity_runtimes(
     data_sets = range(data_start_size, data_end_size + 1, data_step_size)
 
     output_folder = "../benchmarks/similarities_runtimes/"
-    file_name = f"similarity_runtimes_{measure}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+    if (measure == "disk_dtw_cy") or (measure == "disk_frechet_cy"):
+        file_name = f"similarity_runtimes_{measure}_layers-{layers}_diameter-{diameter}_disks-{disks}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+    elif (measure == "grid_dtw_cy") or (measure == "grid_frechet_cy"):
+        file_name = f"similarity_runtimes_{measure}_layers-{layers}_res-{res}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
 
     df = pd.DataFrame(
         index=[f"run_{x+1}" for x in range(parallel_jobs)],
@@ -132,10 +135,10 @@ def compute_hashed_similarity_runtimes(
     print(f"Computing {measure} for {city} with {parallel_jobs} jobs")
     index = 1
     for size in data_sets:
-        # elapsed_time_for_hash_generation = 0
+        elapsed_time_for_hash_generation = 0
         print(f"Computing size {size}, set {index}/{len(data_sets)}", end="\r")
         with Pool(parallel_jobs) as pool:
-            # start_time = time.perf_counter()
+            start_time = time.perf_counter()
             if (measure == "disk_dtw_cy") or (measure == "disk_frechet_cy"):
                 hashes = compute_disk_hashes(
                     city=city, diameter=diameter, layers=layers, disks=disks, size=size
@@ -146,8 +149,8 @@ def compute_hashed_similarity_runtimes(
                 )
             else:
                 raise ValueError("Invalid measure")
-            # end_time = time.perf_counter()
-            # elapsed_time_for_hash_generation += end_time - start_time
+            end_time = time.perf_counter()
+            elapsed_time_for_hash_generation += end_time - start_time
             # Print average length of keys in hashes
             # print(
             #     f"Average length of keys in hashes: {sum([len(hashes[key][0]) for key in hashes])/len(hashes)}"
@@ -157,9 +160,9 @@ def compute_hashed_similarity_runtimes(
             )
         df[size] = [element[0] for element in execution_times]
         index += 1
-        # print(
-        #     f"Elapsed time for hash generation in set {size}: {elapsed_time_for_hash_generation}"
-        # )
+        print(
+            f"Elapsed time for hash generation in set {size}: {elapsed_time_for_hash_generation}"
+        )
     df.to_csv(os.path.join(output_folder, file_name))
     print(df)
 

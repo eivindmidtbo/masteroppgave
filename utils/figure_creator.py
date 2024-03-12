@@ -9,6 +9,7 @@ import os
 COLOR_GRID_HASH = "#69b3a2"
 COLOR_DISK_HASH = "violet"
 COLOR_TRUE = "#3399e6"
+COLORS = ["#69b3a2", "#ffcc99", "#ff6666", "#c2c2f0", "#ffb3e6", "#c2f0c2", "#ff6666"]
 
 NUMBER_OF_TRAJECTORIES = 500
 
@@ -65,12 +66,20 @@ def draw_hash_similarity_runtime(path: str, path_to_reference: str = "") -> None
     degree = 4
     coeffs = np.polyfit(data_sizes, data_runtimes, degree)
     p = np.poly1d(coeffs)
-    ax2.plot(data_sizes, [p(n) for n in data_sizes], color=COLOR_GRID_HASH, lw=2)
+    ax2.plot(
+        data_sizes,
+        [p(n) for n in data_sizes],
+        color=COLOR_GRID_HASH,
+        lw=2,
+    )
     plt.show()
 
 
 def draw_hash_similarity_runtime_logarithmic(
-    city: str, path_grid: str, path_disk: str, path_to_reference: str = ""
+    city: str,
+    measure: str,
+    paths_hashes: dict[str, str],
+    path_to_reference: str = "",
 ) -> None:
     """
     Method that draws a figure of the runtime of the hash similarity computation, logarithmic y-scale:
@@ -79,28 +88,16 @@ def draw_hash_similarity_runtime_logarithmic(
     ---
     city : str
         The city
-    path_grid : str (abspath)
-        The Path to the csv file containing the grid runtimes
-    path_disk : str (abspath)
-        Path to the csv file containing the disk runtimes
+    paths_hashes : dict[str, str]
+        dictionary containing the paths to the hashed runtime and corresponding label(scheme, configuration params)
     path_to_reference_values : str (abspath)
         The Path to the csv file containing the reference runtimes
 
     """
 
-    grid_timing_data = pd.read_csv(path_grid, index_col=0)
-    disk_timing_data = pd.read_csv(path_disk, index_col=0)
     reference_data = (
         pd.read_csv(path_to_reference, index_col=0) if path_to_reference else None
     )
-
-    grid_mean_timing = grid_timing_data.mean(axis=0)
-    grid_data_sizes = grid_mean_timing.index.to_numpy(int)
-    grid_data_runtimes = grid_mean_timing.values
-
-    disk_mean_timing = disk_timing_data.mean(axis=0)
-    disk_data_sizes = disk_mean_timing.index.to_numpy(int)
-    disk_data_runtimes = disk_mean_timing.values
 
     fig, ax = plt.subplots(figsize=(5, 4), dpi=100)
 
@@ -110,18 +107,38 @@ def draw_hash_similarity_runtime_logarithmic(
     ax.plot(r_sizes, r_runtimes, "or", markersize=8)
 
     degree = 2
-    print(grid_data_sizes[: len(r_runtimes)])
-    coeffs = np.polyfit(grid_data_sizes[: len(r_runtimes)], r_runtimes, degree)
+    example_hash_timing_data = pd.read_csv(list(paths_hashes.keys())[0], index_col=0)
+    example_hash_mean_timing = example_hash_timing_data.mean(axis=0)
+    example_hash_data_size = example_hash_mean_timing.index.to_numpy(int)
+    print(example_hash_data_size[: len(r_runtimes)])
+    coeffs = np.polyfit(example_hash_data_size[: len(r_runtimes)], r_runtimes, degree)
     p = np.poly1d(coeffs)
+    print("example hash data size", example_hash_data_size)
     ax.plot(
-        grid_data_sizes,
-        [p(n) for n in grid_data_sizes],
+        example_hash_data_size,
+        [p(n) for n in example_hash_data_size],
         color=COLOR_TRUE,
         lw=3,
-        label="DTW Similarity",
+        label="True similarity",
     )
-    ax.plot(grid_data_sizes, grid_data_runtimes, "xr", markersize=12)
-    ax.plot(disk_data_sizes, disk_data_runtimes, "xr", markersize=12)
+    index = 0
+    for key, value in paths_hashes.items():
+        hash_timing_data = pd.read_csv(key, index_col=0)
+        hash_mean_timing = hash_timing_data.mean(axis=0)
+        hash_data_sizes = hash_mean_timing.index.to_numpy(int)
+        hash_data_runtimes = hash_mean_timing.values
+        ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
+        degree = 5
+        hash_coeffs = np.polyfit(hash_data_sizes, hash_data_runtimes, degree)
+        hash_p = np.poly1d(hash_coeffs)
+        ax.plot(
+            hash_data_sizes,
+            [hash_p(n) for n in hash_data_sizes],
+            color=COLORS[index],
+            lw=3,
+            label=value,
+        )
+        index += 1
 
     ax.set_xlabel("Dataset size - number of trajectories", fontsize=18)
     ax.set_ylabel("Similarity computation time (s)", fontsize=18)
@@ -130,31 +147,10 @@ def draw_hash_similarity_runtime_logarithmic(
     ax.tick_params(axis="y")
     ax.tick_params(axis="both", which="major", labelsize=18)
 
-    degree = 5
-    grid_coeffs = np.polyfit(grid_data_sizes, grid_data_runtimes, degree)
-    grid_p = np.poly1d(grid_coeffs)
-    ax.plot(
-        grid_data_sizes,
-        [grid_p(n) for n in grid_data_sizes],
-        color=COLOR_GRID_HASH,
-        lw=3,
-        label="Grid Hash Similarity",
-    )
-
-    disk_coeffs = np.polyfit(disk_data_sizes, disk_data_runtimes, degree)
-    disk_p = np.poly1d(disk_coeffs)
-    ax.plot(
-        disk_data_sizes,
-        [disk_p(n) for n in disk_data_sizes],
-        color=COLOR_DISK_HASH,
-        lw=3,
-        label="Disk Hash Similarity",
-    )
-
     ax.text(
-        0.10,
+        0.20,
         0.97,
-        f"{city}",
+        f"{city}-{measure.upper()}",
         ha="right",
         va="top",
         transform=ax.transAxes,
@@ -299,28 +295,25 @@ def draw_similarity_correlation(
 if __name__ == "__main__":
     # Porto
     dtw_true_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-3000_end-3000_step-100.csv"
-    )
-    dtw_grid_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_porto_start-3000_end-3000_step-100.csv"
-    )
-    dtw_disk_sim_porto_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_porto_start-3000_end-3000_step-500.csv"
-    )
-    # Rome
-    dtw_true_sim_rome_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_rome_start-100_end-500_step-100.csv"
-    )
-    dtw_grid_sim_rome_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_rome_start-100_end-500_step-100.csv"
-    )
-    dtw_disk_sim_rome_runtime = os.path.abspath(
-        "../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_rome_start-100_end-500_step-100.csv"
+        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-250_end-3000_step-250.csv"
     )
 
     draw_hash_similarity_runtime_logarithmic(
         city="porto",
-        path_grid=dtw_grid_sim_porto_runtime,
-        path_disk=dtw_disk_sim_porto_runtime,
+        measure="dtw",
+        paths_hashes={
+            os.path.abspath(
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-0.2_porto_start-250_end-3000_step-250.csv"
+            ): "Grid, layers: 4, res: 0.2",
+            os.path.abspath(
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-1.0_porto_start-250_end-3000_step-250.csv"
+            ): "Grid, layers: 5, res: 1.0",
+            os.path.abspath(
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-1_res-1_porto_start-250_end-3000_step-250.csv"
+            ): "Grid, layers: 1, res: 1.0",
+            os.path.abspath(
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-1_res-0.2_porto_start-250_end-3000_step-250.csv"
+            ): "Grid, layers: 1, res: 0.2",
+        },
         path_to_reference=dtw_true_sim_porto_runtime,
     )
