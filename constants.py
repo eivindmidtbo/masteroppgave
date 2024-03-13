@@ -35,9 +35,10 @@ SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS = "benchmarks/true_similarities/kolumbus"
 
 NUMBER_OF_TRAJECTORIES = 100
 COLOR_MAP = {
+    0: "red",
     1: "blue",
     2: "green",
-    3: "red",
+    3: "black",
     4: "cyan",
     5: "magenta",
     6: "darkorange",
