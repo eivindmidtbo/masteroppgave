@@ -23,6 +23,7 @@ from utils.similarity_measures.distance import compute_hash_similarity
 
 
 from constants import (
+    COLOR_MAP_DATASET,
     PORTO_OUTPUT_FOLDER,
     ROME_OUTPUT_FOLDER,
     KOLUMBUS_OUTPUT_FOLDER,
@@ -118,7 +119,32 @@ REFERENCE = {
 }
 
 
-def _constructDisk(city: str, diameter: float, layers: int, disks: int = 50) -> DiskLSH:
+def get_folder_paths(city: str) -> tuple:
+    if city.lower() == "porto":
+        return SIMILARITIES_OUTPUT_FOLDER_PORTO, PORTO_CHOSEN_DATA
+    elif city.lower() == "rome":
+        return SIMILARITIES_OUTPUT_FOLDER_ROME, ROME_CHOSEN_DATA
+    elif city.lower() == "kolumbus":
+        return SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS, KOLUMBUS_CHOSEN_DATA
+
+
+def get_meta_file(city: str, size: int) -> str:
+    if city.lower() == "porto":
+        return f"../{PORTO_OUTPUT_FOLDER}/META-{size}.txt"
+    elif city.lower() == "rome":
+        return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
+    elif city.lower() == "kolumbus":
+        return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
+
+
+def _constructDisk(
+    city: str,
+    diameter: float,
+    layers: int,
+    disks: int,
+    meta_file: str,
+    chosen_data: str,
+) -> DiskLSH:
     """Constructs a disk hash object over the given city"""
     if city.lower() == "porto":
         return DiskLSH(
@@ -130,8 +156,8 @@ def _constructDisk(city: str, diameter: float, layers: int, disks: int = 50) -> 
             disks,
             layers,
             diameter,
-            PORTO_META_TEST,
-            PORTO_CHOSEN_DATA,
+            meta_file,
+            chosen_data,
         )
     elif city.lower() == "rome":
         return DiskLSH(
@@ -143,8 +169,8 @@ def _constructDisk(city: str, diameter: float, layers: int, disks: int = 50) -> 
             disks,
             layers,
             diameter,
-            ROME_META_TEST,
-            ROME_CHOSEN_DATA,
+            meta_file,
+            chosen_data,
         )
     elif city.lower() == "kolumbus":
         return DiskLSH(
@@ -156,8 +182,8 @@ def _constructDisk(city: str, diameter: float, layers: int, disks: int = 50) -> 
             disks,
             layers,
             diameter,
-            KOLUMBUS_META_TEST,
-            KOLUMBUS_CHOSEN_DATA,
+            meta_file,
+            chosen_data,
         )
     else:
         raise ValueError(f"City/dataset argument {city} not supported")
@@ -171,8 +197,16 @@ def _compute_hashes(disk: DiskLSH, measure: str = "dtw") -> dict[str, list]:
 
 
 def _fun_wrapper_corr(args):
-    city, dia, lay, disks, measure, reference = args
-    Disk = _constructDisk(city=city, diameter=dia, layers=lay, disks=disks)
+    city, dia, lay, disks, measure, reference, size = args
+    OUTPUT_FOLDER, CHOSEN_DATA = get_folder_paths(city)
+    Disk = _constructDisk(
+        city=city,
+        diameter=dia,
+        layers=lay,
+        disks=disks,
+        meta_file=get_meta_file(city, size),
+        chosen_data=CHOSEN_DATA,
+    )
     hashes = _compute_hashes(Disk, measure)
     hashed_similarity = compute_hash_similarity(
         hashes=hashes, scheme="disk", measure=measure, parallel=False
@@ -184,21 +218,22 @@ def _fun_wrapper_corr(args):
     return corr
 
 
-def _test_wrapper_corr(args):
-    city, dia, lay, measure, reference = args
-    Disk = _constructDisk(city, dia, lay)
-    hashes = _compute_hashes(Disk, measure)
-    hash_array = _mirrorDiagonal(MEASURE[measure](hashes)).flatten()
-    truesim_array_dtw = REFERENCE[city.lower() + "dtw"]
-    truesim_array_frechet = REFERENCE[city.lower() + "frechet"]
-    null_values = REFERENCE["null_testset"]
-    # spearman_corr = scipy.stats.spearmanr(hash_array, truesim_array_dtw)
-    # print("Spearman_corr", spearman_corr)
-    # kendall_corr = scipy.stats.kendalltau(hash_array, truesim_array_dtw)
-    # print("Kendall_corr", kendall_corr)
+# Used in the next method to verify the correlation methods
+# def _test_wrapper_corr(args):
+#     city, dia, lay, measure, reference = args
+#     Disk = _constructDisk(city, dia, lay)
+#     hashes = _compute_hashes(Disk, measure)
+#     hash_array = _mirrorDiagonal(MEASURE[measure](hashes)).flatten()
+#     truesim_array_dtw = REFERENCE[city.lower() + "dtw"]
+#     truesim_array_frechet = REFERENCE[city.lower() + "frechet"]
+#     null_values = REFERENCE["null_testset"]
+#     # spearman_corr = scipy.stats.spearmanr(hash_array, truesim_array_dtw)
+#     # print("Spearman_corr", spearman_corr)
+#     # kendall_corr = scipy.stats.kendalltau(hash_array, truesim_array_dtw)
+#     # print("Kendall_corr", kendall_corr)
 
-    test_corr = np.corrcoef(hash_array, truesim_array_dtw)[0][1]
-    return test_corr
+#     test_corr = np.corrcoef(hash_array, truesim_array_dtw)[0][1]
+#     return test_corr
 
 
 def _compute_disk_diameter_layers(
@@ -213,6 +248,7 @@ def _compute_disk_diameter_layers(
     """Computations for the visualisation"""
 
     pool = Pool()
+    size = NUMBER_OF_TRAJECTORIES
 
     results = []
     for lay in layers:
@@ -222,7 +258,7 @@ def _compute_disk_diameter_layers(
             corrs = pool.map(
                 _fun_wrapper_corr,
                 [
-                    (city, dia, lay, disks, measure, reference)
+                    (city, dia, lay, disks, measure, reference, size)
                     for _ in range(parallel_jobs)
                 ],
             )
@@ -327,6 +363,141 @@ def plot_disk_dia_layers(
     # Dynamic y-axis limits based on values
     ax2.set_ylim([0, ax2.get_ylim()[1] * 2])
     # ax2.set_ylim([0.0, 0.1])
+    ax1.tick_params(axis="both", which="major", labelsize=16)
+    ax2.tick_params(axis="both", which="major", labelsize=16)
+
+    plt.show()
+
+
+def _fun_wrapper_corr_sizes(args):
+    city, dia, lay, disks, measure, reference, size = args
+    OUTPUT_FOLDER, CHOSEN_DATA = get_folder_paths(city)
+    Disk = _constructDisk(
+        city=city,
+        diameter=dia,
+        layers=lay,
+        disks=disks,
+        meta_file=get_meta_file(city, size),
+        chosen_data=CHOSEN_DATA,
+    )
+    hashes = _compute_hashes(Disk, measure)
+    hashed_similarity = compute_hash_similarity(
+        hashes=hashes, scheme="disk", measure=measure, parallel=False
+    )
+
+    hashed_array = _mirrorDiagonal(hashed_similarity).flatten()
+    true_sim_array = _mirrorDiagonal(
+        pd.read_csv(
+            f"../{OUTPUT_FOLDER}/{city.lower()}-{reference}-{size}.csv",
+            index_col=0,
+        )
+    ).flatten()
+    corr = np.corrcoef(hashed_array, true_sim_array)[0][1]
+    return corr
+
+
+def _compute_disk_sizes(
+    city: str,
+    layer: int,
+    resolution: int,
+    disks: int = 100,
+    measure: str = "dtw",
+    reference: str = "dtw",
+    sizes: list[int] = [],
+    parallel_jobs: int = 10,
+):
+    """oweee"""
+    pool = Pool()
+    results = []
+    for size in sizes:
+        print(f"Size: {size} for {city}")
+        corrs = pool.map(
+            _fun_wrapper_corr_sizes,
+            [
+                (city, resolution, layer, disks, measure, reference, size)
+                for _ in range(parallel_jobs)
+            ],
+        )
+        corr = np.average(np.array(corrs))
+        std = np.std(np.array(corrs))
+        results.append([corr, size, std, size, city])
+    return results
+
+
+def plot_disk_sizes(
+    layer: int,
+    resolution: float,
+    number_of_disks: int,
+    sizes: list[int],
+    measure: str = "dtw",
+    reference: str = "dtw",
+    parallel_jobs: int = 10,
+):
+    """oweee"""
+    all_results = []
+    datasets = ["porto", "rome", "kolumbus"]
+    for city in datasets:
+        results = _compute_disk_sizes(
+            city=city,
+            layer=layer,
+            resolution=resolution,
+            disks=number_of_disks,
+            sizes=sizes,
+            measure=measure,
+            reference=reference,
+            parallel_jobs=parallel_jobs,
+        )
+        all_results.append(results)
+
+    fig, ax1 = plt.subplots(figsize=(10, 8), dpi=300)
+    ax2 = ax1.twinx()
+    cmap = plt.get_cmap("gist_ncar")
+    # N = len(results)
+
+    for i in range(len(all_results)):
+        correlations = [element[0] for element in all_results[i]]
+        stds = [element[2] for element in all_results[i]]
+        # sizes = [element[3] for element in dataset]
+        city = datasets[i]
+
+        ax1.plot(
+            sizes,
+            correlations,
+            c=COLOR_MAP_DATASET[city],
+            label=f"{city.upper()}",
+            lw=2,
+        )
+        ax2.plot(sizes, stds, c=COLOR_MAP_DATASET[city], alpha=0.3, ls="dashed")
+
+    # Now styling the figure
+    ax1.legend(
+        loc="lower right",
+        ncols=5,
+        fontsize=16,
+        labelspacing=0.2,
+        borderpad=0.2,
+        handlelength=1,
+        handletextpad=0.5,
+        borderaxespad=0.2,
+        columnspacing=1,
+    )
+    ax2.text(
+        0.99,
+        0.99,
+        f"{datasets}: {measure.upper()} (Disk) - {reference.upper()} True\nSubsets: {str(sizes)}\nRes: {str(resolution)} km\nLayers: {layer}\nDisks: {number_of_disks} ",
+        ha="right",
+        va="top",
+        transform=ax2.transAxes,
+        fontsize=12,
+        color="black",
+    )
+    ax1.set_xlabel("Number of trajectories", fontsize=18)
+    ax1.set_ylabel("Pearson correlation coefficient - Solid lines", fontsize=18)
+    ax2.set_ylabel("Standard deviation - Dashed lines", fontsize=16)
+    ax1.set_ylim([0, 1.0])
+    # Dynamic y-axis limits based on values
+    ax2.set_ylim([0, ax2.get_ylim()[1] * 2])
+    ax2.set_xlim([sizes[0], sizes[-1]])
     ax1.tick_params(axis="both", which="major", labelsize=16)
     ax2.tick_params(axis="both", which="major", labelsize=16)
 
