@@ -9,7 +9,10 @@ import os
 COLOR_GRID_HASH = "#69b3a2"
 COLOR_DISK_HASH = "violet"
 COLOR_TRUE = "#3399e6"
-COLORS = ["#69b3a2", "#ffcc99", "#ff6666", "#c2c2f0", "#ffb3e6", "#c2f0c2", "#ff6666"]
+# COLORS = ["#69b3a2", "#ffcc99", "#ff6666", "#c2c2f0", "#ffb3e6", "#c2f0c2", "#ff6666"]
+
+# Bare for å sammenligne Cython og Python
+COLORS = ["#3399e6", "#69b3a2", "#69b3a2", "violet", "violet", "#ff6666", "#ff6666"]
 
 NUMBER_OF_TRAJECTORIES = 500
 
@@ -104,9 +107,9 @@ def draw_hash_similarity_runtime_logarithmic(
     rd = reference_data.mean(axis=0)
     r_sizes = rd.index.to_numpy(int)
     r_runtimes = rd.values
-    ax.plot(r_sizes, r_runtimes, "or", markersize=8)
+    # ax.plot(r_sizes, r_runtimes, "or", markersize=8)
 
-    degree = 2
+    degree = 10
     example_hash_timing_data = pd.read_csv(list(paths_hashes.keys())[0], index_col=0)
     example_hash_mean_timing = example_hash_timing_data.mean(axis=0)
     example_hash_data_size = example_hash_mean_timing.index.to_numpy(int)
@@ -119,7 +122,8 @@ def draw_hash_similarity_runtime_logarithmic(
         [p(n) for n in example_hash_data_size],
         color=COLOR_TRUE,
         lw=3,
-        label="True similarity",
+        # label="True similarity",
+        label="True Python",
     )
     index = 0
     for key, value in paths_hashes.items():
@@ -127,16 +131,24 @@ def draw_hash_similarity_runtime_logarithmic(
         hash_mean_timing = hash_timing_data.mean(axis=0)
         hash_data_sizes = hash_mean_timing.index.to_numpy(int)
         hash_data_runtimes = hash_mean_timing.values
-        ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
-        degree = 5
+        # ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
+        # Degree kontrollerer nøyaktigheten til polynomet. Vil gjerne ha så lav som mulig for at kurven ikke skal gå så mye opp og ned, men samtidig så høyt at den representerer alle punktene riktig nok.
+        degree = 9
         hash_coeffs = np.polyfit(hash_data_sizes, hash_data_runtimes, degree)
         hash_p = np.poly1d(hash_coeffs)
+
+        # NOTE Bare for å sammenligne Cython og Python.
+        if "_cy_" in key:
+            linestyle = "dashed"
+        else:
+            linestyle = "solid"
         ax.plot(
             hash_data_sizes,
             [hash_p(n) for n in hash_data_sizes],
             color=COLORS[index],
             lw=3,
             label=value,
+            linestyle=linestyle,
         )
         index += 1
 
@@ -295,7 +307,7 @@ def draw_similarity_correlation(
 if __name__ == "__main__":
     # Porto
     dtw_true_sim_porto_runtime = os.path.abspath(
-        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-250_end-3000_step-250.csv"
+        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_py_porto_start-100_end-1000_step-100.csv"
     )
 
     draw_hash_similarity_runtime_logarithmic(
@@ -303,17 +315,20 @@ if __name__ == "__main__":
         measure="dtw",
         paths_hashes={
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-0.2_porto_start-250_end-3000_step-250.csv"
-            ): "Grid, layers: 4, res: 0.2",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
+            ): "True Cython",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-1.0_porto_start-250_end-3000_step-250.csv"
-            ): "Grid, layers: 5, res: 1.0",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_py_layers-5_res-1.6_porto_start-100_end-1000_step-100.csv"
+            ): "Grid Python",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-1_res-1_porto_start-250_end-3000_step-250.csv"
-            ): "Grid, layers: 1, res: 1.0",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-1.6_porto_start-100_end-1000_step-100.csv"
+            ): "Grid Cython",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-1_res-0.2_porto_start-250_end-3000_step-250.csv"
-            ): "Grid, layers: 1, res: 0.2",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_py_layers-4_diameter-2.2_disks-60_porto_start-100_end-1000_step-100.csv"
+            ): "Disk Python",
+            os.path.abspath(
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_layers-4_diameter-2.2_disks-60_porto_start-100_end-1000_step-100.csv"
+            ): "Disk Cython",
         },
         path_to_reference=dtw_true_sim_porto_runtime,
     )
