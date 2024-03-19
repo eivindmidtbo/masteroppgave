@@ -73,22 +73,10 @@ P_DTW = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
-P_FRE = _mirrorDiagonal(
-    pd.read_csv(
-        f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
-        index_col=0,
-    )
-).flatten()
 
 R_DTW = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-dtw-{NUMBER_OF_TRAJECTORIES}.csv",
-        index_col=0,
-    )
-).flatten()
-R_FRE = _mirrorDiagonal(
-    pd.read_csv(
-        f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
         index_col=0,
     )
 ).flatten()
@@ -98,23 +86,35 @@ K_DTW = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
-K_FRE = _mirrorDiagonal(
-    pd.read_csv(
-        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
-        index_col=0,
-    )
-).flatten()
+# P_FRE = _mirrorDiagonal(
+#     pd.read_csv(
+#         f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
+#         index_col=0,
+#     )
+# ).flatten()
+# R_FRE = _mirrorDiagonal(
+#     pd.read_csv(
+#         f"../{SIMILARITIES_OUTPUT_FOLDER_ROME}/rome-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
+#         index_col=0,
+#     )
+# ).flatten()
+# K_FRE = _mirrorDiagonal(
+#     pd.read_csv(
+#         f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
+#         index_col=0,
+#     )
+# ).flatten()
 NULL_TEST_CSV = _mirrorDiagonal(
     pd.read_csv("../benchmarks/true_similarities/null-testset.csv", index_col=0)
 ).flatten()
 
 REFERENCE = {
     "portodtw": P_DTW,
-    "portofrechet": P_FRE,
     "romedtw": R_DTW,
-    "romefrechet": R_FRE,
     "kolumbusdtw": K_DTW,
-    "kolumbusfrechet": K_FRE,
+    # "portofrechet": P_FRE,
+    # "romefrechet": R_FRE,
+    # "kolumbusfrechet": K_FRE,
     "null_testset": NULL_TEST_CSV,
 }
 
