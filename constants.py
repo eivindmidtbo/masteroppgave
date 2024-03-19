@@ -12,12 +12,11 @@ R_MIN_LON = 12.44
 R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
-# TODO - Decide on coordinates to use for kolumbus
 # Kolumbus coordinates
-K_MAX_LON = 5.80
-K_MIN_LON = 5.70
-K_MAX_LAT = 59.10
-K_MIN_LAT = 58.85
+K_MAX_LON = 5.85
+K_MIN_LON = 5.53
+K_MAX_LAT = 59.02
+K_MIN_LAT = 58.71
 
 ### DATA PATHS ###
 
