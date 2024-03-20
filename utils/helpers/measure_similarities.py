@@ -146,6 +146,9 @@ def compute_hashed_similarity_runtimes(
     data_step_size: int = 100,
     iterations: int = 3,  # New parameter for specifying the number of iterations
 ):
+    # Set this to true if you want to save the hash generation times to a file
+    save_has_generation = False
+
     data_sets = range(data_start_size, data_end_size + 1, data_step_size)
     output_folder = "../benchmarks/similarities_runtimes/"
 
@@ -246,9 +249,10 @@ def compute_hashed_similarity_runtimes(
             ],
         }
     )
-    hash_generation_df.to_csv(
-        os.path.join(output_folder, hash_generation_file_name), index=False
-    )
+    if save_has_generation:
+        hash_generation_df.to_csv(
+            os.path.join(output_folder, hash_generation_file_name), index=False
+        )
 
 
 def compute_grid_similarity_runtimes(
