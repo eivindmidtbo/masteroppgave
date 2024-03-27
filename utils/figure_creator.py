@@ -107,7 +107,7 @@ def draw_hash_similarity_runtime_logarithmic(
     rd = reference_data.mean(axis=0)
     r_sizes = rd.index.to_numpy(int)
     r_runtimes = rd.values
-    # ax.plot(r_sizes, r_runtimes, "or", markersize=8)
+    ax.plot(r_sizes, r_runtimes, "or", markersize=8)
 
     degree = 10
     example_hash_timing_data = pd.read_csv(list(paths_hashes.keys())[0], index_col=0)
@@ -123,7 +123,7 @@ def draw_hash_similarity_runtime_logarithmic(
         color=COLOR_TRUE,
         lw=3,
         # label="True similarity",
-        label="True Python",
+        label="True Porto",
     )
     index = 0
     for key, value in paths_hashes.items():
@@ -131,14 +131,14 @@ def draw_hash_similarity_runtime_logarithmic(
         hash_mean_timing = hash_timing_data.mean(axis=0)
         hash_data_sizes = hash_mean_timing.index.to_numpy(int)
         hash_data_runtimes = hash_mean_timing.values
-        # ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
+        ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
         # Degree kontrollerer nøyaktigheten til polynomet. Vil gjerne ha så lav som mulig for at kurven ikke skal gå så mye opp og ned, men samtidig så høyt at den representerer alle punktene riktig nok.
         degree = 9
         hash_coeffs = np.polyfit(hash_data_sizes, hash_data_runtimes, degree)
         hash_p = np.poly1d(hash_coeffs)
 
         # NOTE Bare for å sammenligne Cython og Python.
-        if "_cy_" in key:
+        if "true" not in key:
             linestyle = "dashed"
         else:
             linestyle = "solid"
@@ -307,28 +307,31 @@ def draw_similarity_correlation(
 if __name__ == "__main__":
     # Porto
     dtw_true_sim_porto_runtime = os.path.abspath(
-        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_py_porto_start-100_end-1000_step-100.csv"
+        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
     )
 
     draw_hash_similarity_runtime_logarithmic(
-        city="porto",
+        city="Grid",
         measure="dtw",
         paths_hashes={
+            # os.path.abspath(
+            #     "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
+            # ): "True Porto",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
-            ): "True Cython",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_porto_start-100_end-1000_step-100.csv"
+            ): "Grid Porto",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_py_layers-5_res-1.6_porto_start-100_end-1000_step-100.csv"
-            ): "Grid Python",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_rome_start-100_end-1000_step-100.csv"
+            ): "True Rome",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-5_res-1.6_porto_start-100_end-1000_step-100.csv"
-            ): "Grid Cython",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_rome_start-100_end-1000_step-100.csv"
+            ): "Grid Rome",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_py_layers-4_diameter-2.2_disks-60_porto_start-100_end-1000_step-100.csv"
-            ): "Disk Python",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_kolumbus_start-100_end-1000_step-100.csv"
+            ): "True Kolumbus",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_disk_dtw_cy_layers-4_diameter-2.2_disks-60_porto_start-100_end-1000_step-100.csv"
-            ): "Disk Cython",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_kolumbus_start-100_end-1000_step-100.csv"
+            ): "Grid Kolumbus",
         },
         path_to_reference=dtw_true_sim_porto_runtime,
     )
