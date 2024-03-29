@@ -62,8 +62,9 @@ def compute_true_similarity_runtimes(
     print("data_end_size", data_end_size)
     print("data sets", data_sets)
     output_folder = "../benchmarks/similarities_runtimes/"
-    file_name = f"similarity_runtimes_{measure}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
-
+    # Check if measure contains string "grid" or "disk" to adjust file_name generation
+    scheme = "grid" if "grid" in measure else "disk"
+    file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
     # Initialize a list to hold the DataFrames from each iteration
     dfs_iterations = []
 
@@ -157,17 +158,15 @@ def compute_hashed_similarity_runtimes(
 
     data_sets = range(data_start_size, data_end_size + 1, data_step_size)
     output_folder = "../benchmarks/similarities_runtimes/"
-
+    scheme = "grid" if "grid" in measure else "disk"
     # Adjust file_name generation based on measure
     if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
-        file_name = f"similarity_runtimes_{measure}_layers-{layers}_diameter-{diameter}_disks-{disks}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+        file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_diameter-{diameter}_disks-{disks}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
     elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
         if use_fixed_dataset_size:
-            file_name = (
-                f"similarity_runtimes_{measure}_layers-{layers}_{city}_size-{size}.csv"
-            )
+            file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_{city}_size-{size}.csv"
         else:
-            file_name = f"similarity_runtimes_{measure}_layers-{layers}_res-{res}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+            file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_res-{res}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
 
     # Initialize a list to hold the DataFrames from each iteration
     dfs_iterations = []
