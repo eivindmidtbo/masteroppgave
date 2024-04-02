@@ -161,7 +161,10 @@ def compute_hashed_similarity_runtimes(
     scheme = "grid" if "grid" in measure else "disk"
     # Adjust file_name generation based on measure
     if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
-        file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_diameter-{diameter}_disks-{disks}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+        if use_fixed_dataset_size:
+            file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_diameter-{diameter}_disks-{disks}_{city}_size-{size}.csv"
+        else:
+            file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_diameter-{diameter}_disks-{disks}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
     elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
         if use_fixed_dataset_size:
             file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_layers-{layers}_{city}_size-{size}.csv"
@@ -178,10 +181,16 @@ def compute_hashed_similarity_runtimes(
     for iteration in range(iterations):  # Loop through each iteration
         print(f"Iteration {iteration+1}/{iterations}")
         if use_fixed_dataset_size:
-            df = pd.DataFrame(
-                index=[f"run_{x+1}" for x in range(parallel_jobs)],
-                columns=[x for x in resolutions],
-            )
+            if measure in ["grid_dtw_cy", "grid_frechet_cy"]:
+                df = pd.DataFrame(
+                    index=[f"run_{x+1}" for x in range(parallel_jobs)],
+                    columns=[x for x in resolutions],
+                )
+            elif measure in ["disk_dtw_cy", "disk_frechet_cy"]:
+                df = pd.DataFrame(
+                    index=[f"run_{x+1}" for x in range(parallel_jobs)],
+                    columns=[x for x in range(1, 6)],
+                )
         else:
             df = pd.DataFrame(
                 index=[f"run_{x+1}" for x in range(parallel_jobs)],
@@ -228,28 +237,34 @@ def compute_hashed_similarity_runtimes(
 
         # NOTE - Fixed datasize with increasing resolution
         else:
-            for res in resolutions:
-                print(f"Resolution {res}", end="\r")
-                with Pool(parallel_jobs) as pool:
-                    if measure in ["grid_dtw_cy", "grid_frechet_cy"]:
+            if measure in ["grid_dtw_cy", "grid_frechet_cy"]:
+                for res in resolutions:
+                    print(f"Resolution {res}", end="\r")
+                    with Pool(parallel_jobs) as pool:
                         hashes = compute_grid_hashes(
                             city=city, res=res, layers=layers, size=size
                         )
-                    elif measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
+                        execution_times = pool.map(
+                            sim[measure], [hashes for _ in range(parallel_jobs)]
+                        )
+                    df[res] = [element[0] for element in execution_times]
+            elif measure in ["disk_dtw_cy", "disk_frechet_cy"]:
+                for layer in range(1, 6):
+                    print(f"Layer {layer}", end="\r")
+                    with Pool(parallel_jobs) as pool:
                         hashes = compute_disk_hashes(
                             city=city,
                             diameter=diameter,
-                            layers=layers,
+                            layers=layer,
                             disks=disks,
                             size=size,
                         )
-                    else:
-                        raise ValueError("Invalid measure")
-                    execution_times = pool.map(
-                        sim[measure], [hashes for _ in range(parallel_jobs)]
-                    )
-
-                df[res] = [element[0] for element in execution_times]
+                        execution_times = pool.map(
+                            sim[measure], [hashes for _ in range(parallel_jobs)]
+                        )
+                    df[layer] = [element[0] for element in execution_times]
+            else:
+                raise ValueError("Invalid measure")
 
         # Append the DataFrame of this iteration to the list
         dfs_iterations.append(df)
