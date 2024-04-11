@@ -4,15 +4,28 @@ from matplotlib import pyplot as plt
 from matplotlib import colors
 import pandas as pd
 import numpy as np
-import os
+import os, sys
+
+currentdir = os.path.dirname(os.path.abspath("__file__"))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+from constants import COLOR_MAP_DATASET
 
 COLOR_GRID_HASH = "#69b3a2"
 COLOR_DISK_HASH = "violet"
-COLOR_TRUE = "#3399e6"
+COLOR_TRUE = COLOR_MAP_DATASET["kolumbus"]
 # COLORS = ["#69b3a2", "#ffcc99", "#ff6666", "#c2c2f0", "#ffb3e6", "#c2f0c2", "#ff6666"]
 
 # Bare for å sammenligne Cython og Python
-COLORS = ["#3399e6", "#69b3a2", "#69b3a2", "violet", "violet", "#ff6666", "#ff6666"]
+COLORS = [
+    COLOR_MAP_DATASET["kolumbus"],
+    COLOR_MAP_DATASET["rome"],
+    COLOR_MAP_DATASET["rome"],
+    COLOR_MAP_DATASET["porto"],
+    COLOR_MAP_DATASET["porto"],
+    "#ff6666",
+    "#ff6666",
+]
 
 NUMBER_OF_TRAJECTORIES = 500
 
@@ -107,7 +120,7 @@ def draw_hash_similarity_runtime_logarithmic(
     rd = reference_data.mean(axis=0)
     r_sizes = rd.index.to_numpy(int)
     r_runtimes = rd.values
-    ax.plot(r_sizes, r_runtimes, "or", markersize=8)
+    ax.plot(r_sizes, r_runtimes, "xr", markersize=8, color="black")
 
     degree = 10
     example_hash_timing_data = pd.read_csv(list(paths_hashes.keys())[0], index_col=0)
@@ -123,7 +136,9 @@ def draw_hash_similarity_runtime_logarithmic(
         color=COLOR_TRUE,
         lw=3,
         # label="True similarity",
-        label="True Porto",
+        label="Kol DTW",
+        linestyle="solid",
+        alpha=0.5,
     )
     index = 0
     for key, value in paths_hashes.items():
@@ -131,14 +146,14 @@ def draw_hash_similarity_runtime_logarithmic(
         hash_mean_timing = hash_timing_data.mean(axis=0)
         hash_data_sizes = hash_mean_timing.index.to_numpy(int)
         hash_data_runtimes = hash_mean_timing.values
-        ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=12)
+        ax.plot(hash_data_sizes, hash_data_runtimes, "xr", markersize=8, color="black")
         # Degree kontrollerer nøyaktigheten til polynomet. Vil gjerne ha så lav som mulig for at kurven ikke skal gå så mye opp og ned, men samtidig så høyt at den representerer alle punktene riktig nok.
         degree = 9
         hash_coeffs = np.polyfit(hash_data_sizes, hash_data_runtimes, degree)
         hash_p = np.poly1d(hash_coeffs)
 
         # NOTE Bare for å sammenligne Cython og Python.
-        if "true" not in key:
+        if "dtw" not in key:
             linestyle = "dashed"
         else:
             linestyle = "solid"
@@ -149,6 +164,7 @@ def draw_hash_similarity_runtime_logarithmic(
             lw=3,
             label=value,
             linestyle=linestyle,
+            alpha=0.5,
         )
         index += 1
 
@@ -307,31 +323,28 @@ def draw_similarity_correlation(
 if __name__ == "__main__":
     # Porto
     dtw_true_sim_porto_runtime = os.path.abspath(
-        "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
+        "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/kolumbus/similarity_runtimes_disk_dtw_cy_layers-2_diameter-1.3_disks-300_kolumbus_start-100_end-1000_step-100.csv"
     )
 
     draw_hash_similarity_runtime_logarithmic(
-        city="Grid",
-        measure="dtw",
+        city="Disk",
+        measure="DTW & Fréchet",
         paths_hashes={
-            # os.path.abspath(
-            #     "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_porto_start-100_end-1000_step-100.csv"
-            # ): "True Porto",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_porto_start-100_end-1000_step-100.csv"
-            ): "Grid Porto",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/kolumbus/similarity_runtimes_disk_frechet_cy_layers-2_diameter-1.3_disks-300_kolumbus_start-100_end-1000_step-100.csv"
+            ): "Kol Fréchet",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_rome_start-100_end-1000_step-100.csv"
-            ): "True Rome",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/rome/similarity_runtimes_disk_dtw_cy_layers-4_diameter-1.8_disks-40_rome_start-100_end-1000_step-100.csv"
+            ): "Rome DTW",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_rome_start-100_end-1000_step-100.csv"
-            ): "Grid Rome",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/rome/similarity_runtimes_disk_frechet_cy_layers-1_diameter-1.8_disks-40_rome_start-100_end-1000_step-100.csv"
+            ): "Rome Fréchet",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_true_dtw_cy_kolumbus_start-100_end-1000_step-100.csv"
-            ): "True Kolumbus",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/porto/similarity_runtimes_disk_dtw_cy_layers-5_diameter-1.8_disks-50_porto_start-100_end-1000_step-100.csv"
+            ): "Porto DTW",
             os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/similarity_runtimes_grid_dtw_cy_layers-4_res-1.8_kolumbus_start-100_end-1000_step-100.csv"
-            ): "Grid Kolumbus",
+                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/porto/similarity_runtimes_disk_frechet_cy_layers-1_diameter-1.8_disks-50_porto_start-100_end-1000_step-100.csv"
+            ): "Porto Fréchet",
         },
         path_to_reference=dtw_true_sim_porto_runtime,
     )
