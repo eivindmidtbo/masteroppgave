@@ -31,14 +31,26 @@ def py_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
 
     M = np.zeros((num_trajectories, num_trajectories))
 
+    total_frechet = 0
+    count = 0
+
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
             X = np.array(sorted_trajectories[traj_i])
             Y = np.array(sorted_trajectories[traj_j])
             frechet = p_frechet(X, Y)
             M[i, j] = frechet
+            total_frechet += frechet
+            count += 1
             if i == j:
                 break
+
+    if count > 0:
+        average_frechet = total_frechet / count
+    else:
+        average_frechet = float("nan")  # Avoid division by zero
+
+    print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
@@ -78,6 +90,8 @@ def cy_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     num_trajectories = len(sorted_trajectories)
 
     M = np.zeros((num_trajectories, num_trajectories))
+    total_frechet = 0
+    count = 0
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
@@ -85,8 +99,17 @@ def cy_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
             Y = np.array(sorted_trajectories[traj_j])
             frech = c_frechet(X, Y)
             M[i, j] = frech
+            total_frechet += frech
+            count += 1
             if i == j:
                 break
+
+    if count > 0:
+        average_frechet = total_frechet / count
+    else:
+        average_frechet = float("nan")  # Avoid division by zero
+
+    print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()

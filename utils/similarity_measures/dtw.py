@@ -64,6 +64,8 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     num_trajectoris = len(sorted_trajectories)
 
     M = np.zeros((num_trajectoris, num_trajectoris))
+    total_dtw_distance = 0
+    count = 0
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
@@ -71,8 +73,16 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
             Y = np.array(sorted_trajectories[traj_j])
             dtw = c_dtw(X, Y)
             M[i, j] = dtw
+            total_dtw_distance += dtw
+            count += 1
             if i == j:
                 break
+    if count > 0:
+        average_dtw = total_dtw_distance / count
+    else:
+        average_dtw = float("nan")  # Avoid division by zero
+
+    print(f"Average DTW score for all pairs: {average_dtw}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
