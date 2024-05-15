@@ -1,6 +1,6 @@
 # masteroppgave
 
-Repo for masteroppgave
+Bruk for masteroppgaven IT3920 vår 2024 til Joon-Erik Sæther og Endre Moseholm Gilje-Sørnes. Mye er likt fra dette repoet https://github.com/bjorafla/master , og vårt repo er i praksis en fork.
 
 # Setup
 
