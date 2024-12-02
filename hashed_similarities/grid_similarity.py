@@ -105,7 +105,7 @@ def generate_grid_hash_similarity(
     )
 
     return similarities
-
+  
 
 def generate_grid_hash_similarity_coordinates(
     city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
