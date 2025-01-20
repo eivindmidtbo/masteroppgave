@@ -19,7 +19,6 @@ from utils.similarity_measures.distance import compute_hash_similarity, disk_coo
 from constants import (
     PORTO_OUTPUT_FOLDER,
     ROME_OUTPUT_FOLDER,
-    KOLUMBUS_OUTPUT_FOLDER,
     P_MAX_LAT,
     P_MIN_LAT,
     P_MAX_LON,
@@ -28,15 +27,10 @@ from constants import (
     R_MIN_LAT,
     R_MAX_LON,
     R_MIN_LON,
-    K_MAX_LAT,
-    K_MIN_LAT,
-    K_MAX_LON,
-    K_MIN_LON,
 )
 
 PORTO_CHOSEN_DATA = f"../{PORTO_OUTPUT_FOLDER}/"
 ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
-KOLUMBUS_CHOSEN_DATA = f"../{KOLUMBUS_OUTPUT_FOLDER}/"
 
 
 def PORTO_META(size: int):
@@ -45,10 +39,6 @@ def PORTO_META(size: int):
 
 def ROME_META(size: int):
     return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
-
-
-def KOLUMBUS_META(size: int):
-    return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
 
 
 def _constructDisk(
@@ -80,19 +70,6 @@ def _constructDisk(
             diameter,
             ROME_META(size),
             ROME_CHOSEN_DATA,
-        )
-    elif city.lower() == "kolumbus":
-        return DiskLSH(
-            f"GDK_{layers}-{'{:.2f}'.format(diameter)}",
-            K_MIN_LAT,
-            K_MAX_LAT,
-            K_MIN_LON,
-            K_MAX_LON,
-            disks,
-            layers,
-            diameter,
-            KOLUMBUS_META(size),
-            KOLUMBUS_CHOSEN_DATA,
         )
     else:
         raise ValueError("City argument must be either porto or rome")

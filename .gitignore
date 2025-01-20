@@ -217,11 +217,6 @@ dataset/porto/*.csv
 dataset/porto/output/*.txt
 !dataset/porto/output/META-*.txt
 
-dataset/kolumbus/*.csv
-dataset/kolumbus/output/*.txt
-!dataset/kolumbus/output/META-*.txt
-
-
 heatmaps/output/porto/*.html
 heatmaps/output/rome/*.html
 
@@ -240,8 +235,6 @@ dataset/hashed_data/disk/rome/META-*.txt
 dataset/hashed_data/grid/rome/*.txt
 dataset/hashed_data/grid/rome/META-*.txt
 
-dataset/hashed_data/disk/kolumbus/*.txt
-dataset/hashed_data/disk/kolumbus/META-*.txt
 
-dataset/hashed_data/grid/kolumbus/*.txt
-dataset/hashed_data/grid/kolumbus/META-*.txt
+visualization/output/porto/*
+visualization/output/rome/*

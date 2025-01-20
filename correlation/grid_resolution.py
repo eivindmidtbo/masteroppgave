@@ -24,7 +24,6 @@ from constants import (
     COLOR_MAP_DATASET,
     PORTO_OUTPUT_FOLDER,
     ROME_OUTPUT_FOLDER,
-    KOLUMBUS_OUTPUT_FOLDER,
     P_MAX_LAT,
     P_MIN_LAT,
     P_MAX_LON,
@@ -33,11 +32,6 @@ from constants import (
     R_MIN_LAT,
     R_MAX_LON,
     R_MIN_LON,
-    K_MAX_LAT,
-    K_MIN_LAT,
-    K_MAX_LON,
-    K_MIN_LON,
-    SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS,
     SIMILARITIES_OUTPUT_FOLDER_PORTO,
     SIMILARITIES_OUTPUT_FOLDER_ROME,
     NUMBER_OF_TRAJECTORIES,
@@ -51,10 +45,6 @@ PORTO_META_FILE = f"../{PORTO_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
 
 ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
 ROME_META_FILE = f"../{ROME_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
-
-KOLUMBUS_CHOSEN_DATA = f"../{KOLUMBUS_OUTPUT_FOLDER}/"
-KOLUMBUS_META_FILE = f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
-
 
 # Defining helper functions:
 def _mirrorDiagonal(M: np.ndarray) -> np.ndarray:
@@ -78,12 +68,7 @@ R_DTW = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
-K_DTW = _mirrorDiagonal(
-    pd.read_csv(
-        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-dtw-{NUMBER_OF_TRAJECTORIES}.csv",
-        index_col=0,
-    )
-).flatten()
+
 P_FRE = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
@@ -97,20 +82,12 @@ R_FRE = _mirrorDiagonal(
     )
 ).flatten()
 
-K_FRE = _mirrorDiagonal(
-    pd.read_csv(
-        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
-        index_col=0,
-    )
-).flatten()
 
 REFERENCE = {
     "portodtw": P_DTW,
     "romedtw": R_DTW,
-    "kolumbusdtw": K_DTW,
     "portofrechet": P_FRE,
     "romefrechet": R_FRE,
-    "kolumbusfrechet": K_FRE,
 }
 
 
@@ -119,8 +96,6 @@ def get_folder_paths(city: str) -> tuple:
         return SIMILARITIES_OUTPUT_FOLDER_PORTO, PORTO_CHOSEN_DATA
     elif city.lower() == "rome":
         return SIMILARITIES_OUTPUT_FOLDER_ROME, ROME_CHOSEN_DATA
-    elif city.lower() == "kolumbus":
-        return SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS, KOLUMBUS_CHOSEN_DATA
 
 
 def get_meta_file(city: str, size: int) -> str:
@@ -128,9 +103,6 @@ def get_meta_file(city: str, size: int) -> str:
         return f"../{PORTO_OUTPUT_FOLDER}/META-{size}.txt"
     elif city.lower() == "rome":
         return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
-    elif city.lower() == "kolumbus":
-        return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
-
 
 def _constructGrid(
     city: str, res: float, layers: int, meta_file: str, chosen_data: str
@@ -155,18 +127,6 @@ def _constructGrid(
             R_MAX_LAT,
             R_MIN_LON,
             R_MAX_LON,
-            res,
-            layers,
-            meta_file,
-            chosen_data,
-        )
-    elif city.lower() == "kolumbus":
-        return GridLSH(
-            f"GK_{layers}-{'{:.2f}'.format(res)}",
-            K_MIN_LAT,
-            K_MAX_LAT,
-            K_MIN_LON,
-            K_MAX_LON,
             res,
             layers,
             meta_file,
@@ -387,7 +347,7 @@ def plot_grid_sizes(
     """Visualises the correlation values based on various dataset sizes for all datasets with fixed grid and resolution"""
 
     all_results = []
-    datasets = ["porto", "rome", "kolumbus"]
+    datasets = ["porto", "rome"]
     for city in datasets:
         results = _compute_grid_sizes(
             city=city,

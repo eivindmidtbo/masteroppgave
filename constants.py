@@ -1,4 +1,4 @@
-### COORDINATES ###
+### COORDINATES ### --> IKKE RØR
 
 # Porto coordinates
 P_MAX_LON = -8.57
