@@ -290,7 +290,7 @@ class DiskLSH(LSHInterface):
         return trees
 
     def _create_trajectory_hash(self, trajectory: list[list[float]]) -> list[list[str]]:
-        """Creates a hash for one trajectory for all layers. Returns it as a alist of length layers with a list of hashed point for each layer"""
+        """Creates a hash for one trajectory for all layers. Returns it as a a list of length layers with a list of hashed point for each layer"""
         hashes = []
         radius = td.get_latitude_difference(self.diameter / 2)
         for layer in self.disks.keys():

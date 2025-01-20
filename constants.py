@@ -17,6 +17,7 @@ R_MIN_LAT = 41.88
 
 # Porto data paths
 PORTO_OUTPUT_FOLDER = "dataset/porto/output"
+PORTO_MAP_OUTPUT_FOLDER = "output/porto"
 SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/true_similarities/porto"
 
 # Rome data paths
