@@ -43,5 +43,5 @@ COLOR_MAP = {
 COLOR_MAP_DATASET = {
     "porto": "blue",
     "rome": "green",
-    "kolumbus": "red",
+    
 }
