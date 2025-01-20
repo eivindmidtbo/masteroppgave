@@ -12,16 +12,6 @@ R_MIN_LON = 12.44
 R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
-# Kolumbus coordinates
-K_MAX_LON = 5.76
-K_MIN_LON = 5.68
-K_MAX_LAT = 59.01
-K_MIN_LAT = 58.93
-# K_MAX_LON = 5.85
-# K_MIN_LON = 5.53
-# K_MAX_LAT = 59.02
-# K_MIN_LAT = 58.71
-
 
 ### DATA PATHS ###
 
@@ -33,11 +23,10 @@ SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/true_similarities/porto"
 ROME_OUTPUT_FOLDER = "dataset/rome/output"
 SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/true_similarities/rome"
 
-# Kolumbus data paths
-KOLUMBUS_OUTPUT_FOLDER = "dataset/kolumbus/output"
-SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS = "benchmarks/true_similarities/kolumbus"
 
 NUMBER_OF_TRAJECTORIES = 100
+
+
 COLOR_MAP = {
     0: "red",
     1: "blue",
