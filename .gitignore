@@ -236,5 +236,5 @@ dataset/hashed_data/grid/rome/*.txt
 dataset/hashed_data/grid/rome/META-*.txt
 
 
-visualization/output/porto/*
-visualization/output/rome/*
+!visualization/output/porto/*
+!visualization/output/rome/*
