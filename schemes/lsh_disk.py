@@ -3,9 +3,14 @@ File for a disk-based LSH scheme class in python.
 
 Takes min/max lat/lon as argument -> Could potentially make this integrated in the future
 """
+import sys, os
+currentdir = os.path.dirname(os.path.abspath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 import random
-import sys, os
+import timeit as ti
+import time
 
 from matplotlib import pyplot as plt
 from matplotlib import lines
@@ -13,24 +18,14 @@ from matplotlib import lines
 from colorama import init as colorama_init, Fore, Style
 from scipy import spatial as sp
 
-import timeit as ti
-import time
-
-
-currentdir = os.path.dirname(os.path.abspath("__file__"))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
-
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
-
-
 from utils.helpers import trajectory_distance as td
 from utils.helpers import alphabetical_number as an
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
-from .lsh_interface import LSHInterface
 
+from lsh_interface import LSHInterface
 
 class Disk:
     """Class structure for disk-based LSH"""
