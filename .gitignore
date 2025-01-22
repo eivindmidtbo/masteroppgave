@@ -217,10 +217,6 @@ dataset/porto/*.csv
 dataset/porto/output/*.txt
 !dataset/porto/output/META-*.txt
 
-heatmaps/output/porto/*.html
-heatmaps/output/rome/*.html
-
-
 #HASHES
 dataset/hashed_data/disk/porto/*.txt
 dataset/hashed_data/disk/porto/META-*.txt
