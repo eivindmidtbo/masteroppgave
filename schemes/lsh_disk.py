@@ -25,7 +25,8 @@ from utils.helpers import alphabetical_number as an
 from utils.helpers import metafile_handler as mfh
 from utils.helpers import file_handler as fh
 
-from lsh_interface import LSHInterface
+from schemes.lsh_interface import LSHInterface
+
 
 class Disk:
     """Class structure for disk-based LSH"""

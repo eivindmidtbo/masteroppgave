@@ -10,6 +10,8 @@ import os, sys
 currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
+
+
 from schemes.lsh_grid import GridLSH
 
 from utils.similarity_measures.distance import (
