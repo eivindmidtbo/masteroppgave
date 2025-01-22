@@ -26,3 +26,34 @@ Inneholder alt dataset relevant. Metafiler og test filer for trajectories for b√
 Scripts for √• rense og lage datasettene. 
 #### visualization: 
 Inneholder alt av visualisering av data.
+
+
+
+
+## Finding the Project Root Dynamically
+
+You can use the following Python code to dynamically locate the `masteroppgave/root` folder:
+
+```python
+import os
+import sys
+
+def find_project_root(target_folder="masteroppgave"):
+    """Find the absolute path of a folder by searching upward."""
+    currentdir = os.path.abspath(__file__)  # Get absolute script path
+    while True:
+        if os.path.basename(currentdir) == target_folder:
+            return currentdir  # Found the target folder
+        parentdir = os.path.dirname(currentdir)
+        if parentdir == currentdir:  # Stop at filesystem root
+            return None
+        currentdir = parentdir  # Move one level up
+
+# Example usage
+project_root = find_project_root("masteroppgave")
+
+if project_root:
+    sys.path.append(project_root)
+    print(f"Project root found: {project_root}")
+else:
+    raise RuntimeError("Could not find 'masteroppgave' directory")

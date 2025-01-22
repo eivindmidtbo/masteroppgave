@@ -234,6 +234,9 @@ class GridLSH(LSHInterface):
                 )
                 for hash in self.hashes[key][1:]:
                     print(f"\t{Fore.BLUE}{hash}{Style.RESET_ALL}")
+                    
+                    
+
 
 
 if __name__ == "__main__":
@@ -249,3 +252,5 @@ if __name__ == "__main__":
         data_path="/data",
     )
     print(Grid)
+    # grid_lsh.compute_dataset_hashes()  # Compute trajectory hashes
+    # grid_lsh.print_hashes()  # Display computed hashes
