@@ -233,3 +233,4 @@ dataset/hashed_data/grid/rome/META-*.txt
 
 visualization/output/porto/*
 visualization/output/rome/*
+*.html
