@@ -8,13 +8,14 @@ currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
+from computation import disk_similarity
 from utils.similarity_measures import dtw, frechet, hashed_dtw, hashed_frechet
 from utils.similarity_measures.distance import (
     transform_np_numerical_disk_hashes_to_non_np,
 )
 from utils.helpers import file_handler as fh
 from utils.helpers import metafile_handler as mfh
-from hashed_similarities import grid_similarity, disk_similarity
+from hashed_similarities import grid_similarity
 
 
 def get_dataset_path(city: str) -> str:

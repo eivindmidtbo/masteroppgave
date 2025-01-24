@@ -13,12 +13,10 @@ from constants import COLOR_MAP_DATASET
 
 COLOR_GRID_HASH = "#69b3a2"
 COLOR_DISK_HASH = "violet"
-COLOR_TRUE = COLOR_MAP_DATASET["kolumbus"]
 # COLORS = ["#69b3a2", "#ffcc99", "#ff6666", "#c2c2f0", "#ffb3e6", "#c2f0c2", "#ff6666"]
 
 # Bare for å sammenligne Cython og Python
 COLORS = [
-    COLOR_MAP_DATASET["kolumbus"],
     COLOR_MAP_DATASET["rome"],
     COLOR_MAP_DATASET["rome"],
     COLOR_MAP_DATASET["porto"],
@@ -322,17 +320,14 @@ def draw_similarity_correlation(
 
 if __name__ == "__main__":
     # Porto
-    dtw_true_sim_porto_runtime = os.path.abspath(
-        "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/kolumbus/similarity_runtimes_disk_dtw_cy_layers-2_diameter-1.3_disks-300_kolumbus_start-100_end-1000_step-100.csv"
-    )
+    # dtw_true_sim_porto_runtime = os.path.abspath(
+    #     "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/kolumbus/similarity_runtimes_disk_dtw_cy_layers-2_diameter-1.3_disks-300_kolumbus_start-100_end-1000_step-100.csv"
+    # )
 
     draw_hash_similarity_runtime_logarithmic(
         city="Disk",
         measure="DTW & Fréchet",
         paths_hashes={
-            os.path.abspath(
-                "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/kolumbus/similarity_runtimes_disk_frechet_cy_layers-2_diameter-1.3_disks-300_kolumbus_start-100_end-1000_step-100.csv"
-            ): "Kol Fréchet",
             os.path.abspath(
                 "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/rome/similarity_runtimes_disk_dtw_cy_layers-4_diameter-1.8_disks-40_rome_start-100_end-1000_step-100.csv"
             ): "Rome DTW",
@@ -346,5 +341,5 @@ if __name__ == "__main__":
                 "../../prosjektoppgave/benchmarks/similarities_runtimes/disk/porto/similarity_runtimes_disk_frechet_cy_layers-1_diameter-1.8_disks-50_porto_start-100_end-1000_step-100.csv"
             ): "Porto Fréchet",
         },
-        path_to_reference=dtw_true_sim_porto_runtime,
+        # path_to_reference=dtw_true_sim_porto_runtime,
     )
