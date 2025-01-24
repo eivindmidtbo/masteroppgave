@@ -26,7 +26,7 @@ import sys
 
 def find_project_root(target_folder="masteroppgave"):
     """Find the absolute path of a folder by searching upward."""
-    currentdir = os.path.abspath(__file__)  # Get absolute script path
+    currentdir = os.path.abspath("__file__")  # Get absolute script path
     while True:
         if os.path.basename(currentdir) == target_folder:
             return currentdir  # Found the target folder
