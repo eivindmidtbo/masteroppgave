@@ -43,18 +43,18 @@ if project_root:
     print(f"Project root found: {project_root}")
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
-````
+```
 
 ### Folder structure
 
-| Folder Name             | Description |
-|-------------------------|-------------|
-| computation            | All computation             |
-| correlation            | Correlation figures           |
-| dataset               | All datasets and produced hashes           |
-| results_hashed        | Results from computation for hashed data           |
-| results_true          | Results from computation for true data            |
-| schemes               | LSH schemes          |
-| traj-dist-master      | external trajectory similarity library            |
-| utils                 | Helper functions            |
-| visualization         | Visualizations            |
+| **Folder Name**    | **Description**                             |
+| ------------------ | ------------------------------------------- |
+| `computation`      | Contains all computational processes.       |
+| `correlation`      | Stores correlation figures.                 |
+| `dataset`          | Includes all datasets and generated hashes. |
+| `results_hashed`   | Results of computations on hashed data.     |
+| `results_true`     | Results of computations on true data.       |
+| `schemes`          | Contains LSH schemes.                       |
+| `traj-dist-master` | External trajectory similarity library.     |
+| `utils`            | Helper functions.                           |
+| `visualization`    | Includes visualizations.                    |
