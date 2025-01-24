@@ -12,26 +12,6 @@ R_MIN_LON = 12.44
 R_MAX_LAT = 41.93
 R_MIN_LAT = 41.88
 
-
-### DATA PATHS ###
-
-# Porto data paths
-PORTO_OUTPUT_FOLDER = "dataset/porto/output"
-PORTO_OUTPUT_FOLDER_FULL = "/Users/thomasnitsche/Developer/skole/master/masteroppgave/dataset/porto/output/"
-PORTO_MAP_OUTPUT_FOLDER = "output/porto"
-SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/similarities/true/porto"
-SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/similarities/true/porto"
-DTW_SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/similarities/true/porto/dtw"
-FRECHET_SIMILARITIES_OUTPUT_FOLDER_PORTO = "benchmarks/similarities/true/porto/frechet"
-
-# Rome data paths
-ROME_OUTPUT_FOLDER = "dataset/rome/output"
-ROME_OUTPUT_FOLDER_FULL = "/Users/thomasnitsche/Developer/skole/master/masteroppgave/dataset/rome/output/"
-SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/similarities/true/rome"
-DTW_SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/similarities/true/rome/dtw"
-FRECHET_SIMILARITIES_OUTPUT_FOLDER_ROME = "benchmarks/similarities/true/rome/frechet"
-
-
 NUMBER_OF_TRAJECTORIES = 100
 
 
