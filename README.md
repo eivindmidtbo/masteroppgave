@@ -16,20 +16,6 @@ Bruk for masteroppgaven IT3920 vår 2024 til Joon-Erik Sæther og Endre Moseholm
 - Fixed traj-dist package issues by following: https://github.com/bguillouet/traj-dist/issues/28
   - Forced integer division in frechet.pyx as shown in: https://stackoverflow.com/questions/64932145/cython-compile-error-cannot-assign-type-double-to-int-using-mingw64-in-win
 
-
-### Mapper og filer
-
-#### Dataset: 
-Inneholder alt dataset relevant. Metafiler og test filer for trajectories for både porto og rome. 
-
-#### proccesing: 
-Scripts for å rense og lage datasettene. 
-#### visualization: 
-Inneholder alt av visualisering av data.
-
-
-
-
 ## Finding the Project Root Dynamically
 
 You can use the following Python code to dynamically locate the `masteroppgave/root` folder:
@@ -57,3 +43,18 @@ if project_root:
     print(f"Project root found: {project_root}")
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
+````
+
+### Folder structure
+
+| Folder Name             | Description |
+|-------------------------|-------------|
+| computation            | All computation             |
+| correlation            | Correlation figures           |
+| dataset               | All datasets and produced hashes           |
+| results_hashed        | Results from computation for hashed data           |
+| results_true          | Results from computation for true data            |
+| schemes               | LSH schemes          |
+| traj-dist-master      | external trajectory similarity library            |
+| utils                 | Helper functions            |
+| visualization         | Visualizations            |
