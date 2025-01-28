@@ -4,9 +4,24 @@ import time
 import timeit as ti
 import pandas as pd
 
-currentdir = os.path.dirname(os.path.abspath("__file__"))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+def find_project_root(target_folder="masteroppgave"):
+    """Find the absolute path of a folder by searching upward."""
+    currentdir = os.path.abspath("__file__")  # Get absolute script path
+    while True:
+        if os.path.basename(currentdir) == target_folder:
+            return currentdir  # Found the target folder
+        parentdir = os.path.dirname(currentdir)
+        if parentdir == currentdir:  # Stop at filesystem root
+            return None
+        currentdir = parentdir  # Move one level up
+
+project_root = find_project_root("masteroppgave")
+
+if project_root:
+    sys.path.append(project_root)
+    print(f"Project root found: {project_root}")
+else:
+    raise RuntimeError("Could not find 'masteroppgave' directory")
 
 from computation import disk_similarity
 from utils.similarity_measures import dtw, frechet, hashed_dtw, hashed_frechet
@@ -15,11 +30,14 @@ from utils.similarity_measures.distance import (
 )
 from utils.helpers import file_handler as fh
 from utils.helpers import metafile_handler as mfh
-from hashed_similarities import grid_similarity
+from computation import grid_similarity
 
 
 def get_dataset_path(city: str) -> str:
-    return f"../dataset/{city}/output/"
+    return f"../../../dataset/{city}/output/"
+
+print(get_dataset_path("porto"))
+
 
 
 sim = {
@@ -29,7 +47,9 @@ sim = {
     "disk_frechet_cy": hashed_frechet.measure_hashed_cy_frechet,
     "grid_dtw_cy": hashed_dtw.measure_hashed_cy_dtw,
     "grid_frechet_cy": hashed_frechet.measure_hashed_cy_frechet,
+    
     "true_dtw_py": dtw.measure_py_dtw,
+    "true_frechet_py": frechet.measure_py_frechet,
     "disk_dtw_py": hashed_dtw.measure_hashed_py_dtw,
     "grid_dtw_py": hashed_dtw.measure_hashed_py_dtw,
 }
@@ -56,16 +76,20 @@ def compute_true_similarity_runtimes(
     data_start_size: int = 100,
     data_end_size: int = 1000,
     data_step_size: int = 100,
-    iterations: int = 3,
+    iterations: int = 3
 ):
+    
+    #Path to data folder
     data_folder = get_dataset_path(city)
     data_sets = range(data_start_size, data_end_size + 1, data_step_size)
     print("data_end_size", data_end_size)
     print("data sets", data_sets)
-    output_folder = "../benchmarks/similarities_runtimes/"
-    # Check if measure contains string "grid" or "disk" to adjust file_name generation
-    scheme = "grid" if "grid" in measure else "disk"
-    file_name = f"{scheme}/{city}/similarity_runtimes_{measure}_{city}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+    
+    #Output folder
+    output_folder = f"../../../results_true/runtimes/{city}/"
+    #Filename    
+    file_name = f"similarity_runtimes_{measure}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+    
     # Initialize a list to hold the DataFrames from each iteration
     dfs_iterations = []
 
@@ -83,7 +107,8 @@ def compute_true_similarity_runtimes(
         index = 1
         for size in data_sets:
             print(f"Computing size {size}, set {index}/{len(data_sets)}", end="\r")
-            meta_file = data_folder + f"META-{size}.txt"
+            meta_file = f"{data_folder}META-{size}.txt"
+            print(meta_file)
             execution_times = measure_true_similarities(
                 measure=measure,
                 data_folder=data_folder,
@@ -94,6 +119,7 @@ def compute_true_similarity_runtimes(
             index += 1
         # Append the DataFrame of this iteration to the list
         dfs_iterations.append(df)
+        print(dfs_iterations)
 
         # Accumulate the results from this iteration
         if df_accumulated.empty:

@@ -7,9 +7,24 @@ Will run N processess in parallell to measure time efficiency
 import pandas as pd
 import os, sys
 
-currentdir = os.path.dirname(os.path.abspath("__file__"))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+def find_project_root(target_folder="masteroppgave"):
+    """Find the absolute path of a folder by searching upward."""
+    currentdir = os.path.abspath("__file__")  # Get absolute script path
+    while True:
+        if os.path.basename(currentdir) == target_folder:
+            return currentdir  # Found the target folder
+        parentdir = os.path.dirname(currentdir)
+        if parentdir == currentdir:  # Stop at filesystem root
+            return None
+        currentdir = parentdir  # Move one level up
+
+project_root = find_project_root("masteroppgave")
+
+if project_root:
+    sys.path.append(project_root)
+    print(f"Project root found: {project_root}")
+else:
+    raise RuntimeError("Could not find 'masteroppgave' directory")
 
 
 from schemes.lsh_grid import GridLSH
@@ -19,8 +34,6 @@ from utils.similarity_measures.distance import (
 )
 
 from constants import (
-    PORTO_OUTPUT_FOLDER,
-    ROME_OUTPUT_FOLDER,
     P_MAX_LAT,
     P_MIN_LAT,
     P_MAX_LON,
@@ -31,16 +44,19 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_CHOSEN_DATA = f"../{PORTO_OUTPUT_FOLDER}/"
-ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
+PORTO_CHOSEN_DATA = "../../dataset/porto/output/"
+PORTO_DATA_FOLDER = "../../dataset/porto/output/"
+
+ROME_CHOSEN_DATA = "../../dataset/rome/output/"
+ROME_DATA_FOLDER = "../../dataset/rome/output/"
 
 
 def PORTO_META(size: int):
-    return f"../{PORTO_OUTPUT_FOLDER}/META-{size}.txt"
+    return f"../{PORTO_DATA_FOLDER}/META-{size}.txt"
 
 
 def ROME_META(size: int):
-    return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
+    return f"../{ROME_DATA_FOLDER}/META-{size}.txt"
 
 def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
     """Constructs a grid hash object over the given city"""
@@ -54,7 +70,7 @@ def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
             res,
             layers,
             PORTO_META(size),
-            PORTO_CHOSEN_DATA,
+            PORTO_DATA_FOLDER,
         )
     elif city.lower() == "rome":
         return GridLSH(
@@ -66,7 +82,7 @@ def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
             res,
             layers,
             ROME_META(size),
-            ROME_CHOSEN_DATA,
+            ROME_DATA_FOLDER,
         )
     else:
         raise ValueError("City argument must be either porto or rome")

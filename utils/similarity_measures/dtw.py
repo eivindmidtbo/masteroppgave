@@ -9,6 +9,7 @@ from traj_dist.distance import dtw as c_dtw
 from multiprocessing import Pool
 import timeit as ti
 import time
+from tqdm import tqdm
 
 
 def py_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
@@ -104,13 +105,13 @@ def cy_dtw_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
 
     sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
-    num_trajectoris = len(sorted_trajectories)
+    num_trajectories = len(sorted_trajectories)
 
-    M = np.zeros((num_trajectoris, num_trajectoris))
+    M = np.zeros((num_trajectories, num_trajectories))
 
     pool = Pool(12)
-
-    for i, traj_i in enumerate(sorted_trajectories.keys()):
+    
+    for i, traj_i in tqdm(enumerate(sorted_trajectories.keys()), total=num_trajectories):
 
         dtw_elements = pool.map(
             _fun_wrapper,
@@ -133,6 +134,8 @@ def cy_dtw_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     )
 
     return df
+
+
 
 
 def measure_cy_dtw(args):

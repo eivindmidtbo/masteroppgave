@@ -11,6 +11,8 @@ import time
 from traj_dist.pydist.frechet import frechet as p_frechet
 from traj_dist.distance import frechet as c_frechet
 
+from tqdm import tqdm
+
 
 def py_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
@@ -136,9 +138,8 @@ def cy_frechet_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
 
     pool = Pool(12)
 
-    for i, traj_i in enumerate(sorted_trajectories.keys()):
-        if (i % 5) == 0:
-            print(f"Cy Pool Frechet: {i}/{num_trajectories}")
+    for i, traj_i in tqdm(enumerate(sorted_trajectories.keys()), total=num_trajectories):
+        
         frech_elements = pool.map(
             _fun_wrapper,
             [
