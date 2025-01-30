@@ -43,19 +43,19 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_CHOSEN_DATA = "../../dataset/porto/output/"
-PORTO_DATA_FOLDER = "../../dataset/porto/output/"
+PORTO_CHOSEN_DATA = "../../../dataset/porto/output/"
+PORTO_DATA_FOLDER = "../../../dataset/porto/output/"
 
-ROME_CHOSEN_DATA = "../../dataset/rome/output/"
-ROME_DATA_FOLDER = "../../dataset/rome/output/"
+ROME_CHOSEN_DATA = "../../../dataset/rome/output/"
+ROME_DATA_FOLDER = "../../../dataset/rome/output/"
 
 
 def PORTO_META(size: int):
-    return f"../{PORTO_DATA_FOLDER}/META-{size}.txt"
+    return f"{PORTO_DATA_FOLDER}META-{size}.txt"
 
 
 def ROME_META(size: int):
-    return f"../{ROME_DATA_FOLDER}/META-{size}.txt"
+    return f"{ROME_DATA_FOLDER}META-{size}.txt"
 
 
 def _constructDisk(
