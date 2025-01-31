@@ -4,6 +4,7 @@ Sheet containing methods for reading trajectories
 
 import os, re
 import shutil
+import ast
 
 
 def read_trajectory_file(file_path: str) -> list[list[float]]:
@@ -115,6 +116,36 @@ def read_hash_file(file_path: str) -> list[list[float]]:
     return hashes
 
 
+def read_hash_file_to_float(file_path: str) -> list[list[float]]:
+    """
+    Reads a hash.txt file and returns the content as a list of hashes
+
+    Parameters
+    ----------
+    file_path : str
+        The file path for the file that should be read
+
+    Returns
+    ---
+    A list containing the files' hashes as lists
+    """
+
+    hashes = []
+    try:
+        with open(file_path, "r") as file:
+            for line in file:
+                line = line.strip()  # Remove newline characters and spaces
+                if line:  # Ensure the line is not empty
+                    try:
+                        parsed_list = ast.literal_eval(line)  # Safely convert string list to Python list
+                        hashes.append(parsed_list)
+                    except (SyntaxError, ValueError) as e:
+                        print(f"Skipping invalid line: {line} - Error: {e}")
+    except FileNotFoundError:
+        print("Can't find file.")
+    return hashes
+
+
 def load_trajectory_hashes(files: list[str], folder_path: str) -> dict:
     """
     Loads all hashes.txt files and returns the content as a dictionary
@@ -137,6 +168,39 @@ def load_trajectory_hashes(files: list[str], folder_path: str) -> dict:
         hash = read_hash_file(folder_path + file_name)
 
         hashes[key] = hash
+
+    return hashes
+
+
+def load_all_trajectory_hashes(folder_path: str, prefix: str) -> dict:
+    """
+    Reads all hash.txt files with the given prefix in the folder and returns a dictionary containing the data
+
+    Parameters
+    ----------
+    folder_path : str
+        The file path for the file that should be read
+    prefix : str
+        The prefix of the files that should be loaded
+
+    Returns
+    ---
+    A dictionary containing all files with their filename as key
+    """
+
+    file_list = [
+        file
+        for file in os.listdir(folder_path)
+        if re.match(r"\b" + re.escape(prefix) + r"[^\\]*\.txt$", file)
+    ]
+
+    hashes = dict()
+
+    for file_name in file_list:
+        key = os.path.splitext(file_name)[0]
+        hashed_trajectory = read_hash_file_to_float(folder_path + file_name)
+
+        hashes[key] = hashed_trajectory
 
     return hashes
 
