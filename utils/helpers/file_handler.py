@@ -6,7 +6,7 @@ import os, re
 import shutil
 import ast
 
-
+# TRUE TRAJECTORIES
 def read_trajectory_file(file_path: str) -> list[list[float]]:
     """
     Reads a trajectory.txt file and returns the content as a list of coordinates
@@ -90,6 +90,7 @@ def load_all_trajectory_files(folder_path: str, prefix: str) -> dict:
     return trajectories
 
 
+# HASHED TRAJECTORIES
 def read_hash_file(file_path: str) -> list[list[float]]:
     """
     Reads a hash.txt file and returns the content as a list of hashes
@@ -166,6 +167,31 @@ def load_trajectory_hashes(files: list[str], folder_path: str) -> dict:
     for file_name in file_list:
         key = os.path.splitext(file_name)[0]
         hash = read_hash_file(folder_path + file_name)
+
+        hashes[key] = hash
+
+    return hashes
+
+def load_trajectory_hashes_float(files: list[str], folder_path: str) -> dict:
+    """
+    Loads all hashes.txt files and returns the content as a dictionary
+
+    Parameters
+    ----------
+    files : list[str]
+        A list of the files that should be read
+
+    Returns
+    ---
+    A dictionary containing the files and their hashes with their filename as key
+    """
+
+    file_list = files
+    hashes = dict()
+
+    for file_name in file_list:
+        key = os.path.splitext(file_name)[0]
+        hash = read_hash_file_to_float(folder_path + file_name)
 
         hashes[key] = hash
 
