@@ -231,6 +231,10 @@ dataset/hashed_data/disk/rome/META-*.txt
 dataset/hashed_data/grid/rome/*.txt
 dataset/hashed_data/grid/rome/META-*.txt
 
+
+# ignore all txt files within the bucket folder
+dataset/buckets/**/*.txt
+
 visualization/output/porto/*
 visualization/output/rome/*
 *.html
