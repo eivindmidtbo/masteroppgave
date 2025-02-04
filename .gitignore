@@ -235,6 +235,8 @@ dataset/hashed_data/grid/rome/META-*.txt
 # ignore all txt files within the bucket folder
 results_hashed/buckets/**/*.json
 
+computation/hash_generation/*.json
+
 visualization/output/porto/*
 visualization/output/rome/*
 *.html
