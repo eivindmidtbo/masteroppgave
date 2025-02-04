@@ -233,7 +233,7 @@ dataset/hashed_data/grid/rome/META-*.txt
 
 
 # ignore all txt files within the bucket folder
-dataset/buckets/**/*.json
+results_hashed/buckets/**/*.json
 
 visualization/output/porto/*
 visualization/output/rome/*
