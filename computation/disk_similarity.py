@@ -28,6 +28,7 @@ if project_root:
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
 
+from schemes.lsh_bucketing import *
 from schemes.lsh_disk import DiskLSH
 
 from utils.similarity_measures.distance import compute_hash_similarity, disk_coordinates
@@ -128,6 +129,45 @@ def generate_disk_hash_similarity_coordinates(
     all_disks_coordinates = Disk.disks
 
     return hashed_coordinates, all_disks_coordinates
+
+
+
+
+
+# BUCKETING PART:
+def generate_disk_hash_similarity_with_bucketing(
+    city: str,
+    diameter: float,
+    layers: int,
+    disks: int,
+    measure: str = "dtw",
+    size: int = 50,
+) -> pd.DataFrame:
+    """Generates the full disk hash similarities and saves it as a dataframe"""
+
+    Disk = _constructDisk(city, diameter, layers, disks, size)
+    hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
+    bucket_system = place_hashes_into_buckets(hashes)
+    
+    similarities = compute_hash_similarity(
+        hashes=hashes, scheme="disk", measure=measure, parallel=True
+    )
+
+    return similarities, bucket_system
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # TODO - measure computation time

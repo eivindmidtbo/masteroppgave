@@ -37,6 +37,26 @@ def compute_hash_similarity(
         else:
             return cy_frechet_hashes(hashes)
 
+def compute_hash_similarity_within_buckets(
+    hashes: dict[str, list[list[list[float]]]],
+    scheme: str,
+    measure: str,
+    parallel: bool = False,
+    bucket_system: dict[int, list[str]],
+) -> pd.DataFrame:
+    if scheme == "disk":
+        hashes = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    # NOTE - if scheme =="grid" then the hashes are already in the correct format, I.E non numpy
+    if measure == "dtw":
+        if parallel:
+            return cy_dtw_hashes_pool(hashes)
+        else:
+            return cy_dtw_hashes(hashes)
+    elif measure == "frechet":
+        if parallel:
+            return cy_frechet_hashes_pool(hashes)
+        else:
+            return cy_frechet_hashes(hashes)
 
 def disk_coordinates(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
     """The hashed disk coordinates"""
