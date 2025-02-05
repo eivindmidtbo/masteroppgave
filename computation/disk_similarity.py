@@ -132,9 +132,9 @@ def generate_disk_hash_similarity_coordinates(
 
 
 
+#####################################################################################NEW CODE - BUCKETING####################
 
-
-# BUCKETING PART:
+#Bucketing version of "generate_disk_hash_similarity"
 def generate_disk_hash_similarity_with_bucketing(
     city: str,
     diameter: float,
@@ -143,14 +143,30 @@ def generate_disk_hash_similarity_with_bucketing(
     measure: str = "dtw",
     size: int = 50,
 ) -> pd.DataFrame:
-    """Generates the full disk hash similarities and saves it as a dataframe"""
+    """
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket
+
+    Args:
+        city (str): The city to use. Either "porto" or "rome".
+        diameter (float): The disks diameter
+        layers (int): number of layers in the disk.
+        disks (int): number of disks in each layer.
+        measure (str, optional): Measure to use. Defaults to "dtw".
+        size (int, optional): Number of trajectories to use. Defaults to 50.
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
 
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
     bucket_system = place_hashes_into_buckets(hashes)
     
     similarities = compute_hash_similarity_within_buckets(
-        hashes=hashes, scheme="disk", measure=measure, bucket_system=bucket_system, parallel=True
+        hashes=hashes, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=True
     )
 
     return similarities, bucket_system

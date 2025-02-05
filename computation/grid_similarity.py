@@ -28,9 +28,11 @@ else:
 
 
 from schemes.lsh_grid import GridLSH
+from schemes.lsh_bucketing import *
 
 from utils.similarity_measures.distance import (
     compute_hash_similarity,
+    compute_hash_similarity_within_buckets
 )
 
 from constants import (
@@ -44,19 +46,17 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_CHOSEN_DATA = "../../dataset/porto/output/"
-PORTO_DATA_FOLDER = "../../dataset/porto/output/"
+PORTO_DATA_FOLDER = "../../../dataset/porto/output/"
 
-ROME_CHOSEN_DATA = "../../dataset/rome/output/"
-ROME_DATA_FOLDER = "../../dataset/rome/output/"
+ROME_DATA_FOLDER = "../../../dataset/rome/output/"
 
 
 def PORTO_META(size: int):
-    return f"../{PORTO_DATA_FOLDER}/META-{size}.txt"
+    return f"{PORTO_DATA_FOLDER}META-{size}.txt"
 
 
 def ROME_META(size: int):
-    return f"../{ROME_DATA_FOLDER}/META-{size}.txt"
+    return f"{ROME_DATA_FOLDER}META-{size}.txt"
 
 def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
     """Constructs a grid hash object over the given city"""
@@ -111,3 +111,38 @@ def generate_grid_hash_similarity_coordinates(
     hashes = Grid.compute_dataset_hashes()
     grid_cells = Grid.grid
     return hashes, grid_cells
+
+
+#####################################################################################NEW CODE - BUCKETING########################
+
+#Bucketing version of "generate_grid_hash_similarity"
+
+def generate_grid_hash_similarity_with_bucketing(
+    city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
+) -> pd.DataFrame:
+    """
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket
+
+    Args:
+        city (str): The city to use. Either "porto" or "rome".
+        res (float): resolution of the grid.
+        layers (int): number of layers in the grid.
+        measure (str, optional): Measure to use. Defaults to "dtw".
+        size (int, optional): Number of trajectories to use. Defaults to 50.
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
+
+    Grid = _constructGrid(city, res, layers, size) 
+    hashes = Grid.compute_dataset_hashes() 
+    bucket_system = place_hashes_into_buckets(hashes) 
+    
+    similarities = compute_hash_similarity_within_buckets(
+        hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=True
+    )
+
+    return similarities, bucket_system

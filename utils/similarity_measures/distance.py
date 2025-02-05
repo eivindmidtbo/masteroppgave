@@ -37,9 +37,16 @@ def compute_hash_similarity(
         else:
             return cy_frechet_hashes(hashes)
 
-import pandas as pd
 
-import pandas as pd
+
+def disk_coordinates(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """The hashed disk coordinates"""
+    hashed_coordinates = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    return hashed_coordinates
+
+
+#####################################################################################NEW CODE - BUCKETING########################
+
 
 def compute_hash_similarity_within_buckets(
     hashes: dict[str, list[list[list[float]]]],
@@ -48,8 +55,11 @@ def compute_hash_similarity_within_buckets(
     bucket_system: dict[int, list[str]],
     parallel: bool = False,
 ) -> pd.DataFrame:
+    
+    
     # Get all trajectory names across all buckets
     all_trajectories = set()
+    
     for bucket_trajectories in bucket_system.values():
         all_trajectories.update(bucket_trajectories)
 
@@ -72,7 +82,7 @@ def compute_hash_similarity_within_buckets(
 
         # Filter hashes for the current bucket
         bucket_hashes = {file: hashes[file] for file in bucket_system[key]}
-
+        
         # Transform hashes if necessary
         if scheme == "disk":
             bucket_hashes = transform_np_numerical_disk_hashes_to_non_np(bucket_hashes)
@@ -99,12 +109,3 @@ def compute_hash_similarity_within_buckets(
                 )
 
     return global_similarity_matrix
-
-
-
-
-
-def disk_coordinates(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
-    """The hashed disk coordinates"""
-    hashed_coordinates = transform_np_numerical_disk_hashes_to_non_np(hashes)
-    return hashed_coordinates
