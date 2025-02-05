@@ -16,7 +16,7 @@ def place_hashes_into_buckets(hashes):
     for hash_file in hashes:
         for layer_hash in hashes[hash_file]:
 
-            if layer_hash == ['']:
+            if layer_hash == []:
                 continue
 
             # Convert the list of coordinates into a string

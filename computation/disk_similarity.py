@@ -31,7 +31,7 @@ else:
 from schemes.lsh_bucketing import *
 from schemes.lsh_disk import DiskLSH
 
-from utils.similarity_measures.distance import compute_hash_similarity, disk_coordinates
+from utils.similarity_measures.distance import compute_hash_similarity, compute_hash_similarity_within_buckets, disk_coordinates
 
 from constants import (
     P_MAX_LAT,
@@ -149,8 +149,8 @@ def generate_disk_hash_similarity_with_bucketing(
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
     bucket_system = place_hashes_into_buckets(hashes)
     
-    similarities = compute_hash_similarity(
-        hashes=hashes, scheme="disk", measure=measure, parallel=True
+    similarities = compute_hash_similarity_within_buckets(
+        hashes=hashes, scheme="disk", measure=measure, bucket_system=bucket_system, parallel=True
     )
 
     return similarities, bucket_system
