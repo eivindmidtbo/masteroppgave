@@ -4,6 +4,8 @@ import time
 import timeit as ti
 import pandas as pd
 
+from schemes.lsh_bucketing import place_hashes_into_buckets
+
 def find_project_root(target_folder="masteroppgave"):
     """Find the absolute path of a folder by searching upward."""
     currentdir = os.path.abspath("__file__")  # Get absolute script path
@@ -174,6 +176,14 @@ def compute_hashed_similarity_runtimes(
     data_step_size: int = 100,
     iterations: int = 3,  # New parameter for specifying the number of iterations
 ):
+    """
+    Function that measures runtime for:
+        * Hashing (either with grid or disk)
+        * Similarity computation: Time it takes to compute the similarity value between all trajectory hashes
+
+        Raises:
+            ValueError: 
+    """
     use_fixed_dataset_size = False
     resolutions = [
         round(0.2 * i, 2) for i in range(1, 11)
@@ -392,3 +402,185 @@ def compute_disk_similarity_runtimes(
         data_step_size=data_step_size,
         iterations=iterations,
     )
+
+
+
+
+################### NEW CODE - BUCKETING ####################
+
+def compute_hashed_similarity_runtimes_with_bucketing(
+    measure: str,
+    city: str,
+    layers: int = 4,
+    res: float = 0.5,
+    diameter: float = 0.5,
+    disks: int = 100,
+    parallel_jobs: int = 10,
+    data_size: int = 100,
+    iterations: int = 3,  # New parameter for specifying the number of iterations
+):
+    
+    """
+    Function that measures runtime for:
+    * Hashing (either with grid or disk).
+    * Bucket distribution: Time it takes to place the hashes into buckets.
+    * Similarity computation over all buckets: Time it takes to compute the similarity values between trajectories in the same bucket for all buckets.
+
+    Raises:
+        ValueError: _description_
+    """
+    
+    # Set this to true if you want to save the hash generation times to a file
+    save_hash_generation = False
+
+    #File handling
+    scheme = "grid" if "grid" in measure else "disk"
+    output_folder = f"../../../results_hashed/runtimes/{scheme}/{city}/"
+    file_name  = filename_generator(measure=measure, city=city, layers=layers, res=res, diameter=diameter, disks=disks, data_size=data_size)
+    
+    # Initialize a list to hold the DataFrames from each iteration
+    dfs_iterations = []
+    hash_generation_times = {data_size: [] } # hash generation times
+    bucket_distributuion_times = {data_size: [] } # bucket distribution times
+
+    # Initialize an empty DataFrame to accumulate execution times
+    df_accumulated = pd.DataFrame()
+
+
+    # Building the dataframes
+    for iteration in range(iterations):  # Loop through each iteration
+        print(f"Iteration {iteration+1}/{iterations}")
+        
+        df = pd.DataFrame(
+                index=[f"run_{x+1}" for x in range(parallel_jobs)],
+                columns=[data_size],
+        )
+
+        print(
+            f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}"
+        )
+        index = 1
+
+        #Initializes times for hashing and bucketing
+        elapsed_time_for_hash_generation = 0
+        elapsed_time_for_bucket_distribution = 0
+        print(f"Computing size {data_size}", end="\r")
+        
+        with Pool(parallel_jobs) as pool:
+            
+            
+            #######HASHING#######
+      
+            #Start time for hahsing
+            start_time = time.perf_counter()
+            
+            #Specifies disk or grid for hashing
+            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]: # -> DISK
+                hashes = compute_disk_hashes(
+                    city=city,
+                    diameter=diameter,
+                    layers=layers,
+                    disks=disks,
+                    size=data_size,
+                )
+                
+            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]: # -> GRID
+                hashes = compute_grid_hashes(
+                    city=city, res=res, layers=layers, size=data_size
+                )
+            else:
+                raise ValueError("Invalid measure")
+                          
+            end_time = time.perf_counter()
+            elapsed_time_for_hash_generation += end_time - start_time
+            hash_generation_times[data_size].append(elapsed_time_for_hash_generation)
+
+            #######BUCKETING#######
+
+            #Start time for bucketing
+            start_time_bucketing = time.perf_counter()
+            bucket_system = place_hashes_into_buckets(hashes)
+            end_time_bucketing = time.perf_counter()
+            elapsed_time_for_bucket_distribution += end_time - start_time
+            bucket_distributuion_times[data_size].append(elapsed_time_for_hash_generation)
+
+            #######SIMILARITY COMPUTATION WITHIN BUCKETS#######
+
+            #Measuring similarity value computation -> Denne må endres til å måle kjøretid innad i bøtter. 
+            #Want runtimes for similarity computation within buckets for all buckets
+            execution_times = pool.map(
+                sim[measure], [hashes for _ in range(parallel_jobs)]
+            )
+
+            df[data_size] = [element[0] for element in execution_times]
+            index += 1
+            
+            
+            
+        # Append the DataFrame of this iteration to the list
+        dfs_iterations.append(df)
+        
+        # Accumulate the results from this iteration
+        if df_accumulated.empty:
+            df_accumulated = df.copy()
+        else:
+            df_accumulated += df
+
+    # Calculate the average execution times over all iterations
+    df_average = pd.concat(dfs_iterations).groupby(level=0).mean()
+
+    # Print the runtimes of each iteration for comparison
+    for i, df_iteration in enumerate(dfs_iterations, 1):
+        print(f"\nRuntimes - Iteration {i}:")
+        print(df_iteration)
+
+    
+    # Print the average hash generation time for each dataset size
+    print("\nAverage Hash Generation Times:")
+    average_time = sum(hash_generation_times[data_size]) / len(
+                hash_generation_times[data_size]
+    )
+       
+    print(f"Size {data_size}: {average_time:.4f} seconds")
+
+    print("\nAverage Runtimes:")
+    print(df_average)
+    
+    #Save similarity computation runtimes to file
+    df_average.to_csv(os.path.join(output_folder + "similarity_measurement/", file_name))
+
+
+    #Save hash generation runtimes to file
+    hash_generation_file_name = file_name.replace("similarity_runtimes", "hash_generation")
+    hash_generation_df = pd.DataFrame(
+        {
+            "Dataset Size": list(hash_generation_times.keys()),
+            "Average Hash Generation Time (seconds)": [
+                sum(times) / len(times) for times in hash_generation_times.values()
+            ],
+        }
+    )
+    hash_generation_df.to_csv(os.path.join(output_folder + "hash_generation/", hash_generation_file_name), index=False)
+
+
+
+def filename_generator(
+    measure: str,
+    city: str,
+    layers: int = 4,
+    res: float = 0.5,
+    diameter: float = 0.5,
+    disks: int = 100,
+    data_size: int = 100):
+    
+    file_name= ""
+    
+    scheme = "grid" if "grid" in measure else "disk"
+    # Adjust file_name generation based on measure
+    if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
+        file_name = f"{city}_similarity_runtimes_{measure}_diameter_{diameter}_layers_{layers}_disks_{disks}_trajectories_{data_size}.csv"
+        
+    elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
+        file_name = f"{city}_similarity_runtimes_{measure}_resolution_{res}_layers-{layers}_trajectories_{data_size}.csv"
+            
+    return file_name
