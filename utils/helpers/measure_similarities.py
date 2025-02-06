@@ -501,7 +501,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
             start_time_bucketing = time.perf_counter()
             bucket_system = place_hashes_into_buckets(hashes)
             end_time_bucketing = time.perf_counter()
-            elapsed_time_for_bucket_distribution += end_time - start_time
+            elapsed_time_for_bucket_distribution += start_time_bucketing - end_time_bucketing
             bucket_distributuion_times[data_size].append(elapsed_time_for_hash_generation)
 
             #######SIMILARITY COMPUTATION WITHIN BUCKETS#######
@@ -561,6 +561,18 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         }
     )
     hash_generation_df.to_csv(os.path.join(output_folder + "hash_generation/", hash_generation_file_name), index=False)
+    
+    #Save hash generation runtimes to file
+    bucket_distribution_file_name = file_name.replace("similarity_runtimes", "bucket_distribution")
+    bucket_distribution_df = pd.DataFrame(
+        {
+            "Dataset Size": list(bucket_distributuion_times.keys()),
+            "Average Bucket distribution Time (seconds)": [
+                sum(times) / len(times) for times in bucket_distributuion_times.values()
+            ],
+        }
+    )
+    bucket_distribution_df.to_csv(os.path.join(output_folder + "bucketing/", bucket_distribution_file_name), index=False)
 
 
 
