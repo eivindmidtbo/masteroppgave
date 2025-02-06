@@ -502,7 +502,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
             bucket_system = place_hashes_into_buckets(hashes)
             end_time_bucketing = time.perf_counter()
             elapsed_time_for_bucket_distribution += start_time_bucketing - end_time_bucketing
-            bucket_distributuion_times[data_size].append(elapsed_time_for_hash_generation)
+            bucket_distributuion_times[data_size].append(elapsed_time_for_bucket_distribution)
 
             #######SIMILARITY COMPUTATION WITHIN BUCKETS#######
 
