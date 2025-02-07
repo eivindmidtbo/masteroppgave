@@ -43,13 +43,17 @@ print(get_dataset_path("porto"))
 
 
 sim = {
+    #True cython
     "true_dtw_cy": dtw.measure_cy_dtw,
     "true_frechet_cy": frechet.measure_cy_frechet,
+    
+    #Schemes cython
     "disk_dtw_cy": hashed_dtw.measure_hashed_cy_dtw,
     "disk_frechet_cy": hashed_frechet.measure_hashed_cy_frechet,
     "grid_dtw_cy": hashed_dtw.measure_hashed_cy_dtw,
     "grid_frechet_cy": hashed_frechet.measure_hashed_cy_frechet,
     
+    #Python
     "true_dtw_py": dtw.measure_py_dtw,
     "true_frechet_py": frechet.measure_py_frechet,
     "disk_dtw_py": hashed_dtw.measure_hashed_py_dtw,
@@ -468,7 +472,9 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         print(f"Computing size {data_size}, end="\r")
         with Pool(parallel_jobs) as pool:
             start_time = time.perf_counter()
-            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
+            
+            #Specifies disk or grid for hashing
+            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py" ]: # -> DISK
                 hashes = compute_disk_hashes(
                     city=city,
                     diameter=diameter,
@@ -488,6 +494,17 @@ def compute_hashed_similarity_runtimes_with_bucketing(
 
             start_time = time.perf_counter()
 
+            #Start time for bucketing
+            start_time_bucketing = time.perf_counter()
+            bucket_system = place_hashes_into_buckets(hashes)
+            end_time_bucketing = time.perf_counter()
+            elapsed_time_for_bucket_distribution += end_time_bucketing - start_time_bucketing
+            bucket_distributuion_times[data_size].append(elapsed_time_for_bucket_distribution)
+
+            #######SIMILARITY COMPUTATION WITHIN BUCKETS#######
+
+            #Measuring similarity value computation -> Denne må endres til å måle kjøretid innad i bøtter. 
+            #Want runtimes for similarity computation within buckets for all buckets
             execution_times = pool.map(
                 sim[measure], [hashes for _ in range(parallel_jobs)]
             )
@@ -553,8 +570,6 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         }
     )
     bucket_distribution_df.to_csv(os.path.join(output_folder + "bucketing/", bucket_distribution_file_name), index=False)
-
-
 
 def filename_generator(
     measure: str,

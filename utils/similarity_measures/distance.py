@@ -109,3 +109,66 @@ def compute_hash_similarity_within_buckets(
                 )
 
     return global_similarity_matrix
+
+
+def compute_runtime_hash_similarity_within_buckets(
+    hashes: dict[str, list[list[list[float]]]],
+    scheme: str,
+    measure: str,
+    bucket_system: dict[int, list[str]],
+    parallel: bool = False,
+) -> pd.DataFrame:
+    
+    
+    # Get all trajectory names across all buckets
+    all_trajectories = set()
+    
+    for bucket_trajectories in bucket_system.values():
+        all_trajectories.update(bucket_trajectories)
+
+    # Convert set to a sorted list for a stable DataFrame index
+    all_trajectories = sorted(all_trajectories)
+
+    # Create a DataFrame initialized with zeros
+    global_similarity_matrix = pd.DataFrame(
+        0,
+        index=all_trajectories,
+        columns=all_trajectories,
+        dtype=float,
+    )
+
+    # Compute similarity matrices for each bucket
+    for key in bucket_system:
+        # Skip buckets with only one trajectory
+        if len(bucket_system[key]) <= 1:
+            continue
+
+        # Filter hashes for the current bucket
+        bucket_hashes = {file: hashes[file] for file in bucket_system[key]}
+        
+        # Transform hashes if necessary
+        if scheme == "disk":
+            bucket_hashes = transform_np_numerical_disk_hashes_to_non_np(bucket_hashes)
+
+        # Compute similarities within the current bucket
+        if measure == "dtw":
+            similarities = (
+                cy_dtw_hashes_pool(bucket_hashes) if parallel else cy_dtw_hashes(bucket_hashes)
+            )
+        elif measure == "frechet":
+            similarities = (
+                cy_frechet_hashes_pool(bucket_hashes) if parallel else cy_frechet_hashes(bucket_hashes)
+            )
+
+        # Create a DataFrame for the current bucket
+        trajectory_names = list(bucket_hashes.keys())
+        similarity_df = pd.DataFrame(similarities, index=trajectory_names, columns=trajectory_names)
+
+        # Update the global similarity matrix with values from the current bucket
+        for i, traj_i in enumerate(trajectory_names):
+            for j, traj_j in enumerate(trajectory_names):
+                global_similarity_matrix.loc[traj_i, traj_j] = max(
+                    global_similarity_matrix.loc[traj_i, traj_j], similarity_df.iloc[i, j]
+                )
+
+    return global_similarity_matrix
