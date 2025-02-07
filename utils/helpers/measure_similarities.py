@@ -421,7 +421,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     disks: int = 100,
     parallel_jobs: int = 10,
     data_size: int = 100,
-    iterations: int = 3,  # New parameter for specifying the number of iterations
+    iterations: int = 3,
 ):
     
     """
@@ -431,7 +431,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     * Similarity computation over all buckets: Time it takes to compute the similarity values between trajectories in the same bucket for all buckets.
 
     Raises:
-        ValueError: _description_
+        ValueError: If measure not exists
     """
 
     #File handling
@@ -441,8 +441,9 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     
     # Initialize a list to hold the DataFrames from each iteration
     dfs_iterations = []
-    hash_generation_times = {data_size: [] } # hash generation times
-    bucket_distributuion_times = {data_size: [] } # bucket distribution times
+    
+    hash_generation_times = []
+    bucket_distribution_times = []
 
     # Initialize an empty DataFrame to accumulate execution times
     df_accumulated = pd.DataFrame()
@@ -452,9 +453,11 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     for iteration in range(iterations):  # Loop through each iteration
         print(f"Iteration {iteration+1}/{iterations}")
         
+        column_name = f"data size:{data_size}"
+        
         df = pd.DataFrame(
                 index=[f"similarity computation run_{x+1}" for x in range(parallel_jobs)],
-                columns=[f"data size :{data_size}"],
+                columns=[column_name],
         )
 
         print(
@@ -487,8 +490,9 @@ def compute_hashed_similarity_runtimes_with_bucketing(
                 raise ValueError("Invalid measure")
             end_time_hashing = time.perf_counter()
             #Hashing end
+            
             elapsed_time_for_hash_generation += end_time_hashing - start_time_hashing
-            hash_generation_times[data_size].append(elapsed_time_for_hash_generation)
+            hash_generation_times.append(elapsed_time_for_hash_generation)
 
 
             #Bucketing start
@@ -498,7 +502,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
             #Bucketing end
             
             elapsed_time_for_bucket_distribution += end_time_bucketing - start_time_bucketing
-            bucket_distributuion_times[data_size].append(elapsed_time_for_bucket_distribution)
+            bucket_distribution_times.append(elapsed_time_for_bucket_distribution)
 
 
            #Similarity computation start
@@ -513,10 +517,8 @@ def compute_hashed_similarity_runtimes_with_bucketing(
                 )
             #Similarity computation end
             
-        df[data_size] = [element[0] for element in execution_times]
+        df[column_name] = [element[0] for element in execution_times]
         index += 1
-            
-            
             
         # Append the DataFrame of this iteration to the list
         dfs_iterations.append(df)
@@ -528,82 +530,22 @@ def compute_hashed_similarity_runtimes_with_bucketing(
             df_accumulated += df
 
     # Calculate the average execution times over all iterations
-    df_average = pd.concat(dfs_iterations).groupby(level=0).mean()
+    df_final = pd.concat(dfs_iterations).groupby(level=0).mean()
     
-    print(df_average)
-    
+    # Add hash generation time to the final DataFrame
+    df_final.loc["Average hash generation time (Seconds)", "data size:50"] = sum(hash_generation_times) / len(hash_generation_times)
 
-    # # Print the runtimes of each iteration for comparison
-    # for i, df_iteration in enumerate(dfs_iterations, 1):
-    #     print(f"\nRuntimes - Iteration {i}:")
-    #     print(df_iteration)
+    # Add bucket distribution time to the final DataFrame
+    df_final.loc["Average bucket distribution time (Seconds)", "data size:50"] = sum(bucket_distribution_times) / len(bucket_distribution_times)
 
-    
-    # Print the average hash generation time for each dataset size
-    # print("\nAverage Hash Generation Times:")
-    # average_time = sum(hash_generation_times[data_size]) / len(
-    #             hash_generation_times[data_size]
-    # )
-       
-    # print(f"Size {data_size}: {average_time:.4f} seconds")
+    # Print the runtimes of each iteration for comparison
+    for i, df_iteration in enumerate(dfs_iterations, 1):
+        print(f"\nRuntimes - Iteration {i}:")
+        print(df_iteration)
 
-    # print("\nAverage Runtimes:")
-    # print(df_average)
-    
-    #Save similarity computation runtimes to file
-
-    # Prepare df_average for merging
-    df_average = df_average.reset_index()  # Reset index for proper row handling
-    df_average = df_average.iloc[:, [0, 2]]  # Select only the first and third columns
-    df_average.columns = ["Task", "Time (seconds)"]
-
-    # Prepare hash_generation_df
-    hash_generation_df = pd.DataFrame({
-        "Task": "Average Hash Generation Time",
-        "Time (seconds)": [sum(times) / len(times) for times in hash_generation_times.values()]
-    })
-
-    # Prepare bucket_distribution_df
-    bucket_distribution_df = pd.DataFrame({
-        "Task": "Average Bucket distribution Time",
-        "Time (seconds)": [sum(times) / len(times) for times in bucket_distributuion_times.values()]
-    })
-
-    # Combine all DataFrames vertically
-    combined_df = pd.concat([df_average, hash_generation_df, bucket_distribution_df], ignore_index=True)
-
-    # Save to a single CSV file
-    combined_df.to_csv(os.path.join(output_folder, file_name), index=False)
-
-    print("Data saved to:", os.path.join(output_folder, file_name))
-    
-    # df_average.to_csv(os.path.join(output_folder + "similarity_measurement/", file_name))
-    
-
-
-    # #Save hash generation runtimes to file
-    # hash_generation_file_name = file_name.replace("similarity_runtimes", "hash_generation")
-    # hash_generation_df = pd.DataFrame(
-    #     {
-    #         "Dataset Size": list(hash_generation_times.keys()),
-    #         "Average Hash Generation Time (seconds)": [
-    #             sum(times) / len(times) for times in hash_generation_times.values()
-    #         ],
-    #     }
-    # )
-    # hash_generation_df.to_csv(os.path.join(output_folder + "hash_generation/", hash_generation_file_name), index=False)
-    
-    # #Save hash generation runtimes to file
-    # bucket_distribution_file_name = file_name.replace("similarity_runtimes", "bucket_distribution")
-    # bucket_distribution_df = pd.DataFrame(
-    #     {
-    #         "Dataset Size": list(bucket_distributuion_times.keys()),
-    #         "Average Bucket distribution Time (seconds)": [
-    #             sum(times) / len(times) for times in bucket_distributuion_times.values()
-    #         ],
-    #     }
-    # )
-    # bucket_distribution_df.to_csv(os.path.join(output_folder + "bucketing/", bucket_distribution_file_name), index=False)
+    # Save similarity computation runtimes to file
+    df_final.to_csv(os.path.join(output_folder, file_name))
+ 
 
 def filename_generator(
     measure: str,
