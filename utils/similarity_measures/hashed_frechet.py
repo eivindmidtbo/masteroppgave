@@ -1,3 +1,5 @@
+""" Sheet containing FRECHET methods related to hashed similarity creation """
+
 import numpy as np
 import pandas as pd
 import collections as co
