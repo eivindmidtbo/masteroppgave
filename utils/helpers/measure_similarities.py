@@ -25,7 +25,7 @@ if project_root:
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
 
-from computation import disk_similarity
+from computation import similarity
 from utils.similarity_measures import dtw, frechet, hashed_dtw, hashed_frechet
 from utils.similarity_measures.distance import (
     transform_np_numerical_disk_hashes_to_non_np,
@@ -152,7 +152,7 @@ def measure_hashed_similarities(args):
 
 
 def compute_disk_hashes(city: str, diameter: float, layers: int, disks: int, size: int):
-    disk = disk_similarity._constructDisk(city, diameter, layers, disks, size)
+    disk = similarity._constructDisk(city, diameter, layers, disks, size)
     return transform_np_numerical_disk_hashes_to_non_np(
         disk.compute_dataset_hashes_with_KD_tree_numerical()
     )
@@ -464,56 +464,36 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         #Initializes times for hashing and bucketing
         elapsed_time_for_hash_generation = 0
         elapsed_time_for_bucket_distribution = 0
-        print(f"Computing size {data_size}", end="\r")
-        
+        elapsed_time_for_hash_generation = 0
+        print(f"Computing size {data_size}, end="\r")
         with Pool(parallel_jobs) as pool:
-            
-            
-            #######HASHING#######
-      
-            #Start time for hahsing
             start_time = time.perf_counter()
-            
-            #Specifies disk or grid for hashing
-            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]: # -> DISK
+            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:
                 hashes = compute_disk_hashes(
                     city=city,
                     diameter=diameter,
                     layers=layers,
                     disks=disks,
-                    size=data_size,
+                    size=size,
                 )
-                
-            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]: # -> GRID
+            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
                 hashes = compute_grid_hashes(
-                    city=city, res=res, layers=layers, size=data_size
+                    city=city, res=res, layers=layers, size=size
                 )
             else:
                 raise ValueError("Invalid measure")
-                          
             end_time = time.perf_counter()
             elapsed_time_for_hash_generation += end_time - start_time
-            hash_generation_times[data_size].append(elapsed_time_for_hash_generation)
+            hash_generation_times[size].append(elapsed_time_for_hash_generation)
 
-            #######BUCKETING#######
+            start_time = time.perf_counter()
 
-            #Start time for bucketing
-            start_time_bucketing = time.perf_counter()
-            bucket_system = place_hashes_into_buckets(hashes)
-            end_time_bucketing = time.perf_counter()
-            elapsed_time_for_bucket_distribution += start_time_bucketing - end_time_bucketing
-            bucket_distributuion_times[data_size].append(elapsed_time_for_bucket_distribution)
-
-            #######SIMILARITY COMPUTATION WITHIN BUCKETS#######
-
-            #Measuring similarity value computation -> Denne må endres til å måle kjøretid innad i bøtter. 
-            #Want runtimes for similarity computation within buckets for all buckets
             execution_times = pool.map(
                 sim[measure], [hashes for _ in range(parallel_jobs)]
             )
 
-            df[data_size] = [element[0] for element in execution_times]
-            index += 1
+        df[size] = [element[0] for element in execution_times]
+        index += 1
             
             
             

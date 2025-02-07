@@ -4,6 +4,11 @@ Sheet that will be used to measure the time needed to generate similarities of t
 Will run N processess in parallell to measure time efficiency
 """
 
+"""
+Sheet with collections of methods to generate similarities between trajectories, without having runtime as a focus
+
+"""
+
 import time
 import timeit as ti
 import pandas as pd
@@ -28,8 +33,13 @@ if project_root:
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
 
+
+# Imports
 from schemes.lsh_bucketing import *
 from schemes.lsh_disk import DiskLSH
+
+from schemes.lsh_grid import GridLSH
+from schemes.lsh_bucketing import *
 
 from utils.similarity_measures.distance import compute_hash_similarity, compute_hash_similarity_within_buckets, disk_coordinates
 
@@ -51,12 +61,15 @@ ROME_CHOSEN_DATA = "../../../dataset/rome/output/"
 ROME_DATA_FOLDER = "../../../dataset/rome/output/"
 
 
+
 def PORTO_META(size: int):
     return f"{PORTO_DATA_FOLDER}META-{size}.txt"
 
 
 def ROME_META(size: int):
     return f"{ROME_DATA_FOLDER}META-{size}.txt"
+
+
 
 
 def _constructDisk(
@@ -92,6 +105,36 @@ def _constructDisk(
     else:
         raise ValueError("City argument must be either porto or rome")
 
+def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
+    """Constructs a grid hash object over the given city"""
+    if city.lower() == "porto":
+        return GridLSH(
+            f"GP_{layers}-{'{:.2f}'.format(res)}",
+            P_MIN_LAT,
+            P_MAX_LAT,
+            P_MIN_LON,
+            P_MAX_LON,
+            res,
+            layers,
+            PORTO_META(size),
+            PORTO_DATA_FOLDER,
+        )
+    elif city.lower() == "rome":
+        return GridLSH(
+            f"GR_{layers}-{'{:.2f}'.format(res)}",
+            R_MIN_LAT,
+            R_MAX_LAT,
+            R_MIN_LON,
+            R_MAX_LON,
+            res,
+            layers,
+            ROME_META(size),
+            ROME_DATA_FOLDER,
+        )
+    else:
+        raise ValueError("City argument must be either porto or rome")
+
+
 
 def generate_disk_hash_similarity(
     city: str,
@@ -111,6 +154,19 @@ def generate_disk_hash_similarity(
 
     return similarities
 
+def generate_grid_hash_similarity(
+    city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
+) -> pd.DataFrame:
+    """Generates the full grid hash similarities and saves it as a dataframe"""
+
+    Grid = _constructGrid(city, res, layers, size)
+    hashes = Grid.compute_dataset_hashes()
+    similarities = compute_hash_similarity(
+        hashes=hashes, scheme="grid", measure=measure, parallel=True
+    )
+
+    return similarities
+
 
 def generate_disk_hash_similarity_coordinates(
     city: str,
@@ -124,17 +180,25 @@ def generate_disk_hash_similarity_coordinates(
 
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-    # Disk.print_disks()
     hashed_coordinates = disk_coordinates(hashes)
     all_disks_coordinates = Disk.disks
 
     return hashed_coordinates, all_disks_coordinates
 
+def generate_grid_hash_similarity_coordinates(
+    city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
+) -> pd.DataFrame:
+    """Generates the full grid hash similarities and saves it as a dataframe"""
+
+    Grid = _constructGrid(city, res, layers, size)
+    hashes = Grid.compute_dataset_hashes()
+    grid_cells = Grid.grid
+    return hashes, grid_cells
 
 
-#####################################################################################NEW CODE - BUCKETING####################
 
-#Bucketing version of "generate_disk_hash_similarity"
+######################## NEW CODE - BUCKETING ########################
+
 def generate_disk_hash_similarity_with_bucketing(
     city: str,
     diameter: float,
@@ -146,7 +210,8 @@ def generate_disk_hash_similarity_with_bucketing(
     """
     - Hashes the dataset
     - Places the hashes into buckets
-    - Computes the hash similarity values for trajectories within the same bucket
+    - Computes the hash similarity values for trajectories within the same bucket and creates a dataframe
+
 
     Args:
         city (str): The city to use. Either "porto" or "rome".
@@ -171,6 +236,36 @@ def generate_disk_hash_similarity_with_bucketing(
 
     return similarities, bucket_system
 
+
+def generate_grid_hash_similarity_with_bucketing(
+    city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
+) -> pd.DataFrame:
+    """
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket
+
+    Args:
+        city (str): The city to use. Either "porto" or "rome".
+        res (float): resolution of the grid.
+        layers (int): number of layers in the grid.
+        measure (str, optional): Measure to use. Defaults to "dtw".
+        size (int, optional): Number of trajectories to use. Defaults to 50.
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
+
+    Grid = _constructGrid(city, res, layers, size) 
+    hashes = Grid.compute_dataset_hashes() 
+    bucket_system = place_hashes_into_buckets(hashes) 
+    
+    similarities = compute_hash_similarity_within_buckets(
+        hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=True
+    )
+
+    return similarities, bucket_system
 
 
 
