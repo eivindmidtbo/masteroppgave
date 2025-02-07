@@ -8,10 +8,6 @@ Will run N processess in parallell to measure time efficiency
 Sheet with collections of methods to generate similarities between trajectories, without having runtime as a focus
 
 """
-
-import time
-import timeit as ti
-import pandas as pd
 import os, sys
 
 def find_project_root(target_folder="masteroppgave"):
@@ -29,19 +25,20 @@ project_root = find_project_root("masteroppgave")
 
 if project_root:
     sys.path.append(project_root)
-    print(f"Project root found: {project_root}")
+    # print(f"Project root found: {project_root}")
 else:
     raise RuntimeError("Could not find 'masteroppgave' directory")
 
-
 # Imports
-from schemes.lsh_bucketing import *
+import pandas as pd
 from schemes.lsh_disk import DiskLSH
-
 from schemes.lsh_grid import GridLSH
 from schemes.lsh_bucketing import *
+import timeit as ti
+import time
 
-from utils.similarity_measures.distance import compute_hash_similarity, compute_hash_similarity_within_buckets, disk_coordinates
+from utils.similarity_measures.hashed_dtw import cy_dtw_hashes, cy_dtw_hashes_pool
+from utils.similarity_measures.hashed_frechet import cy_frechet_hashes, cy_frechet_hashes_pool
 
 from constants import (
     P_MAX_LAT,
@@ -54,27 +51,33 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_CHOSEN_DATA = "../../../dataset/porto/output/"
 PORTO_DATA_FOLDER = "../../../dataset/porto/output/"
-
-ROME_CHOSEN_DATA = "../../../dataset/rome/output/"
 ROME_DATA_FOLDER = "../../../dataset/rome/output/"
 
-
-
+#Get metafile from porto
 def PORTO_META(size: int):
     return f"{PORTO_DATA_FOLDER}META-{size}.txt"
 
-
+#Get metafile from rome
 def ROME_META(size: int):
     return f"{ROME_DATA_FOLDER}META-{size}.txt"
 
+def transform_np_numerical_disk_hashes_to_non_np(
+    hashes: dict[str, list[list[float]]]
+) -> dict[str, list[list[list[float]]]]:
+    """Transforms the numerical disk hashes to a format that fits the true dtw similarity measure (non numpy input)"""
+    transformed_data = {
+        key: [[array.tolist() for array in sublist] for sublist in value]
+        for key, value in hashes.items()
+    }
+    return transformed_data
 
+def disk_coordinates(hashes: dict[str, list[list[float]]]) -> pd.DataFrame:
+    """The hashed disk coordinates"""
+    hashed_coordinates = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    return hashed_coordinates
 
-
-def _constructDisk(
-    city: str, diameter: float, layers: int, disks: int, size: int
-) -> DiskLSH:
+def _constructDisk(city: str, diameter: float, layers: int, disks: int, size: int) -> DiskLSH:
     """Constructs a disk hash object over the given city"""
     if city.lower() == "porto":
         return DiskLSH(
@@ -133,8 +136,35 @@ def _constructGrid(city: str, res: float, layers: int, size: int) -> GridLSH:
         )
     else:
         raise ValueError("City argument must be either porto or rome")
+    
+def compute_hash_similarity(
+    hashes: dict[str, list[list[list[float]]]],
+    scheme: str,
+    measure: str,
+    parallel: bool = False,
+) -> pd.DataFrame:
+    """
+    Computes the similarity between the hashes for both schemes with the given measure
 
+    Args:
+        parallel (bool, optional): Rather to speed up computation. Defaults to False.
 
+    Returns:
+        pd.DataFrame: similarities between the hashes
+    """
+    if scheme == "disk":
+        hashes = transform_np_numerical_disk_hashes_to_non_np(hashes)
+    # NOTE - if scheme =="grid" then the hashes are already in the correct format, I.E non numpy
+    if measure == "dtw":
+        if parallel:
+            return cy_dtw_hashes_pool(hashes)
+        else:
+            return cy_dtw_hashes(hashes)
+    elif measure == "frechet":
+        if parallel:
+            return cy_frechet_hashes_pool(hashes)
+        else:
+            return cy_frechet_hashes(hashes)
 
 def generate_disk_hash_similarity(
     city: str,
@@ -144,7 +174,7 @@ def generate_disk_hash_similarity(
     measure: str = "dtw",
     size: int = 50,
 ) -> pd.DataFrame:
-    """Generates the full disk hash similarities and saves it as a dataframe"""
+    """Generates the full disk hash similarities and saves it as a dataframe (wrapper function)"""
 
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
@@ -157,7 +187,7 @@ def generate_disk_hash_similarity(
 def generate_grid_hash_similarity(
     city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
 ) -> pd.DataFrame:
-    """Generates the full grid hash similarities and saves it as a dataframe"""
+    """Generates the full grid hash similarities and saves it as a dataframe (wrapper function)"""
 
     Grid = _constructGrid(city, res, layers, size)
     hashes = Grid.compute_dataset_hashes()
@@ -166,7 +196,6 @@ def generate_grid_hash_similarity(
     )
 
     return similarities
-
 
 def generate_disk_hash_similarity_coordinates(
     city: str,
@@ -194,8 +223,6 @@ def generate_grid_hash_similarity_coordinates(
     hashes = Grid.compute_dataset_hashes()
     grid_cells = Grid.grid
     return hashes, grid_cells
-
-
 
 ######################## NEW CODE - BUCKETING ########################
 
@@ -236,7 +263,6 @@ def generate_disk_hash_similarity_with_bucketing(
 
     return similarities, bucket_system
 
-
 def generate_grid_hash_similarity_with_bucketing(
     city: str, res: float, layers: int, measure: str = "dtw", size: int = 50
 ) -> pd.DataFrame:
@@ -267,83 +293,87 @@ def generate_grid_hash_similarity_with_bucketing(
 
     return similarities, bucket_system
 
+def compute_hash_similarity_within_buckets(
+    hashes: dict[str, list[list[list[float]]]],
+    scheme: str,
+    measure: str,
+    bucket_system: dict[int, list[str]],
+    parallel: bool = False,
+) -> pd.DataFrame:
+    """
+    Computes the similarity between the hashes in the same bucket for all buckets
+    
+    Returns:
+        pd.DataFrame: A global similarity matrix for all trajectories
+    """
+    
+    
+    # Get all trajectory names across all buckets
+    all_trajectories = set()
+    
+    for bucket_trajectories in bucket_system.values():
+        all_trajectories.update(bucket_trajectories)
+
+    # Convert set to a sorted list for a stable DataFrame index
+    all_trajectories = sorted(all_trajectories)
+
+    # Create a DataFrame initialized with zeros
+    global_similarity_matrix = pd.DataFrame(
+        0,
+        index=all_trajectories,
+        columns=all_trajectories,
+        dtype=float,
+    )
+
+    # Compute similarity matrices for each bucket
+    for key in bucket_system:
+        # Skip buckets with only one trajectory
+        if len(bucket_system[key]) <= 1:
+            continue
+
+        # Filter hashes for the current bucket
+        bucket_hashes = {file: hashes[file] for file in bucket_system[key]}
+        
+        # Transform hashes if necessary
+        if scheme == "disk":
+            bucket_hashes = transform_np_numerical_disk_hashes_to_non_np(bucket_hashes)
+
+        # Compute similarities within the current bucket
+        if measure == "dtw":
+            similarities = (
+                cy_dtw_hashes_pool(bucket_hashes) if parallel else cy_dtw_hashes(bucket_hashes)
+            )
+        elif measure == "frechet":
+            similarities = (
+                cy_frechet_hashes_pool(bucket_hashes) if parallel else cy_frechet_hashes(bucket_hashes)
+            )
+
+        # Create a DataFrame for the current bucket
+        trajectory_names = list(bucket_hashes.keys())
+        similarity_df = pd.DataFrame(similarities, index=trajectory_names, columns=trajectory_names)
+
+        # Update the global similarity matrix with values from the current bucket
+        for i, traj_i in enumerate(trajectory_names):
+            for j, traj_j in enumerate(trajectory_names):
+                global_similarity_matrix.loc[traj_i, traj_j] = max(
+                    global_similarity_matrix.loc[traj_i, traj_j], similarity_df.iloc[i, j]
+                )
+
+    return global_similarity_matrix
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-# TODO - measure computation time
-# def _computeSimilarities(args) -> list:
-#     hashes, measure = args
-#     elapsed_time = ti.timeit(
-#         lambda: MEASURE[measure](hashes), number=1, timer=time.process_time
-#     )
-#     return elapsed_time
-
-
-# def measure_disk_hash_similarity_computation_time(
-#     city: str,
-#     size: int,
-#     diameter: float,
-#     layers: int,
-#     disks: int,
-#     hashtype: str,
-#     measure: str = "dtw",
-#     parallell_jobs: int = 10,
-# ) -> list:
-#     """
-#     Method to measure the execution time of similarity computation of the hashes
-
-#     Param
-#     ---
-#     city : str
-#         Either "porto" or "rome"
-#     size : int
-#         The dataset-size that will be computed
-#     diameter : float
-#         The disks diameter
-#     layers : int
-#         The number of layers that will be used
-#     disks : int
-#         The number of disks that will be used at each layer
-#     hashtype : str
-#         "normal" | "quadrants" | "kd"
-#     measure : str (Either "ed" or "dtw" - "dtw" default)
-#         The measure that will be used for computation
-#     parallell_jobs : int
-#         The number of jobs that will be run
-#     """
-
-#     execution_times = []
-
-#     with Pool(parallell_jobs) as pool:
-#         Disk = _constructDisk(city, diameter, layers, disks, size)
-
-#         if measure == "dtw" and hashtype == "kd":
-#             hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-#         elif measure == "ed" and hashtype == "normal":
-#             hashes = Disk.compute_dataset_hashes()
-#         elif measure == "ed" and hashtype == "quadrants":
-#             hashes = Disk.compute_dataset_hashes_with_quad_tree()
-#         elif measure == "ed" and hashtype == "kd":
-#             hashes = Disk.compute_dataset_hashes_with_KD_tree()
-#         else:
-#             raise ValueError(
-#                 "Cannot construct disk hashes as input parameters are uncertain"
-#             )
-
-#         time_measurement = pool.map(
-#             _computeSimilarities, [(hashes, measure) for _ in range(parallell_jobs)]
-#         )
-#         execution_times.extend(time_measurement)
-
-#     return execution_times
+def measure_hashed_cy_bucketing(
+    hashes: dict[str, list[list[list[float]]]],
+    scheme: str,
+    measure: str,
+    bucket_system: dict[int, list[str]],
+    parallel: bool = False):
+    
+    """Method for measuring time efficiency using cy_dtw_hashes"""
+        
+    measures = ti.repeat(
+        lambda: compute_hash_similarity_within_buckets(hashes=hashes, scheme=scheme, measure=measure, bucket_system=bucket_system, parallel=parallel)
+                ,number=1, repeat=1, timer=time.process_time
+    )
+    
+    return measures
