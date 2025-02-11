@@ -51,8 +51,8 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_DATA_FOLDER = "../../../dataset/porto/output/"
-ROME_DATA_FOLDER = "../../../dataset/rome/output/"
+PORTO_DATA_FOLDER = f"../../../dataset/porto/output/"
+ROME_DATA_FOLDER = f"{project_root}/dataset/rome/output/"
 
 #Get metafile from porto
 def PORTO_META(size: int):
@@ -258,7 +258,7 @@ def generate_disk_hash_similarity_with_bucketing(
     bucket_system = place_hashes_into_buckets(hashes)
     
     similarities = compute_hash_similarity_within_buckets(
-        hashes=hashes, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=True
+        hashes=hashes, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
     return similarities, bucket_system
@@ -288,7 +288,7 @@ def generate_grid_hash_similarity_with_bucketing(
     bucket_system = place_hashes_into_buckets(hashes) 
     
     similarities = compute_hash_similarity_within_buckets(
-        hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=True
+        hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
     return similarities, bucket_system

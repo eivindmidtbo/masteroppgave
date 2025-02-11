@@ -1,4 +1,5 @@
 # Sheet containing helper functions for bucket evaluation
+from decimal import DivisionImpossible
 import pandas as pd
 
 
@@ -47,13 +48,6 @@ def calculate_true_positives(predicted: list[str], ground_truth: list[str]) -> i
     """
     return len(set(predicted).intersection(ground_truth))
 
-
-def calculate_true_negatives(predicted: list[str], ground_truth: list[str]):
-    # Calculate the number of true negatives
-    pass
-    
-    
-
 def calculate_false_positives(predicted: list[str], ground_truth: list[str]):
     """
     Calculate the number of false positives between the predicted and ground truth values.
@@ -86,3 +80,31 @@ def find_predicted_similar_trajectories(trajectory_name: str, bucket_system):
     
     return list(shared_trajectories)
     
+    
+    
+def compute_bucket_system_precision(true_positives, false_positives):
+    """
+    Compute the precision of the bucket system.
+    """
+    if true_positives == 0 and false_positives == 0:
+         raise DivisionImpossible(f"Division by zero. True positives: {true_positives}, False positives: {false_positives}")
+    precision = true_positives / (true_positives + false_positives)
+    return precision
+
+def compute_bucket_system_recall(true_positives, false_negatives):
+    """
+    Compute the recall of the bucket system.
+    """
+    if true_positives == 0 and false_negatives == 0:
+         raise DivisionImpossible(f"Division by zero. True positives: {true_positives}, False negatives: {false_negatives}")
+    recall = true_positives / (true_positives + false_negatives)
+    return recall
+
+def compute_bucket_system_f1_score(precision, recall):
+    """
+    Compute the F1 score of the bucket system.
+    """
+    if precision == 0 and recall == 0:
+         raise DivisionImpossible(f"Division by zero. Precision: {precision}, Recall: {recall}")
+    f1 = 2 * (precision * recall) / (precision + recall)
+    return f1

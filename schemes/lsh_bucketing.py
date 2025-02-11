@@ -15,7 +15,7 @@ def place_hashes_into_buckets(hashes):
     # Iterate over each layer's hash
     for hash_file in hashes:
         for layer_hash in hashes[hash_file]:
-
+            
             if layer_hash == []:
                 continue
 
