@@ -252,11 +252,13 @@ def generate_disk_hash_similarity_with_bucketing(
         bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
         pd.DataFrame: The similarity values for the trajectories within the same bucket
     """
-
+    print("Generating disk hash similarity with bucketing")
     Disk = _constructDisk(city, diameter, layers, disks, size)
+    print("Computing dataset hashes")
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-    bucket_system = place_hashes_into_buckets(hashes)
-    
+    print("Placing hashes into buckets")
+    bucket_system = place_hashes_into_buckets_individual(hashes)
+    print("Computing hash similarity within buckets")
     similarities = compute_hash_similarity_within_buckets(
         hashes=hashes, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
     )
