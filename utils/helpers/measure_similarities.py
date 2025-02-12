@@ -4,7 +4,7 @@ import time
 import timeit as ti
 import pandas as pd
 
-from schemes.lsh_bucketing import place_hashes_into_buckets
+from schemes.lsh_bucketing import place_hashes_into_buckets, place_hashes_into_buckets_individual
 
 def find_project_root(target_folder="masteroppgave"):
     """Find the absolute path of a folder by searching upward."""
@@ -497,7 +497,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
 
             #Bucketing start
             start_time_bucketing = time.perf_counter()
-            bucket_system = place_hashes_into_buckets(hashes)
+            bucket_system = place_hashes_into_buckets_individual(hashes)
             end_time_bucketing = time.perf_counter()
             #Bucketing end
             
