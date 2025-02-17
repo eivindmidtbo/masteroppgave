@@ -13,13 +13,38 @@ from matplotlib import pyplot as plt
 from multiprocessing import Pool
 import scipy
 
-currentdir = os.path.dirname(os.path.abspath("__file__"))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+import os
+import sys
+
+def find_project_root(target_folder="masteroppgave"):
+    """Find the absolute path of a folder by searching upward."""
+    currentdir = os.path.abspath("__file__")  # Get absolute script path
+    while True:
+        if os.path.basename(currentdir) == target_folder:
+            return currentdir  # Found the target folder
+        parentdir = os.path.dirname(currentdir)
+        if parentdir == currentdir:  # Stop at filesystem root
+            return None
+        currentdir = parentdir  # Move one level up
+
+# Example usage
+project_root = find_project_root("masteroppgave")
+
+if project_root:
+    sys.path.append(project_root)
+    print(f"Project root found: {project_root}")
+else:
+    raise RuntimeError("Could not find 'masteroppgave' directory")
+
+from computation.similarity import *
+from utils.helpers.bucket_evaluation import *
+import json
+import pandas as pd
+
 
 from schemes.lsh_disk import DiskLSH
 
-from utils.similarity_measures.distance import compute_hash_similarity
+from computation.similarity import compute_hash_similarity
 
 
 from constants import (
