@@ -13,44 +13,20 @@ from matplotlib import pyplot as plt
 from multiprocessing import Pool
 import scipy
 
-import os
-import sys
-
-def find_project_root(target_folder="masteroppgave"):
-    """Find the absolute path of a folder by searching upward."""
-    currentdir = os.path.abspath("__file__")  # Get absolute script path
-    while True:
-        if os.path.basename(currentdir) == target_folder:
-            return currentdir  # Found the target folder
-        parentdir = os.path.dirname(currentdir)
-        if parentdir == currentdir:  # Stop at filesystem root
-            return None
-        currentdir = parentdir  # Move one level up
-
-# Example usage
-project_root = find_project_root("masteroppgave")
-
-if project_root:
-    sys.path.append(project_root)
-    print(f"Project root found: {project_root}")
-else:
-    raise RuntimeError("Could not find 'masteroppgave' directory")
-
-from computation.similarity import *
-from utils.helpers.bucket_evaluation import *
-import json
-import pandas as pd
-
+currentdir = os.path.dirname(os.path.abspath("__file__"))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 from schemes.lsh_disk import DiskLSH
 
-from computation.similarity import compute_hash_similarity
+from utils.similarity_measures.distance import compute_hash_similarity
 
 
 from constants import (
     COLOR_MAP_DATASET,
     PORTO_OUTPUT_FOLDER,
     ROME_OUTPUT_FOLDER,
+    KOLUMBUS_OUTPUT_FOLDER,
     P_MAX_LAT,
     P_MIN_LAT,
     P_MAX_LON,
@@ -59,6 +35,11 @@ from constants import (
     R_MIN_LAT,
     R_MAX_LON,
     R_MIN_LON,
+    K_MAX_LAT,
+    K_MIN_LAT,
+    K_MAX_LON,
+    K_MIN_LON,
+    SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS,
     SIMILARITIES_OUTPUT_FOLDER_PORTO,
     SIMILARITIES_OUTPUT_FOLDER_ROME,
     NUMBER_OF_TRAJECTORIES,
@@ -72,6 +53,10 @@ PORTO_META_TEST = f"../{PORTO_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
 
 ROME_CHOSEN_DATA = f"../{ROME_OUTPUT_FOLDER}/"
 ROME_META_TEST = f"../{ROME_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
+
+KOLUMBUS_CHOSEN_DATA = f"../{KOLUMBUS_OUTPUT_FOLDER}/"
+KOLUMBUS_META_TEST = f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{NUMBER_OF_TRAJECTORIES}.TXT"
+
 
 # Defining helper functions:
 def _mirrorDiagonal(M: np.ndarray) -> np.ndarray:
@@ -95,6 +80,12 @@ R_DTW = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
+K_DTW = _mirrorDiagonal(
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-dtw-{NUMBER_OF_TRAJECTORIES}.csv",
+        index_col=0,
+    )
+).flatten()
 P_FRE = _mirrorDiagonal(
     pd.read_csv(
         f"../{SIMILARITIES_OUTPUT_FOLDER_PORTO}/porto-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
@@ -107,6 +98,12 @@ R_FRE = _mirrorDiagonal(
         index_col=0,
     )
 ).flatten()
+K_FRE = _mirrorDiagonal(
+    pd.read_csv(
+        f"../{SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS}/kolumbus-frechet-{NUMBER_OF_TRAJECTORIES}.csv",
+        index_col=0,
+    )
+).flatten()
 NULL_TEST_CSV = _mirrorDiagonal(
     pd.read_csv("../benchmarks/true_similarities/null-testset.csv", index_col=0)
 ).flatten()
@@ -114,8 +111,10 @@ NULL_TEST_CSV = _mirrorDiagonal(
 REFERENCE = {
     "portodtw": P_DTW,
     "romedtw": R_DTW,
+    "kolumbusdtw": K_DTW,
     "portofrechet": P_FRE,
     "romefrechet": R_FRE,
+    "kolumbusfrechet": K_FRE,
     "null_testset": NULL_TEST_CSV,
 }
 
@@ -125,6 +124,8 @@ def get_folder_paths(city: str) -> tuple:
         return SIMILARITIES_OUTPUT_FOLDER_PORTO, PORTO_CHOSEN_DATA
     elif city.lower() == "rome":
         return SIMILARITIES_OUTPUT_FOLDER_ROME, ROME_CHOSEN_DATA
+    elif city.lower() == "kolumbus":
+        return SIMILARITIES_OUTPUT_FOLDER_KOLUMBUS, KOLUMBUS_CHOSEN_DATA
 
 
 def get_meta_file(city: str, size: int) -> str:
@@ -132,6 +133,8 @@ def get_meta_file(city: str, size: int) -> str:
         return f"../{PORTO_OUTPUT_FOLDER}/META-{size}.txt"
     elif city.lower() == "rome":
         return f"../{ROME_OUTPUT_FOLDER}/META-{size}.txt"
+    elif city.lower() == "kolumbus":
+        return f"../{KOLUMBUS_OUTPUT_FOLDER}/META-{size}.txt"
 
 
 def _constructDisk(
@@ -163,6 +166,19 @@ def _constructDisk(
             R_MAX_LAT,
             R_MIN_LON,
             R_MAX_LON,
+            disks,
+            layers,
+            diameter,
+            meta_file,
+            chosen_data,
+        )
+    elif city.lower() == "kolumbus":
+        return DiskLSH(
+            f"GK_{layers}-{'{:.2f}'.format(diameter)}",
+            K_MIN_LAT,
+            K_MAX_LAT,
+            K_MIN_LON,
+            K_MAX_LON,
             disks,
             layers,
             diameter,
@@ -419,7 +435,7 @@ def plot_disk_sizes(
 ):
     """oweee"""
     all_results = []
-    datasets = ["porto", "rome"]
+    datasets = ["porto", "rome", "kolumbus"]
     for city in datasets:
         results = _compute_disk_sizes(
             city=city,
