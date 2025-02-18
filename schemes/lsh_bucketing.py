@@ -1,6 +1,6 @@
 import cityhash
 
-def place_hashes_into_buckets(hashes):
+def place_hashes_into_buckets_original(hashes):
     """Places trajectories into buckets based on their hash values.
     Works for all types of hashes (grid and disk)
     
@@ -33,7 +33,7 @@ def place_hashes_into_buckets(hashes):
     return bucket_system
 
 
-def place_hashes_into_buckets_individual(hashes):
+def place_hashes_into_buckets_loose(hashes):
     """Places trajectories into buckets based on the individual buckets they pass through.
     
     Args:    

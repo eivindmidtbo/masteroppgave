@@ -31,6 +31,39 @@ def read_trajectory_file(file_path: str) -> list[list[float]]:
     return trajectory
 
 
+def load_trajectories_from_meta_file(size: int, folder_path: str) -> dict:
+    """
+    Reads all trajectory.txt files from the meta.txt file and returns the content as a dictionary
+
+    Parameters
+    ----------
+    size : int
+        The number of files that should be read
+    folder_path : str
+        The file path for the file that should be read
+
+    Returns
+    ---
+    A dictionary containing the files and their coordinates with their filename as key
+    """
+
+    try:
+        with open(folder_path + f"meta-{size}.txt", "r") as file:
+            file_list = [next(file).strip() for _ in range(size)]
+            file.close()
+    except FileNotFoundError:
+        print("Can't find file.")
+
+    trajectories = dict()
+
+    for file_name in file_list:
+        key = os.path.splitext(file_name)[0]
+        trajectory = read_trajectory_file(folder_path + file_name)
+
+        trajectories[key] = trajectory
+
+    return trajectories
+
 def load_trajectory_files(files: list[str], folder_path) -> dict:
     """
     Loads all trajectory.txt files and returns the content as a dictionary
