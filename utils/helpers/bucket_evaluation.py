@@ -46,10 +46,6 @@ def calculate_true_positives(predicted: list[str], ground_truth: list[str]) -> i
     """
     Calculate the number of true positives between the predicted and ground truth values.
     """
-    if predicted == []:
-        print("Predicted is empty")
-    if ground_truth == []:
-        print("Ground truth is empty")
     return len(set(predicted).intersection(ground_truth))
 
 def calculate_false_positives(predicted: list[str], ground_truth: list[str]) -> int:
@@ -95,7 +91,7 @@ def compute_bucket_system_precision(true_positives, false_positives):
     Compute the precision of the bucket system.
     """
     if true_positives == 0 and false_positives == 0:
-         raise DivisionImpossible(f"Division by zero. True positives: {true_positives}, False positives: {false_positives}")
+        return 0
     precision = true_positives / (true_positives + false_positives)
     return precision
 
@@ -104,7 +100,7 @@ def compute_bucket_system_recall(true_positives, false_negatives):
     Compute the recall of the bucket system.
     """
     if true_positives == 0 and false_negatives == 0:
-         raise DivisionImpossible(f"Division by zero. True positives: {true_positives}, False negatives: {false_negatives}")
+        return 0
     recall = true_positives / (true_positives + false_negatives)
     return recall
 
@@ -113,6 +109,6 @@ def compute_bucket_system_f1_score(precision, recall):
     Compute the F1 score of the bucket system.
     """
     if precision == 0 and recall == 0:
-         raise DivisionImpossible(f"Division by zero. Precision: {precision}, Recall: {recall}")
+        return 0
     f1 = 2 * (precision * recall) / (precision + recall)
     return f1
