@@ -83,7 +83,7 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     else:
         average_dtw = float("nan")  # Avoid division by zero
 
-    print(f"Average DTW score for all pairs: {average_dtw}")
+    # print(f"Average DTW score for all pairs: {average_dtw}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()

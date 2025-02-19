@@ -292,7 +292,7 @@ def generate_grid_hash_similarity_with_bucketing(
         pd.DataFrame: The similarity values for the trajectories within the same bucket
     """
 
-    Grid = _constructGrid(city, res, layers, size) 
+    Grid = _constructGrid(city, res, layers, size)
     hashes = Grid.compute_dataset_hashes()
     bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
     similarities = compute_hash_similarity_within_buckets(
@@ -368,7 +368,6 @@ def compute_hash_similarity_within_buckets(
                 )
 
     return global_similarity_matrix
-
 
 def measure_hashed_cy_bucketing(
     hashes: dict[str, list[list[list[float]]]],
@@ -454,7 +453,7 @@ def generate_grid_hash_similarity_with_bucketing_with_true_sim(
     bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
     
     
-    similarities = compute_hash_similarity_within_buckets(
+    similarities = compute_hash_similarity_within_buckets_with_true_sim(
         true_coordinates=true_coordinates, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
