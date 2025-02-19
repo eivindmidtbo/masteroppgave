@@ -497,13 +497,10 @@ def compute_hash_similarity_within_buckets_with_true_sim(
         if len(bucket_system[key]) <= 1:
             continue
 
+        
         # Filter hashes for the current bucket
         bucket_trajectories = {file: true_coordinates[file] for file in bucket_system[key]}
-        
-        # # Transform hashes if necessary
-        # if scheme == "disk":
-        #     bucket_hashes = transform_np_numerical_disk_hashes_to_non_np(bucket_hashes)
-
+              
         # Compute similarities within the current bucket
         if measure == "dtw":
             similarities = (
@@ -524,7 +521,7 @@ def compute_hash_similarity_within_buckets_with_true_sim(
                 global_similarity_matrix.loc[traj_i, traj_j] = max(
                     global_similarity_matrix.loc[traj_i, traj_j], similarity_df.iloc[i, j]
                 )
-
+                
     return global_similarity_matrix
 
 def measure_hashed_cy_bucketing_with_true_sim(
