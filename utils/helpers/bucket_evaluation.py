@@ -46,14 +46,22 @@ def calculate_true_positives(predicted: list[str], ground_truth: list[str]) -> i
     """
     Calculate the number of true positives between the predicted and ground truth values.
     """
+    if predicted == []:
+        print("Predicted is empty")
+    if ground_truth == []:
+        print("Ground truth is empty")
     return len(set(predicted).intersection(ground_truth))
 
-def calculate_false_positives(predicted: list[str], ground_truth: list[str]):
+def calculate_false_positives(predicted: list[str], ground_truth: list[str]) -> int:
     """
     Calculate the number of false positives between the predicted and ground truth values.
+    If ground_truth is empty, all predicted values are considered false positives.
     """
-    # Calculate the number of false positives
+    if not ground_truth:  # Check if ground_truth is empty
+        return len(predicted)  # All predicted elements are false positives
+
     return len(set(predicted).difference(ground_truth))
+
 
 def calculate_false_negatives(predicted: list[str], ground_truth: list[str]):
     """

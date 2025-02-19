@@ -33,6 +33,8 @@ def place_hashes_into_buckets_original(hashes):
     return bucket_system
 
 
+import cityhash
+
 def place_hashes_into_buckets_loose(hashes):
     """Places trajectories into buckets based on the individual buckets they pass through.
     
@@ -60,10 +62,14 @@ def place_hashes_into_buckets_loose(hashes):
                 # Hash each coordinate individually
                 hash_key = cityhash.CityHash128(coord_string)
                 
-                # Place trajectory into the corresponding bucket
+                # Ensure bucket exists
                 if hash_key not in bucket_system:
-                    bucket_system[hash_key] = []
-                bucket_system[hash_key].append(hash_file)
+                    bucket_system[hash_key] = set()  # Use a set to prevent duplicates
+                
+                # Add trajectory if not already in the bucket
+                bucket_system[hash_key].add(hash_file)
 
-    return bucket_system
+    # Convert sets back to lists before returning
+    return {key: list(values) for key, values in bucket_system.items()}
+
 
