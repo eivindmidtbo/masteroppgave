@@ -31,6 +31,7 @@ else:
 
 # Imports
 import pandas as pd
+import numpy as np
 from schemes.lsh_disk import DiskLSH
 from schemes.lsh_grid import GridLSH
 from schemes.lsh_bucketing import *
@@ -39,7 +40,7 @@ import time
 
 from utils.similarity_measures.hashed_dtw import cy_dtw_hashes, cy_dtw_hashes_pool
 from utils.similarity_measures.hashed_frechet import cy_frechet_hashes, cy_frechet_hashes_pool
-from utils.similarity_measures.dtw import cy_dtw, cy_dtw_pool
+from utils.similarity_measures.dtw import cy_dtw, cy_dtw_bucketing, cy_dtw_pool
 from utils.similarity_measures.frechet import cy_frechet, cy_frechet_pool
 from utils.helpers.file_handler import load_trajectories_from_meta_file, load_trajectory_files
 
@@ -314,60 +315,43 @@ def compute_hash_similarity_within_buckets(
     Returns:
         pd.DataFrame: A global similarity matrix for all trajectories
     """
+    # 1) Gather all trajectories, give each an integer ID
+    all_trajs = sorted({t for b in bucket_system.values() for t in b})
+    traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
+    n = len(all_trajs)
+    global_matrix = np.zeros((n, n), dtype=float)
     
     
-    # Get all trajectory names across all buckets
-    all_trajectories = set()
+    # 2) Transform the hashes if the scheme is disk
+    if scheme == "disk":
+        hashes = transform_np_numerical_disk_hashes_to_non_np(hashes)
     
-    for bucket_trajectories in bucket_system.values():
-        all_trajectories.update(bucket_trajectories)
-
-    # Convert set to a sorted list for a stable DataFrame index
-    all_trajectories = sorted(all_trajectories)
-
-    # Create a DataFrame initialized with zeros
-    global_similarity_matrix = pd.DataFrame(
-        0,
-        index=all_trajectories,
-        columns=all_trajectories,
-        dtype=float,
-    )
-
-    # Compute similarity matrices for each bucket
-    for key in bucket_system:
-        # Skip buckets with only one trajectory
-        if len(bucket_system[key]) <= 1:
+    # 3) For each bucket, compute pairwise similarities
+    for bucket_id, traj_list in bucket_system.items():
+        if len(traj_list) <= 1:
             continue
-
-        # Filter hashes for the current bucket
-        bucket_hashes = {file: hashes[file] for file in bucket_system[key]}
         
-        # Transform hashes if necessary
-        if scheme == "disk":
-            bucket_hashes = transform_np_numerical_disk_hashes_to_non_np(bucket_hashes)
+        stable_ordered_names = sorted(traj_list)
 
-        # Compute similarities within the current bucket
+        bucket_data = {t: hashes[t] for t in stable_ordered_names}
+             
         if measure == "dtw":
-            similarities = (
-                cy_dtw_hashes_pool(bucket_hashes) if parallel else cy_dtw_hashes(bucket_hashes)
-            )
+            sims = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes(bucket_data)
         elif measure == "frechet":
-            similarities = (
-                cy_frechet_hashes_pool(bucket_hashes) if parallel else cy_frechet_hashes(bucket_hashes)
-            )
+            sims = cy_frechet_hashes_pool(bucket_data) if parallel else cy_frechet_hashes(bucket_data)
+        else:
+            raise ValueError("Unsupported measure.")
 
-        # Create a DataFrame for the current bucket
-        trajectory_names = list(bucket_hashes.keys())
-        similarity_df = pd.DataFrame(similarities, index=trajectory_names, columns=trajectory_names)
+         # 4) Convert to integer indices
+        idxs = [traj_to_idx[t] for t in stable_ordered_names]
+                
+        # 5) Update submatrix
+        global_matrix[np.ix_(idxs, idxs)] = np.maximum(
+            global_matrix[np.ix_(idxs, idxs)],
+            sims
+        )
 
-        # Update the global similarity matrix with values from the current bucket
-        for i, traj_i in enumerate(trajectory_names):
-            for j, traj_j in enumerate(trajectory_names):
-                global_similarity_matrix.loc[traj_i, traj_j] = max(
-                    global_similarity_matrix.loc[traj_i, traj_j], similarity_df.iloc[i, j]
-                )
-
-    return global_similarity_matrix
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
 
 def measure_hashed_cy_bucketing(
     hashes: dict[str, list[list[list[float]]]],
@@ -472,57 +456,41 @@ def compute_hash_similarity_within_buckets_with_true_sim(
     Returns:
         pd.DataFrame: A global similarity matrix for all trajectories
     """
-    
-    
-    # Get all trajectory names across all buckets
-    all_trajectories = set()
-    
-    for bucket_trajectories in bucket_system.values():
-        all_trajectories.update(bucket_trajectories)
+    # 1) Gather all trajectories, give each an integer ID
+    all_trajs = sorted({t for b in bucket_system.values() for t in b})
+    traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
+    n = len(all_trajs)
+    global_matrix = np.zeros((n, n), dtype=float)
 
-    # Convert set to a sorted list for a stable DataFrame index
-    all_trajectories = sorted(all_trajectories)
-
-    # Create a DataFrame initialized with zeros
-    global_similarity_matrix = pd.DataFrame(
-        0,
-        index=all_trajectories,
-        columns=all_trajectories,
-        dtype=float,
-    )
-
-    # Compute similarity matrices for each bucket
-    for key in bucket_system:
-        # Skip buckets with only one trajectory
-        if len(bucket_system[key]) <= 1:
+    
+    # 3) For each bucket, compute pairwise similarities
+    for bucket_id, traj_list in bucket_system.items():
+        if len(traj_list) <= 1:
             continue
-
         
-        # Filter hashes for the current bucket
-        bucket_trajectories = {file: true_coordinates[file] for file in bucket_system[key]}
-              
-        # Compute similarities within the current bucket
+        stable_ordered_names = sorted(traj_list)
+
+        bucket_data = {t: true_coordinates[t] for t in stable_ordered_names}
+        
         if measure == "dtw":
-            similarities = (
-                cy_dtw_pool(bucket_trajectories) if parallel else cy_dtw(bucket_trajectories)
-            )
+            sims = cy_dtw_pool(bucket_data) if parallel else cy_dtw_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         elif measure == "frechet":
-            similarities = (
-                cy_frechet_pool(bucket_trajectories) if parallel else cy_frechet(bucket_trajectories)
-            )
-
-        # Create a DataFrame for the current bucket
-        trajectory_names = list(bucket_trajectories.keys())
-        similarity_df = pd.DataFrame(similarities, index=trajectory_names, columns=trajectory_names)
-
-        # Update the global similarity matrix with values from the current bucket
-        for i, traj_i in enumerate(trajectory_names):
-            for j, traj_j in enumerate(trajectory_names):
-                global_similarity_matrix.loc[traj_i, traj_j] = max(
-                    global_similarity_matrix.loc[traj_i, traj_j], similarity_df.iloc[i, j]
-                )
+            sims = cy_frechet_pool(bucket_data) if parallel else cy_frechet(bucket_data)
+        else:
+            raise ValueError("Unsupported measure.")
+        
+        
+        # 4) Convert to integer indices
+        idxs = [traj_to_idx[t] for t in stable_ordered_names]
+        
                 
-    return global_similarity_matrix
+        # 5) Update submatrix
+        global_matrix[np.ix_(idxs, idxs)] = np.maximum(
+            global_matrix[np.ix_(idxs, idxs)],
+            sims
+        ) 
+        
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
 
 def measure_hashed_cy_bucketing_with_true_sim(
     true_coordinates: dict[str, list[list[list[float]]]],
@@ -539,3 +507,8 @@ def measure_hashed_cy_bucketing_with_true_sim(
     )
     
     return measures
+
+
+
+
+

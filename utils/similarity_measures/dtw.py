@@ -164,3 +164,60 @@ def measure_py_dtw(args):
         timer=time.process_time,
     )
     return measures
+
+
+
+def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs, global_matrix) -> pd.DataFrame:
+    """
+    Method for computing DTW similarity between all trajectories in a given dataset using cython.
+
+    Params
+    ---
+    trajectories : dict[str, list[list[float]]]
+        A dictionary containing the trajectories
+
+    Returns
+    ---
+    A nxn pandas dataframe containing the pairwise similarities - sorted alphabetically
+    """
+
+    sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
+    num_trajectoris = len(sorted_trajectories)
+
+    M = np.zeros((num_trajectoris, num_trajectoris))
+    total_dtw_distance = 0
+    count = 0
+
+    for i, traj_i in enumerate(sorted_trajectories.keys()):
+        for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
+            # Lookup index for traj_i, traj_j
+            traj_i_index = trajectory_idxs[traj_i]
+            traj_j_index = trajectory_idxs[traj_j]
+            #Check global index
+            if global_matrix[traj_i_index, traj_j_index] != 0:
+                #skip if exist  
+                continue
+            
+            
+            
+            X = np.array(sorted_trajectories[traj_i])
+            Y = np.array(sorted_trajectories[traj_j])
+            dtw = c_dtw(X, Y)
+            M[i, j] = dtw
+            total_dtw_distance += dtw
+            count += 1
+            if i == j:
+                break
+    if count > 0:
+        average_dtw = total_dtw_distance / count
+    else:
+        average_dtw = float("nan")  # Avoid division by zero
+
+    # print(f"Average DTW score for all pairs: {average_dtw}")
+
+    df = pd.DataFrame(
+        M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
+    )
+
+    return df
