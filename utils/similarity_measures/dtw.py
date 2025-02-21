@@ -46,7 +46,6 @@ def py_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
 
     return df
 
-
 def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
     Method for computing DTW similarity between all trajectories in a given dataset using cython.
@@ -91,13 +90,11 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
 
     return df
 
-
 # Helper function for dtw parallell programming for speedy computations
 def _fun_wrapper(args):
     x, y, j = args
     dtw = c_dtw(x, y)
     return dtw, j
-
 
 def cy_dtw_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     """
@@ -135,9 +132,6 @@ def cy_dtw_pool(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
 
     return df
 
-
-
-
 def measure_cy_dtw(args):
     """Method for measuring time efficiency using cy_dtw"""
 
@@ -164,8 +158,6 @@ def measure_py_dtw(args):
         timer=time.process_time,
     )
     return measures
-
-
 
 def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs, global_matrix) -> pd.DataFrame:
     """

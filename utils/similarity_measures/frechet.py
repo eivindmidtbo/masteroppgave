@@ -173,3 +173,58 @@ def measure_cy_frechet(args):
         timer=time.process_time,
     )
     return measures
+
+
+def cy_frechet_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs, global_matrix) -> pd.DataFrame:
+    """
+    Method for computing frechet similarity between all trajectories in a given dataset using cython.
+
+    Params
+    ---
+    trajectories : dict[str, list[list[float]]]
+        A dictionary containing the trajectories
+
+    Returns
+    ---
+    A nxn pandas dataframe containing the pairwise similarities - sorted alphabetically
+    """
+
+    sorted_trajectories = co.OrderedDict(sorted(trajectories.items()))
+    num_trajectories = len(sorted_trajectories)
+
+    M = np.zeros((num_trajectories, num_trajectories))
+    total_frechet = 0
+    count = 0
+
+    for i, traj_i in enumerate(sorted_trajectories.keys()):
+        for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
+            # Lookup index for traj_i, traj_j
+            traj_i_index = trajectory_idxs[traj_i]
+            traj_j_index = trajectory_idxs[traj_j]
+            #Check global index
+            if global_matrix[traj_i_index, traj_j_index] != 0:
+                #skip if exist  
+                continue
+            
+            X = np.array(sorted_trajectories[traj_i])
+            Y = np.array(sorted_trajectories[traj_j])
+            frech = c_frechet(X, Y)
+            M[i, j] = frech
+            total_frechet += frech
+            count += 1
+            if i == j:
+                break
+
+    if count > 0:
+        average_frechet = total_frechet / count
+    else:
+        average_frechet = float("nan")  # Avoid division by zero
+
+    print(f"Average Fréchet score for all pairs: {average_frechet}")
+
+    df = pd.DataFrame(
+        M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
+    )
+
+    return df

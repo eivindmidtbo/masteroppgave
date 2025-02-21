@@ -38,10 +38,10 @@ from schemes.lsh_bucketing import *
 import timeit as ti
 import time
 
-from utils.similarity_measures.hashed_dtw import cy_dtw_hashes, cy_dtw_hashes_pool
-from utils.similarity_measures.hashed_frechet import cy_frechet_hashes, cy_frechet_hashes_pool
+from utils.similarity_measures.hashed_dtw import cy_dtw_hashes, cy_dtw_hashes_bucketing, cy_dtw_hashes_pool
+from utils.similarity_measures.hashed_frechet import cy_frechet_hashes, cy_frechet_hashes_bucketing, cy_frechet_hashes_pool
 from utils.similarity_measures.dtw import cy_dtw, cy_dtw_bucketing, cy_dtw_pool
-from utils.similarity_measures.frechet import cy_frechet, cy_frechet_pool
+from utils.similarity_measures.frechet import cy_frechet, cy_frechet_bucketing, cy_frechet_pool
 from utils.helpers.file_handler import load_trajectories_from_meta_file, load_trajectory_files
 
 
@@ -336,9 +336,9 @@ def compute_hash_similarity_within_buckets(
         bucket_data = {t: hashes[t] for t in stable_ordered_names}
              
         if measure == "dtw":
-            sims = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes(bucket_data)
+            sims = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         elif measure == "frechet":
-            sims = cy_frechet_hashes_pool(bucket_data) if parallel else cy_frechet_hashes(bucket_data)
+            sims = cy_frechet_hashes_pool(bucket_data) if parallel else cy_frechet_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         else:
             raise ValueError("Unsupported measure.")
 
@@ -475,7 +475,7 @@ def compute_hash_similarity_within_buckets_with_true_sim(
         if measure == "dtw":
             sims = cy_dtw_pool(bucket_data) if parallel else cy_dtw_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         elif measure == "frechet":
-            sims = cy_frechet_pool(bucket_data) if parallel else cy_frechet(bucket_data)
+            sims = cy_frechet_pool(bucket_data) if parallel else cy_frechet_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         else:
             raise ValueError("Unsupported measure.")
         

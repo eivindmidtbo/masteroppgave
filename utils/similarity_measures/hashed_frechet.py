@@ -117,3 +117,67 @@ def measure_hashed_cy_frechet(hashes: dict[str, list[list[list[float]]]]):
         lambda: cy_frechet_hashes(hashes), number=1, repeat=1, timer=time.process_time
     )
     return measures
+
+
+
+def cy_frechet_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajectory_idxs, global_matrix) -> pd.DataFrame:
+    """
+    Method for computing DTW similarity between all layers of trajectories in a given dataset using cython, and summing these similarities.
+
+    Params
+    ---
+    trajectories : dict[str, list[list[list[float]]]]
+        A dictionary containing the trajectories, where each key corresponds to multiple layers of trajectories.
+
+    Returns
+    ---
+    A nxn pandas dataframe containing the pairwise summed similarities - sorted alphabetically
+    """
+    sorted_trajectories = co.OrderedDict(sorted(hashes.items()))
+    num_trajectories = len(sorted_trajectories)
+
+    M = np.zeros((num_trajectories, num_trajectories))
+
+    total_comparisons = 0
+    total_skipped_comparisons = 0
+
+    for i, traj_i in enumerate(sorted_trajectories.keys()):
+        for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
+            
+            # Lookup index for traj_i, traj_j
+            traj_i_index = trajectory_idxs[traj_i]
+            traj_j_index = trajectory_idxs[traj_j]
+            #Check global index
+            if global_matrix[traj_i_index, traj_j_index] != 0:
+                #skip if exist  
+                continue
+            
+            
+            total_frechet = 0  # Initialize total frechet similarity for this pair
+            for layer_i, layer_j in zip(
+                sorted_trajectories[traj_i], sorted_trajectories[traj_j]
+            ):
+
+                X = np.array(layer_i)
+                Y = np.array(layer_j)
+                total_comparisons += 1
+                # Ensure both X and Y are not empty and have the correct shape
+                if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
+                    frechet = c_frechet(
+                        X, Y
+                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    total_frechet += frechet
+                else:
+                    total_skipped_comparisons += 1
+            M[i, j] = total_frechet
+            if i == j:
+                break  # This optimizes by not recalculating for identical trajectories
+
+    df = pd.DataFrame(
+        M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
+    )
+    # Return this when checking correlation based on various number of disks
+    # used by _fun_wrapper_corr_disks
+    # return df, total_comparisons, total_skipped_comparisons
+    return df
