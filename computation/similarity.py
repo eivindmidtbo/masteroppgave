@@ -512,3 +512,58 @@ def measure_hashed_cy_bucketing_with_true_sim(
 
 
 
+############################################################# Hybrid approach #############################################################
+
+
+def generate_disk_hash_similarity_with_bucketing_hybrid(
+    city: str,
+    diameter: list[float],
+    layers: list[int],
+    disks: list[int],
+    measure: str = "dtw",
+    size: int = 50,
+    bucketing_method: str = "original",
+    
+) -> pd.DataFrame:
+    """
+    - Creates a hybrid approach where each layer may have different parameters
+
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket and creates a dataframe
+
+
+    Args:
+    city (str): The city to use. Either "porto" or "rome".
+    diameter list[float]: The disks diameter
+    layers list[int]: number of layers in the disk.
+    disks list[int]: number of disks in each layer.
+    measure (str, optional): Measure to use. Defaults to "dtw".
+    size (int, optional): Number of trajectories to use. Defaults to 50.
+    bucketing_method: str, optional: The bucketing method to use. Defaults to "original"
+    
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
+
+
+    Disk1 = _constructDisk(city, diameter[0], layers[0], disks[0], size) # Construct the first disk object
+    Disk2 = _constructDisk(city, diameter[1], layers[1], disks[1], size) # Construct the third disk object
+
+    hashes1 = Disk1.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
+    hashes2 = Disk2.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
+
+    # combine the three hashes into one based on their keys
+    print(hashes1["R_ABU"])
+    print(hashes2["R_ABU"])
+
+    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes1)
+    
+    
+    similarities = compute_hash_similarity_within_buckets(
+        hashes=hashes2, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
+    )
+
+    return similarities, bucket_system
