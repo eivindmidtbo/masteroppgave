@@ -517,9 +517,12 @@ def measure_hashed_cy_bucketing_with_true_sim(
 
 def generate_disk_hash_similarity_with_bucketing_hybrid(
     city: str,
-    diameter: list[float],
-    layers: list[int],
-    disks: list[int],
+    diameter_bucketing: float,
+    diameter_compression: float,
+    layers_bucketing: int,
+    layers_compression: int,
+    disks_bucketing: int,
+    disks_compression: int,
     measure: str = "dtw",
     size: int = 50,
     bucketing_method: str = "original",
@@ -549,16 +552,16 @@ def generate_disk_hash_similarity_with_bucketing_hybrid(
     """
 
 
-    Disk1 = _constructDisk(city, diameter[0], layers[0], disks[0], size) # Construct the first disk object
-    Disk2 = _constructDisk(city, diameter[1], layers[1], disks[1], size) # Construct the third disk object
+    Disk1 = _constructDisk(city, diameter_bucketing, layers_bucketing, disks_bucketing, size) # Construct the first disk object, used to place the hashes into buckets
+    Disk2 = _constructDisk(city, diameter_compression, layers_compression, disks_compression, size) # Construct the third disk object, used to compute the similarities
 
-    hashes1 = Disk1.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
-    hashes2 = Disk2.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
+    hashes_bucketing = Disk1.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
+    hashes_compression = Disk2.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
 
-    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes1)
+    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes_bucketing)
     
     similarities = compute_hash_similarity_within_buckets(
-        hashes=hashes2, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
+        hashes=hashes_compression, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
     return similarities, bucket_system
@@ -566,8 +569,10 @@ def generate_disk_hash_similarity_with_bucketing_hybrid(
 
 def generate_grid_hash_similarity_with_bucketing_hybrid(
     city: str,
-    layers: list[int],
-    resolutions: list[float],
+    layers_bucketing: int,
+    resolution_bucketing: float,
+    layers_compression: int,
+    resolution_compression: float,
     measure: str = "dtw",
     size: int = 50,
     bucketing_method: str = "original",
@@ -596,16 +601,16 @@ def generate_grid_hash_similarity_with_bucketing_hybrid(
     """
 
 
-    Grid1 = _constructGrid(city, resolutions[0], layers[0], size) # Construct the first disk object
-    Grid2 = _constructGrid(city, resolutions[1], layers[1], size) # Construct the third disk object
+    Grid1 = _constructGrid(city, resolution_bucketing, layers_bucketing, size) # Construct the first grid object, used to place the hashes into buckets
+    Grid2 = _constructGrid(city, resolution_compression, layers_compression, size) # Construct the third grid object, used to compute the similarities
 
-    hashes1 = Grid1.compute_dataset_hashes() # Compute the hashes
-    hashes2 = Grid2.compute_dataset_hashes() # Compute the hashes
+    hashes_bucketing = Grid1.compute_dataset_hashes() # Compute the hashes
+    hashes_compression = Grid2.compute_dataset_hashes() # Compute the hashes
 
-    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes1)
+    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes_bucketing)
     
     similarities = compute_hash_similarity_within_buckets(
-        hashes=hashes2, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
+        hashes=hashes_compression, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
     return similarities, bucket_system
