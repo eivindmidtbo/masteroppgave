@@ -112,3 +112,38 @@ def compute_bucket_system_f1_score(precision, recall):
         return 0
     f1 = 2 * (precision * recall) / (precision + recall)
     return f1
+
+
+def evaluate_bucket_system(bucket_system):
+    """
+    Analyzes the given bucket system and returns a DataFrame with key statistics.
+
+    Parameters:
+    - bucket_system (dict): A dictionary where keys are bucket IDs and values are lists of trajectories.
+
+    Returns:
+    - pandas.DataFrame: A DataFrame containing bucket statistics.
+    """
+    total_buckets = len(bucket_system)
+    buckets_with_multiple = sum(1 for trajectories in bucket_system.values() if len(trajectories) > 1)
+    buckets_with_single = total_buckets - buckets_with_multiple
+    largest_bucket_size = max(len(trajectories) for trajectories in bucket_system.values())
+    smallest_bucket_size = min(len(trajectories) for trajectories in bucket_system.values())
+
+    # Compute distribution percentages
+    multiple_bucket_percentage = (buckets_with_multiple / total_buckets) * 100 if total_buckets > 0 else 0
+    single_bucket_percentage = (buckets_with_single / total_buckets) * 100 if total_buckets > 0 else 0
+
+    # Creating DataFrame
+    stats = {
+        "Total Buckets": [total_buckets],
+        "Largest Bucket Size": [largest_bucket_size],
+        "Smallest Bucket Size": [smallest_bucket_size],
+        "Buckets with >1 Trajectory": [buckets_with_multiple],
+        "Buckets with 1 Trajectory": [buckets_with_single],
+        "Percentage >1 Trajectory": [f"{multiple_bucket_percentage:.2f}%"],
+        "Percentage 1 Trajectory": [f"{single_bucket_percentage:.2f}%"]
+    }
+
+    df = pd.DataFrame(stats)
+    return df
