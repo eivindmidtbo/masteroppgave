@@ -204,7 +204,7 @@ def cy_frechet_bucketing(trajectories: dict[str, list[list[float]]], trajectory_
             traj_j_index = trajectory_idxs[traj_j]
             #Check global index
             if global_matrix[traj_i_index, traj_j_index] != 0:
-                #skip if exist  
+                #skip if exist
                 continue
             
             X = np.array(sorted_trajectories[traj_i])
@@ -221,7 +221,7 @@ def cy_frechet_bucketing(trajectories: dict[str, list[list[float]]], trajectory_
     else:
         average_frechet = float("nan")  # Avoid division by zero
 
-    print(f"Average Fréchet score for all pairs: {average_frechet}")
+    # print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
