@@ -1,4 +1,4 @@
-# masteroppgave
+# Masteroppgave
 
 Brukt for masteroppgaven IT3920 vår 2024 til Eivind Midtbø Øyulvstad og Thomas Nitsche. Mye er likt fra dette repoet https://github.com/bjorafla/master , og vårt repo er i praksis en fork.
 
