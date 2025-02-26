@@ -96,7 +96,7 @@ def compute_true_similarity_runtimes(
     #Output folder
     output_folder = f"../../../results_true/runtimes/{city}/"
     #Filename    
-    file_name = f"similarity_runtimes_{measure}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
+    file_name = f"{city}_similarity_runtimes_{measure}_start-{data_start_size}_end-{data_end_size}_step-{data_step_size}.csv"
     
     # Initialize a list to hold the DataFrames from each iteration
     dfs_iterations = []
