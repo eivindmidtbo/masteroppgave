@@ -564,6 +564,9 @@ def generate_disk_hash_similarity_with_bucketing_hybrid(
         hashes=hashes_compression, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
+    #write to file
+    similarities.to_csv(f"../../../results_hashed/similarity_values/disk/{city}/{measure}/hybrid_{city}_disk_dia_({diameter_bucketing},{diameter_compression})_lay_({layers_bucketing},{layers_compression})_disks_({disks_bucketing},{disks_compression})_{size}_{measure}.csv")
+
     return similarities, bucket_system
 
 
@@ -612,5 +615,8 @@ def generate_grid_hash_similarity_with_bucketing_hybrid(
     similarities = compute_hash_similarity_within_buckets(
         hashes=hashes_compression, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
+
+    #write to file
+    similarities.to_csv(f"../../../results_hashed/similarity_values/grid/{city}/{measure}/hybrid_{city}_grid_res({resolution_bucketing},{resolution_compression})_lay_({layers_bucketing},{layers_compression})_{size}_{measure}.csv")
 
     return similarities, bucket_system
