@@ -184,7 +184,7 @@ def generate_disk_hash_similarity(
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
     similarities = compute_hash_similarity(
-        hashes=hashes, scheme="disk", measure=measure, parallel=True
+        hashes=hashes, scheme="disk", measure=measure, parallel=False
     )
 
     return similarities

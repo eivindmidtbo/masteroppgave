@@ -27,6 +27,18 @@ COLOR_MAP = {
     8: "yellow",
 }
 
+COLOR_MAP_DISKS = {
+    10: "red",
+    20: "blue",
+    30: "green",
+    40: "cyan",
+    50: "magenta",
+    60: "black",
+    70: "darkorange",
+    80: "darkviolet",
+    90: "yellow",
+}
+
 COLOR_MAP_DATASET = {
     "porto": "blue",
     "rome": "green",
