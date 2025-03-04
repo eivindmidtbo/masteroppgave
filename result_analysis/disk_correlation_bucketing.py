@@ -52,6 +52,19 @@ def _fun_wrapper_corr_bucketing(args):
     
     #### Håndtere 0 verdier
         # Lage funksjon senere!!!!!!s
+    
+    
+    print(hashed_similarities)
+    
+    #Filtering truesim matrix
+    truesim_filtered = true_sim_matrix.loc[hashed_similarities.index, hashed_similarities.columns]
+    print(truesim_filtered)
+    
+    
+    
+    
+
+        
     #### ------------------
     
     

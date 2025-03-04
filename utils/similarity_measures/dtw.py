@@ -186,9 +186,9 @@ def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs
             # Lookup index for traj_i, traj_j
             traj_i_index = trajectory_idxs[traj_i]
             traj_j_index = trajectory_idxs[traj_j]
-            #Check global index
-            if global_matrix[traj_i_index, traj_j_index] != 0:
-                #skip if exist  
+            # Check global index
+            if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
+                # skip if exist  
                 continue
             
             

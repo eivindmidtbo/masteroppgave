@@ -319,7 +319,9 @@ def compute_hash_similarity_within_buckets(
     all_trajs = sorted({t for b in bucket_system.values() for t in b})
     traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
     n = len(all_trajs)
-    global_matrix = np.zeros((n, n), dtype=float)
+    
+    # Using nan
+    global_matrix = np.full((n, n), np.nan, dtype=float)
     
     
     # 2) Transform the hashes if the scheme is disk
@@ -334,6 +336,7 @@ def compute_hash_similarity_within_buckets(
         stable_ordered_names = sorted(traj_list)
 
         bucket_data = {t: hashes[t] for t in stable_ordered_names}
+        
              
         if measure == "dtw":
             sims = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
@@ -344,12 +347,21 @@ def compute_hash_similarity_within_buckets(
 
          # 4) Convert to integer indices
         idxs = [traj_to_idx[t] for t in stable_ordered_names]
-                
-        # 5) Update submatrix
-        global_matrix[np.ix_(idxs, idxs)] = np.maximum(
-            global_matrix[np.ix_(idxs, idxs)],
-            sims
+        
+        # 5) Merge the submatrix with the existing global_matrix
+        existing_values = global_matrix[np.ix_(idxs, idxs)]
+        
+        # Replace NaN with new values, otherwise take max
+        # Note: np.where(condition, if_true, if_false)
+        updated_values = np.where(
+            np.isnan(existing_values),
+            sims,  # if existing is NaN, use the newly computed similarity
+            np.maximum(existing_values, sims)  # else take the max
         )
+                
+        global_matrix[np.ix_(idxs, idxs)] = updated_values
+    
+    global_matrix = np.maximum(global_matrix, global_matrix.T)
 
     return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
 
@@ -460,7 +472,9 @@ def compute_hash_similarity_within_buckets_with_true_sim(
     all_trajs = sorted({t for b in bucket_system.values() for t in b})
     traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
     n = len(all_trajs)
-    global_matrix = np.zeros((n, n), dtype=float)
+    
+    
+    global_matrix = np.full((n, n), np.nan, dtype=float)
 
     
     # 3) For each bucket, compute pairwise similarities
@@ -479,16 +493,24 @@ def compute_hash_similarity_within_buckets_with_true_sim(
         else:
             raise ValueError("Unsupported measure.")
         
-        
-        # 4) Convert to integer indices
+         # 4) Convert to integer indices
         idxs = [traj_to_idx[t] for t in stable_ordered_names]
         
+        # 5) Merge the submatrix with the existing global_matrix
+        existing_values = global_matrix[np.ix_(idxs, idxs)]
+        
+        # Replace NaN with new values, otherwise take max
+        # Note: np.where(condition, if_true, if_false)
+        updated_values = np.where(
+            np.isnan(existing_values),
+            sims,  # if existing is NaN, use the newly computed similarity
+            np.maximum(existing_values, sims)  # else take the max
+        )
                 
-        # 5) Update submatrix
-        global_matrix[np.ix_(idxs, idxs)] = np.maximum(
-            global_matrix[np.ix_(idxs, idxs)],
-            sims
-        ) 
+        global_matrix[np.ix_(idxs, idxs)] = updated_values
+    
+    global_matrix = np.maximum(global_matrix, global_matrix.T)
+
         
     return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
 
