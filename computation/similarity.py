@@ -323,7 +323,6 @@ def compute_hash_similarity_within_buckets(
     # Using nan
     global_matrix = np.full((n, n), np.nan, dtype=float)
     
-    
     # 2) Transform the hashes if the scheme is disk
     if scheme == "disk":
         hashes = transform_np_numerical_disk_hashes_to_non_np(hashes)

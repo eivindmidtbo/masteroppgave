@@ -41,47 +41,25 @@ def _fun_wrapper_corr_bucketing(args):
         bucketing_method=bucketing_method
     )
     
-    simi = generate_disk_hash_similarity(
-        city=city,
-        diameter=diameter,
-        disks=disks,
-        layers=layers,
-        measure=measure,
-        size=size
-    )
-    
-    # print(bucket_system)
-    # print(hashed_similarities)
-    
-    #Filtering truesim matrix having the same columns
+    # 1) Align columns and rows
     truesim_filtered = true_sim_matrix.loc[hashed_similarities.index, hashed_similarities.columns]
-    truesim_filtered = (truesim_filtered + truesim_filtered.T) # Making it symmetric
-    
-    #NB!!!!
-    #Mirrordiagonal does not ruin the matrix, but creates new values with doubling the values
-    
-    
-    # Create a boolean mask of valid (non-NaN) entries
-    mask = ~np.isnan(hashed_similarities) & ~np.isnan(truesim_filtered)
 
-    # Filter both arrays
-    hashedsim_cleaned = hashed_similarities[mask]
-    truesim_cleaned = truesim_filtered[mask]
-    
-    print(hashedsim_cleaned)
-    print(truesim_cleaned)
+    # 2) Flatten each to 1D with stack()
+    hashed_stacked = hashed_similarities.stack()
+    true_stacked = truesim_filtered.stack()
 
+    # 3) Combine into one DataFrame
+    df_both = pd.DataFrame({
+        "hashed": hashed_stacked,
+        "true": true_stacked
+    })
     
+    # 4) Drop rows with any NaN
+    df_both.dropna(inplace=True)
     
-    # print(mirrorDiagonal(hashed_similarities)) 
-    
-    
-    
-    hashed_array = mirrorDiagonal(simi).flatten()
-    truesim_array = mirrorDiagonal(true_sim_matrix).flatten()
-    corr = np.corrcoef(hashed_array, truesim_array)[0][1]
+    # 5) Now compute correlation only over valid pairs
+    corr = df_both["hashed"].corr(df_both["true"], method="pearson")
     return corr
-
 
 # Varying layers
 def compute_disk_corr_varying_layers_bucketing(
@@ -110,6 +88,7 @@ def compute_disk_corr_varying_layers_bucketing(
             ],
         )
         corr = np.average(np.array(corrs))
+        print(corr)
         std = np.std(np.array(corrs))
         results.append([corr, layer, std])
 
@@ -699,8 +678,6 @@ def plot_disk_corr_varying_num_of_disks_and_layers_bucketing(
     ax2.tick_params(axis="both", which="major", labelsize=16)
 
     plt.show()
-
-
 
 
 
