@@ -56,7 +56,7 @@ from constants import (
     R_MIN_LON,
 )
 
-PORTO_DATA_FOLDER = f"../../../dataset/porto/output/"
+PORTO_DATA_FOLDER = f"{project_root}/dataset/porto/output/"
 ROME_DATA_FOLDER = f"{project_root}/dataset/rome/output/"
 
 #Get metafile from porto
