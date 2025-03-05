@@ -50,22 +50,31 @@ def _fun_wrapper_corr_bucketing(args):
         size=size
     )
     
-    #### Håndtere 0 verdier
-        # Lage funksjon senere!!!!!!s
+    # print(bucket_system)
+    # print(hashed_similarities)
     
-    
-    print(hashed_similarities)
-    
-    #Filtering truesim matrix
+    #Filtering truesim matrix having the same columns
     truesim_filtered = true_sim_matrix.loc[hashed_similarities.index, hashed_similarities.columns]
-    print(truesim_filtered)
+    truesim_filtered = (truesim_filtered + truesim_filtered.T) # Making it symmetric
+    
+    #NB!!!!
+    #Mirrordiagonal does not ruin the matrix, but creates new values with doubling the values
     
     
-    
-    
+    # Create a boolean mask of valid (non-NaN) entries
+    mask = ~np.isnan(hashed_similarities) & ~np.isnan(truesim_filtered)
 
-        
-    #### ------------------
+    # Filter both arrays
+    hashedsim_cleaned = hashed_similarities[mask]
+    truesim_cleaned = truesim_filtered[mask]
+    
+    print(hashedsim_cleaned)
+    print(truesim_cleaned)
+
+    
+    
+    # print(mirrorDiagonal(hashed_similarities)) 
+    
     
     
     hashed_array = mirrorDiagonal(simi).flatten()
