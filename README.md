@@ -59,30 +59,32 @@ else:
 | `utils`            | Helper functions.                           |
 | `visualization`    | Includes visualizations.                    |
 
-
 ### Often used files
 
 #### Analysis
 
-| **File Name** | **Type** | **Description** |
-|---------------|----------|-----------------|
+| **File Name**                                                                                                                                         | **Type** | **Description**                                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
 | [`bucketing_compute_disk_similarity_values_hybrid.ipynb`](computation/similarity_values/hashed/bucketing_compute_disk_similarity_values_hybrid.ipynb) | Analysis | Notebook for analysis on the hybrid version for disk scheme |
-| [`bucketing_compute_disk_similarity_values.ipynb`](computation/similarity_values/hashed/bucketing_compute_disk_similarity_values.ipynb) | Analysis | Notebook for analysis on the disk scheme |
-| [`bucketing_compute_grid_similarity_value_hybrid.ipynb`](computation/similarity_values/hashed/bucketing_compute_grid_similarity_values_hybrid.ipynb) | Analysis | Notebook for analysis on the hybrid version for grid scheme |
-| [`bucketing_compute_grid_similarity_values.ipynb`](computation/similarity_values/hashed/bucketing_compute_grid_similarity_values.ipynb) | Analysis | Notebook for analysis on the grid scheme |
+| [`bucketing_compute_disk_similarity_values.ipynb`](computation/similarity_values/hashed/bucketing_compute_disk_similarity_values.ipynb)               | Analysis | Notebook for analysis on the disk scheme                    |
+| [`bucketing_compute_grid_similarity_values_hybrid.ipynb`](computation/similarity_values/hashed/bucketing_compute_grid_similarity_values_hybrid.ipynb) | Analysis | Notebook for analysis on the hybrid version for grid scheme |
+| [`bucketing_compute_grid_similarity_values.ipynb`](computation/similarity_values/hashed/bucketing_compute_grid_similarity_values.ipynb)               | Analysis | Notebook for analysis on the grid scheme                    |
+| [`bucketing_correlation_disk.ipynb`](result_analysis/correlation/bucketing_correlation_disk.ipynb)                                                    | Analysis | Notebook for correlation analysis on the disk scheme        |
+| [`bucketing_correlation_grid.ipynb`](result_analysis/correlation/bucketing_correlation_grid.ipynb)                                                    | Analysis | Notebook for correlation analysis on the grid scheme        |
 
 #### Runtime
 
-| **File Name** | **Type** | **Description** |
-|---------------|----------|-----------------|
-| [`compute_hashed_bucketing_runtimes.ipynb`](computation/runtimes/hashed/compute_hashed_bucketing_runtimes.ipynb) | RUNTIME | Notebook for measuring runtime for different schemes with bucketing |
-| [`compute_hashed_runtimes.ipynb`](computation/runtimes/hashed/compute_hashed_runtimes.ipynb) | RUNTIME | Notebook for measuring runtime for different schemes |
-| [`compute_true_runtimes.ipynb`](computation/runtimes/true/compute_true_runtimes.ipynb) | RUNTIME | Notebook for measuring runtime for similarity computation on TRUE trajectories |
-| [`measure_similarities.py`](utils/helpers/measure_similarities.py) | RUNTIME/HELPER | Sheet containing functions for measuring runtime |
+| **File Name**                                                                                                    | **Type**       | **Description**                                                                |
+| ---------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| [`compute_hashed_bucketing_runtimes.ipynb`](computation/runtimes/hashed/compute_hashed_bucketing_runtimes.ipynb) | RUNTIME        | Notebook for measuring runtime for different schemes with bucketing            |
+| [`compute_hashed_runtimes.ipynb`](computation/runtimes/hashed/compute_hashed_runtimes.ipynb)                     | RUNTIME        | Notebook for measuring runtime for different schemes                           |
+| [`compute_true_runtimes.ipynb`](computation/runtimes/true/compute_true_runtimes.ipynb)                           | RUNTIME        | Notebook for measuring runtime for similarity computation on TRUE trajectories |
+| [`measure_similarities.py`](utils/helpers/measure_similarities.py)                                               | RUNTIME/HELPER | Sheet containing functions for measuring runtime                               |
 
 ### Helper Files
-| **File Name** | **Type** | **Description** |
-|---------------|----------|-----------------|
-| [`lsh_bucketing.py`](schemes/lsh_bucketing.py) | Helper | Helper functions for bucketing logic |
-| [`bucket_evaluation.py`](utils/helpers/bucket_evaluation.py) | Helper | Helper functions for bucketing analysis |
-| [`similarity.py`](computation/similarity.py) | Helper | Sheet containing wrapper functions for analysis |
+
+| **File Name**                                                | **Type** | **Description**                                 |
+| ------------------------------------------------------------ | -------- | ----------------------------------------------- |
+| [`lsh_bucketing.py`](schemes/lsh_bucketing.py)               | Helper   | Helper functions for bucketing logic            |
+| [`bucket_evaluation.py`](utils/helpers/bucket_evaluation.py) | Helper   | Helper functions for bucketing analysis         |
+| [`similarity.py`](computation/similarity.py)                 | Helper   | Sheet containing wrapper functions for analysis |
