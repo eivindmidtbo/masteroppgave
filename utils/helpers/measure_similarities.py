@@ -648,8 +648,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     parallel_jobs: int = 10,
     data_size: int = 100,
     iterations: int = 3,
-    bucketing_method: str = "original",
-    true_trajectories: bool = False
+    bucketing_method: str = "original"
 ): 
     """
     Function that measures runtime for:
@@ -667,7 +666,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     
     file_name = filename_generator(measure=measure, city=city, layers_bucketing=layers_bucketing, layers_compression=layers_compression,
                                     res_bucketing=res_bucketing, res_compression=res_compression, diameter_compression=diameter_compression, 
-                                    disks_compression=disks_compression, data_size=data_size, hybrid=True, true_trajectories=true_trajectories)
+                                    disks_compression=disks_compression, data_size=data_size, hybrid=True)
     
     hash_generation_times = []
     bucket_distribution_times = []
@@ -802,15 +801,9 @@ def filename_generator(
             file_name = f"{city}_similarity_runtimes_{measure}_resolution_{res}_layers-{layers}_size_{data_size}.csv"
     
     elif measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"] and hybrid:
-        if true_trajectories:
-            file_name = f"{city}_similarity_runtimes_{measure}_diameter_b_{diameter_bucketing}_layers_b_{layers_bucketing}_disks_b_{disks_bucketing}_size_{data_size}_true_sim.csv"
-        else:
-            file_name = f"{city}_similarity_runtimes_{measure}_diameter_b_{diameter_bucketing}_c_{diameter_compression}_layers_b_{layers_bucketing}_c_{layers_compression}_disks_b_{disks_bucketing}_c_{disks_compression}_size_{data_size}.csv"
+        file_name = f"{city}_similarity_runtimes_{measure}_diameter_b_{diameter_bucketing}_c_{diameter_compression}_layers_b_{layers_bucketing}_c_{layers_compression}_disks_b_{disks_bucketing}_c_{disks_compression}_size_{data_size}.csv"
     
     elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"] and hybrid:
-        if true_trajectories:
-            file_name = f"{city}_similarity_runtimes_{measure}_res_b_{res_bucketing}_layers_b_{layers_bucketing}__size_{data_size}_true_sim.csv"
-        else:
-            file_name = f"{city}_similarity_runtimes_{measure}_res_b_{res_bucketing}_c_{res_compression}_layers_b_{layers_bucketing}_c_{layers_compression}_size_{data_size}.csv"
+        file_name = f"{city}_similarity_runtimes_{measure}_res_b_{res_bucketing}_c_{res_compression}_layers_b_{layers_bucketing}_c_{layers_compression}_size_{data_size}.csv"
 
     return file_name
