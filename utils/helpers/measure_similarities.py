@@ -522,6 +522,8 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     # Print results
     print("\nFinal Runtime Statistics:")
     print(df_final)
+
+    return df_final
  
 
 def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
@@ -768,6 +770,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     print("\nFinal Runtime Statistics:")
     print(df_final)
 
+    return df_final
 
 
 def filename_generator(
