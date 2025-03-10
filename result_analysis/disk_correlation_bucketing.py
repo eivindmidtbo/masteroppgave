@@ -10,6 +10,10 @@ import numpy as np
 import sys, os
 from matplotlib import pyplot as plt
 from multiprocessing import Pool
+import warnings
+
+# Suppress only invalid value warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 currentdir = os.path.dirname(os.path.abspath("__file__"))
 parentdir = os.path.dirname(currentdir)

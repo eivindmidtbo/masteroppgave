@@ -31,6 +31,31 @@ def mirrorDiagonal(M: np.ndarray) -> np.ndarray:
     return M.values + np.rot90(np.fliplr(M.values))
 
 
+
+# used for calculating correlation for one specific configuration 
+def fun_wrapper_corr_bucketing(hashed_similarities, true_sim_matrix):
+     
+    # 1) Align columns and rows
+    truesim_filtered = true_sim_matrix.loc[hashed_similarities.index, hashed_similarities.columns]
+
+    # 2) Flatten each to 1D with stack()
+    hashed_stacked = hashed_similarities.stack()
+    true_stacked = truesim_filtered.stack()
+
+    # 3) Combine into one DataFrame
+    df_both = pd.DataFrame({
+        "hashed": hashed_stacked,
+        "true": true_stacked
+    })
+    
+    # 4) Drop rows with any NaN
+    df_both.dropna(inplace=True)
+    
+    # 5) Now compute correlation only over valid pairs
+    corr = df_both["hashed"].corr(df_both["true"], method="pearson")
+    return corr
+
+
 # Brukes av alle funksjonene
 def _fun_wrapper_corr_bucketing(args):
     
