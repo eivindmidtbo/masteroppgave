@@ -418,6 +418,26 @@ BUCKETING_FUNCTION_MAP = {
     "loose": place_hashes_into_buckets_loose
 }
 
+def compute_hash_parallel(measure, city, data_size, diameter, layers, disks, res):
+        """Function to compute hashes in parallel"""
+        start_time = time.perf_counter()
+        if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:  # -> DISK
+            hashes = compute_disk_hashes(city=city, diameter=diameter, layers=layers, disks=disks, size=data_size)
+        elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
+            hashes = compute_grid_hashes(city=city, res=res, layers=layers, size=data_size)
+        else:
+            raise ValueError("Invalid measure")
+        end_time = time.perf_counter()
+        return hashes, end_time - start_time  # Return both the hash and the time taken
+
+
+def timed_bucketing(h, bucketing_method):
+                """Wrap the bucketing function to measure time per call."""
+                start = time.perf_counter()
+                bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](h)
+                end = time.perf_counter()
+                return bucket_system, (end - start)  # Return both result and time
+
 def compute_hashed_similarity_runtimes_with_bucketing(
     measure: str,
     city: str,
@@ -453,48 +473,38 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     for iteration in range(iterations):
         print(f"Iteration {iteration+1}/{iterations}")
 
-        # Initialize time tracking variables
-        elapsed_time_for_hash_generation = 0
-        elapsed_time_for_bucket_distribution = 0
-        
-        print(f"Computing size {data_size}", end="\r")
         with Pool(parallel_jobs) as pool:
-            
-            # Hashing start
-            start_time_hashing = time.perf_counter()            
-            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:  # DISK
-                hashes = compute_disk_hashes(
-                    city=city,
-                    diameter=diameter,
-                    layers=layers,
-                    disks=disks,
-                    size=data_size,
-                )
-            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:  # GRID
-                hashes = compute_grid_hashes(
-                    city=city, res=res, layers=layers, size=data_size
-                )
-            else:
-                raise ValueError("Invalid measure")
-            end_time_hashing = time.perf_counter()
-            elapsed_time_for_hash_generation += end_time_hashing - start_time_hashing
-            hash_generation_times.append(elapsed_time_for_hash_generation)
+            # --- Parallel Hashing ---
+            hash_results = pool.starmap(
+                compute_hash_parallel, 
+                [(measure, city, data_size, diameter, layers, disks, res) for _ in range(parallel_jobs)]
+            )
 
-            # Bucketing start
-            start_time_bucketing = time.perf_counter()
-            bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)  # Runs the chosen bucketing method
-            end_time_bucketing = time.perf_counter()
-            elapsed_time_for_bucket_distribution += end_time_bucketing - start_time_bucketing
-            bucket_distribution_times.append(elapsed_time_for_bucket_distribution)
+            # Extract hashes and compute average hashing time
+            hashes_list, hashing_times = zip(*hash_results)  # Unpack results
+            avg_hashing_time = sum(hashing_times) / parallel_jobs  # Compute average
+            hash_generation_times.append(avg_hashing_time)
 
-            # Similarity computation start
+            # --- Parallel Bucketing ---
+            bucket_results = pool.starmap(
+                timed_bucketing, [(h, bucketing_method) for h in hashes_list]
+            )
+
+            # Extract bucket systems and compute average bucketing time
+            bucket_systems, individual_bucketing_times = zip(*bucket_results)
+            avg_bucket_time = sum(individual_bucketing_times) / parallel_jobs  # Compute average
+            bucket_distribution_times.append(avg_bucket_time)
+
+            # --- Parallel Similarity Computation ---
             if "dtw" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing, [(hashes, scheme, "dtw", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing, 
+                    [(hashes_list[i], scheme, "dtw", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
             elif "frechet" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing, [(hashes, scheme, "frechet", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing, 
+                    [(hashes_list[i], scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
 
         # Collect all runtime values
@@ -524,7 +534,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     print(df_final)
 
     return df_final
- 
+
 
 def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     measure: str,
@@ -533,7 +543,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     res: float = 0.5,
     diameter: float = 0.5,
     disks: int = 100,
-    parallel_jobs: int = 10,
+    parallel_jobs: int = 8,
     data_size: int = 100,
     iterations: int = 3,
     bucketing_method: str = "original"
@@ -557,57 +567,51 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     bucket_distribution_times = []
     all_runtimes = []
 
-    # Building the dataframes
+    
+    # --- Main Loop ---
     for iteration in range(iterations):
         print(f"Iteration {iteration+1}/{iterations}")
-        
-        print(
-            f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}"
-        )
-        
-        print(f"Computing size {data_size}", end="\r")
-        with Pool(parallel_jobs) as pool:
-            
-            # Hashing start
-            start_time_hashing = time.perf_counter()            
-            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:  # -> DISK
-                hashes = compute_disk_hashes(
-                    city=city,
-                    diameter=diameter,
-                    layers=layers,
-                    disks=disks,
-                    size=data_size,
-                )
-            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
-                hashes = compute_grid_hashes(
-                    city=city, res=res, layers=layers, size=data_size
-                )
-            else:
-                raise ValueError("Invalid measure")
-            end_time_hashing = time.perf_counter()
-            
-            hash_generation_times.append(end_time_hashing - start_time_hashing)
+        print(f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}")
 
-            # Bucketing start
-            start_time_bucketing = time.perf_counter()
-            bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)  # Runs the chosen bucketing method
-            end_time_bucketing = time.perf_counter()
-            
-            bucket_distribution_times.append(end_time_bucketing - start_time_bucketing)
+        with Pool(parallel_jobs) as pool:
+            # --- Parallel Hashing ---
+            hash_results = pool.starmap(
+                compute_hash_parallel, 
+                [(measure, city, data_size, diameter, layers, disks, res) for _ in range(parallel_jobs)]
+            )
+
+            # Extract hashes and compute total hashing time
+            hashes_list, hashing_times = zip(*hash_results)  # Unpack results
+            avg_hashing_time = sum(hashing_times) / parallel_jobs  # Compute the average time
+            hash_generation_times.append(avg_hashing_time)
+
+            # Parallel Bucketing 
+            bucket_results = pool.starmap(
+                timed_bucketing, [(h, bucketing_method) for h in hashes_list]
+            )
+
+            # Extract bucket systems and times
+            bucket_systems, individual_bucketing_times = zip(*bucket_results)
+            avg_bucket_time = sum(individual_bucketing_times) / parallel_jobs  # Compute average
+            bucket_distribution_times.append(avg_bucket_time)
 
             # Load true trajectory coordinates
             true_coordinates = fh.load_trajectories_from_meta_file(data_size, f"../../../dataset/{city}/output/")
 
-            # Similarity computation start
+            # --- Parallel Similarity Computation ---
             if "dtw" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing_with_true_sim, [(true_coordinates, scheme, "dtw", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing_with_true_sim, 
+                    [(true_coordinates, scheme, "dtw", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
             elif "frechet" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing_with_true_sim, [(true_coordinates, scheme, "frechet", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing_with_true_sim, 
+                    [(true_coordinates, scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
-            
+
+
+        # Store runtime results
         all_runtimes.extend([element[0] for element in execution_times])
     
     # Compute overall averages
@@ -657,7 +661,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
 ): 
     """
     Function that measures runtime for:
-    * Hashing (either with grid or disk).
+    * Hashing (bucketing hash & compression hash) in parallel.
     * Bucket distribution: Time it takes to place the hashes into buckets.
     * Similarity computation over all buckets: Time it takes to compute the similarity values between trajectories in the same bucket for all buckets.
 
@@ -677,80 +681,61 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     bucket_distribution_times = []
     all_runtimes = []
 
-    # Building the dataframes
-    for iteration in range(iterations):  # Loop through each iteration
+    for iteration in range(iterations):
         print(f"Iteration {iteration+1}/{iterations}")
 
-        print(
-            f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}"
-        )
-
-        # Initializes times for hashing and bucketing
-        elapsed_time_for_hash_generation = 0
-        elapsed_time_for_bucket_distribution = 0
-
-        print(f"Computing size {data_size}", end="\r")
         with Pool(parallel_jobs) as pool:
-            
-            # Hashing start
-            start_time_hashing = time.perf_counter()            
-            if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]: # -> DISK
-                hashes1 = compute_disk_hashes(
-                    city=city,
-                    diameter=diameter_bucketing,
-                    layers=layers_bucketing,
-                    disks=disks_bucketing,
-                    size=data_size,
-                )
-                hashes2 = compute_disk_hashes(
-                    city=city,
-                    diameter=diameter_compression,
-                    layers=layers_compression,
-                    disks=disks_compression,
-                    size=data_size,
-                )
-            elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
-                hashes1 = compute_grid_hashes(
-                    city=city, res=res_bucketing, layers=layers_bucketing, size=data_size
-                )
-                hashes2 = compute_grid_hashes(
-                    city=city, res=res_compression, layers=layers_compression, size=data_size
-                )
-            else:
-                raise ValueError("Invalid measure")
-            end_time_hashing = time.perf_counter()
-            # Hashing end
-            
-            elapsed_time_for_hash_generation += end_time_hashing - start_time_hashing
-            hash_generation_times.append(elapsed_time_for_hash_generation)
+            # --- Parallel Hashing ---
+            hash_results = pool.starmap(
+                compute_hash_parallel, 
+                [
+                    (measure, city, data_size, diameter_bucketing, layers_bucketing, disks_bucketing, res_bucketing)
+                    for _ in range(parallel_jobs)
+                ]
+            )
+            comp_hash_results = pool.starmap(
+                compute_hash_parallel, 
+                [
+                    (measure, city, data_size, diameter_compression, layers_compression, disks_compression, res_compression)
+                    for _ in range(parallel_jobs)
+                ]
+            )
 
-            # Bucketing start
-            start_time_bucketing = time.perf_counter()
-            bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes1) # Runs the chosen bucketing method
-            end_time_bucketing = time.perf_counter()
-            # Bucketing end
-            
-            elapsed_time_for_bucket_distribution += end_time_bucketing - start_time_bucketing
-            bucket_distribution_times.append(elapsed_time_for_bucket_distribution)
+            # Extract hashes and compute average hashing time
+            hashes1_list, hashing_times1 = zip(*hash_results)  # Hashes for bucketing
+            hashes2_list, hashing_times2 = zip(*comp_hash_results)  # Hashes for compression
+            avg_hashing_time = (sum(hashing_times1) + sum(hashing_times2)) / (2 * parallel_jobs)  # Compute average
+            hash_generation_times.append(avg_hashing_time)
 
-            # Similarity computation start
+            # --- Parallel Bucketing ---
+            bucket_results = pool.starmap(
+                timed_bucketing, [(h, bucketing_method) for h in hashes1_list]
+            )
+
+            # Extract bucket systems and compute average bucketing time
+            bucket_systems, individual_bucketing_times = zip(*bucket_results)
+            avg_bucket_time = sum(individual_bucketing_times) / parallel_jobs  # Compute average
+            bucket_distribution_times.append(avg_bucket_time)
+
+            # --- Parallel Similarity Computation ---
             if "dtw" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing, [(hashes2, scheme, "dtw", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing, 
+                    [(hashes2_list[i], scheme, "dtw", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
             elif "frechet" in measure:
                 execution_times = pool.starmap(
-                    measure_hashed_cy_bucketing, [(hashes2, scheme, "frechet", bucket_system, False) for _ in range(parallel_jobs)]
+                    measure_hashed_cy_bucketing, 
+                    [(hashes2_list[i], scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
-            # Similarity computation end
-            
-            all_runtimes.extend([element[0] for element in execution_times])
-    
+
+        # Collect all runtime values
+        all_runtimes.extend([element[0] for element in execution_times])
+
     # Compute overall average runtime across all iterations and jobs
     overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
     avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
-
 
     # Create a final DataFrame with one row
     df_final = pd.DataFrame(
