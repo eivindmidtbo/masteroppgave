@@ -501,9 +501,9 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         all_runtimes.extend([element[0] for element in execution_times])
 
     # Compute overall average runtime across all iterations and jobs
-    overall_avg_runtime = sum(all_runtimes) / len(all_runtimes)
-    avg_hash_time = sum(hash_generation_times) / len(hash_generation_times)
-    avg_bucket_time = sum(bucket_distribution_times) / len(bucket_distribution_times)
+    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
+    avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
 
     # Create a final DataFrame with one row
     df_final = pd.DataFrame(
@@ -522,6 +522,8 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     # Print results
     print("\nFinal Runtime Statistics:")
     print(df_final)
+
+    return df_final
  
 
 def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
@@ -609,9 +611,10 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
         all_runtimes.extend([element[0] for element in execution_times])
     
     # Compute overall averages
-    overall_avg_runtime = sum(all_runtimes) / len(all_runtimes)
-    avg_hash_time = sum(hash_generation_times) / len(hash_generation_times)
-    avg_bucket_time = sum(bucket_distribution_times) / len(bucket_distribution_times)
+    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
+    avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
+
 
     # Create a single-row DataFrame
     df_final = pd.DataFrame(
@@ -629,6 +632,8 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     
     print("\nFinal Runtime Statistics:")
     print(df_final)
+
+    return df_final
 
 
 
@@ -742,9 +747,10 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
             all_runtimes.extend([element[0] for element in execution_times])
     
     # Compute overall average runtime across all iterations and jobs
-    overall_avg_runtime = sum(all_runtimes) / len(all_runtimes)
-    avg_hash_time = sum(hash_generation_times) / len(hash_generation_times)
-    avg_bucket_time = sum(bucket_distribution_times) / len(bucket_distribution_times)
+    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
+    avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
+
 
     # Create a final DataFrame with one row
     df_final = pd.DataFrame(
@@ -764,6 +770,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     print("\nFinal Runtime Statistics:")
     print(df_final)
 
+    return df_final
 
 
 def filename_generator(
