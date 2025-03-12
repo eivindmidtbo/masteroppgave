@@ -147,3 +147,27 @@ def evaluate_bucket_system(bucket_system):
 
     df = pd.DataFrame(stats)
     return df
+
+
+def evaluate_bucket_system_to_list(bucket_system):
+    """
+    Analyzes the given bucket system and returns a DataFrame with key statistics.
+
+    Parameters:
+    - bucket_system (dict): A dictionary where keys are bucket IDs and values are lists of trajectories.
+
+    Returns:
+    - pandas.DataFrame: A DataFrame containing bucket statistics.
+    """
+    total_buckets = len(bucket_system)
+    buckets_with_multiple = sum(1 for trajectories in bucket_system.values() if len(trajectories) > 1)
+    buckets_with_single = total_buckets - buckets_with_multiple
+    largest_bucket_size = max(len(trajectories) for trajectories in bucket_system.values())
+    smallest_bucket_size = min(len(trajectories) for trajectories in bucket_system.values())
+
+    # Compute distribution percentages
+    multiple_bucket_percentage = (buckets_with_multiple / total_buckets) * 100 if total_buckets > 0 else 0
+    single_bucket_percentage = (buckets_with_single / total_buckets) * 100 if total_buckets > 0 else 0
+
+    results = [total_buckets, largest_bucket_size, smallest_bucket_size, buckets_with_multiple, buckets_with_single, multiple_bucket_percentage, single_bucket_percentage]
+    return results

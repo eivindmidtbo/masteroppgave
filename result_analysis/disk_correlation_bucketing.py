@@ -50,7 +50,7 @@ def fun_wrapper_corr_bucketing(hashed_similarities, true_sim_matrix):
     
     # 4) Drop rows with any NaN
     df_both.dropna(inplace=True)
-    
+        
     # 5) Now compute correlation only over valid pairs
     corr = df_both["hashed"].corr(df_both["true"], method="pearson")
     return corr
