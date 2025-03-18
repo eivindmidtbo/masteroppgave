@@ -462,9 +462,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
 
     # File handling
     scheme = "grid" if "grid" in measure else "disk"
-    output_folder = f"../../../results_hashed/runtimes/{scheme}/{city}/"
-    file_name = filename_generator(measure=measure, city=city, layers=layers, res=res, diameter=diameter, disks=disks, data_size=data_size, true_trajectories=False)
-    
+
     # Initialize lists to collect runtime data
     hash_generation_times = []
     bucket_distribution_times = []
@@ -525,11 +523,7 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         }
     )
 
-    # Save similarity computation runtimes to file
-    os.makedirs(output_folder, exist_ok=True)
-    df_final.to_csv(os.path.join(output_folder, file_name), index=False)
 
-    # Print results
     print("\nFinal Runtime Statistics:")
     print(df_final)
 
