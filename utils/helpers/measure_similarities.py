@@ -80,6 +80,7 @@ def measure_true_similarities(
 def compute_true_similarity_runtimes(
     measure: str,
     city: str,
+    size: int,
     parallel_jobs: int = 10,
     data_start_size: int = 100,
     data_end_size: int = 1000,
@@ -799,3 +800,60 @@ def filename_generator(
         file_name = f"{city}_similarity_runtimes_{measure}_res_b_{res_bucketing}_c_{res_compression}_layers_b_{layers_bucketing}_c_{layers_compression}_size_{data_size}.csv"
 
     return file_name
+
+
+
+def measure_true_similarities_v2(
+    measure: str, data_folder: str, meta_file: str, parallel_jobs: int = 10
+):
+    """Common method for measuring the efficiency of the similarity algorithms"""
+    files = mfh.read_meta_file(meta_file)
+    trajectories = fh.load_trajectory_files(files, data_folder)
+
+    with Pool(parallel_jobs) as pool:
+        result = pool.map(
+            sim[measure], [[trajectories, 1, 1] for _ in range(parallel_jobs)]
+        )
+    return result
+
+
+def compute_true_similarity_runtimes_v2(
+    city: str,
+    measure: str,
+    data_size: int, 
+    parallel_jobs: int = 10,
+    iterations: int = 3
+):
+    
+    #Path to data folder
+    data_folder = get_dataset_path(city)
+    all_runtimes = []
+    
+    for iteration in range(iterations):  # Loop through each iteration
+        print(f"Iteration {iteration+1}/{iterations}")
+        meta_file = f"{data_folder}META-{data_size}.txt"
+        # print(meta_file)
+        
+        #executions times
+        execution_times = measure_true_similarities_v2(
+            measure=measure,
+            data_folder=data_folder,
+            meta_file=meta_file,
+            parallel_jobs=parallel_jobs,
+        )
+        
+        #Extend outer list with times from each iteration
+        all_runtimes.extend([element[0] for element in execution_times])
+        
+    # Compute overall average runtime across all iterations and jobs
+    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    
+    # Create a final DataFrame with one row
+    df_final = pd.DataFrame(
+        {
+            "Data Size": [data_size],
+            "Average Similarity Computation Time (Seconds)": [overall_avg_runtime],
+        }
+    )
+    
+    return df_final
