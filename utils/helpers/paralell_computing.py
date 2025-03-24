@@ -75,19 +75,20 @@ def disk_compute_evaluation_scores(
     threshold_results ={threshold: [0,0,0] for threshold in TRESHOLDS}
     
     #Iterations
-    for iteration in range(iterations):
-        print(f"Iteration {iteration+1}/{iterations}")
-                
-        with Pool(parallell_jobs) as pool:
+    with Pool(parallell_jobs) as pool:
+        
+        for iteration in range(iterations):
+            print(f"Iteration {iteration+1}/{iterations}")
+                    
             evaluation_scores = pool.starmap(
-                disk_compute_single_evaluation_scores, [(CITY, DIAMETER, LAYERS, DISKS, MEASURE, SIZE, TRUE_TRAJECTORIES, TRUE_SIM_MATRIX, BUCKETING_METHOD, TRESHOLDS) for _ in range(parallell_jobs)]
+                    disk_compute_single_evaluation_scores, [(CITY, DIAMETER, LAYERS, DISKS, MEASURE, SIZE, TRUE_TRAJECTORIES, TRUE_SIM_MATRIX, BUCKETING_METHOD, TRESHOLDS) for _ in range(parallell_jobs)]
             )
-            
-            
+                
+                
             # Extract hashes and compute average hashing time
             threshold_results_for_p_r_f1, bucket_evaluation, corr = zip(*evaluation_scores)  # Unpack results
-            
-            
+                
+                
             for threshold in TRESHOLDS:
                 # Go through each parallel job's dictionary
                 for i in range(parallell_jobs):
@@ -97,7 +98,7 @@ def disk_compute_evaluation_scores(
                     threshold_results[threshold][0] += p
                     threshold_results[threshold][1] += r
                     threshold_results[threshold][2] += f1
-            
+                
             for i in range(parallell_jobs):
                 all_total_buckets += bucket_evaluation[i][0]
                 all_largest_bucket_sizes += bucket_evaluation[i][1]
