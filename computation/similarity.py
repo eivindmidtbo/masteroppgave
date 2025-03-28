@@ -197,7 +197,7 @@ def generate_grid_hash_similarity(
     Grid = _constructGrid(city, res, layers, size)
     hashes = Grid.compute_dataset_hashes()
     similarities = compute_hash_similarity(
-        hashes=hashes, scheme="grid", measure=measure, parallel=True
+        hashes=hashes, scheme="grid", measure=measure, parallel=False
     )
 
     return similarities
@@ -228,6 +228,14 @@ def generate_grid_hash_similarity_coordinates(
     hashes = Grid.compute_dataset_hashes()
     grid_cells = Grid.grid
     return hashes, grid_cells
+
+
+
+
+
+
+
+
 
 ######################## NEW CODE - BUCKETING ########################
 
@@ -528,9 +536,6 @@ def measure_hashed_cy_bucketing_with_true_sim(
     )
     
     return measures
-
-
-
 
 
 ############################################################# Hybrid approach #############################################################
