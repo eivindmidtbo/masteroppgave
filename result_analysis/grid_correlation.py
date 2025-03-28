@@ -34,7 +34,7 @@ def mirrorDiagonal(M: np.ndarray) -> np.ndarray:
 # Brukes av alle funksjonene
 def _fun_wrapper_corr(args):
     
-    city, res, layers, true_sim_matrix, measure, size,  = args
+    city, res, layers, true_sim_matrix, measure, size = args
     
     hashed_similarities = generate_grid_hash_similarity(
         city=city,
@@ -44,12 +44,11 @@ def _fun_wrapper_corr(args):
         size=size,
     )
     
-    # 1) Align columns and rows
-    truesim_filtered = true_sim_matrix.loc[hashed_similarities.index, hashed_similarities.columns]
-
+    hashed_similarities = (hashed_similarities + hashed_similarities.T)
+        
     # 2) Flatten each to 1D with stack()
     hashed_stacked = hashed_similarities.stack()
-    true_stacked = truesim_filtered.stack()
+    true_stacked = true_sim_matrix.stack()
 
     # 3) Combine into one DataFrame
     df_both = pd.DataFrame({

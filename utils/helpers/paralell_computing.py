@@ -250,10 +250,10 @@ def grid_compute_evaluation_scores(
     threshold_results ={threshold: [0,0,0] for threshold in TRESHOLDS}
     
     #Iterations
-    for iteration in range(iterations):
-        print(f"Iteration {iteration+1}/{iterations}")
-                
-        with Pool(parallell_jobs) as pool:
+    with Pool(parallell_jobs) as pool:
+        for iteration in range(iterations):
+            print(f"Iteration {iteration+1}/{iterations}")
+                    
             evaluation_scores = pool.starmap(
                 grid_compute_single_evaluation_scores, [(CITY, RESOLUTION, LAYERS, MEASURE, SIZE, TRUE_TRAJECTORIES, TRUE_SIM_MATRIX, BUCKETING_METHOD, TRESHOLDS) for _ in range(parallell_jobs)]
             )
