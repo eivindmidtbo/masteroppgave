@@ -6,24 +6,24 @@ import pandas as pd
 
 from schemes.lsh_bucketing import *
 
-def find_project_root(target_folder="masteroppgave"):
-    """Find the absolute path of a folder by searching upward."""
-    currentdir = os.path.abspath("__file__")  # Get absolute script path
-    while True:
-        if os.path.basename(currentdir) == target_folder:
-            return currentdir  # Found the target folder
-        parentdir = os.path.dirname(currentdir)
-        if parentdir == currentdir:  # Stop at filesystem root
-            return None
-        currentdir = parentdir  # Move one level up
+# def find_project_root(target_folder="masteroppgave"):
+#     """Find the absolute path of a folder by searching upward."""
+#     currentdir = os.path.abspath("__file__")  # Get absolute script path
+#     while True:
+#         if os.path.basename(currentdir) == target_folder:
+#             return currentdir  # Found the target folder
+#         parentdir = os.path.dirname(currentdir)
+#         if parentdir == currentdir:  # Stop at filesystem root
+#             return None
+#         currentdir = parentdir  # Move one level up
 
-project_root = find_project_root("masteroppgave")
+# project_root = find_project_root("masteroppgave")
 
-if project_root:
-    sys.path.append(project_root)
-    print(f"Project root found: {project_root}")
-else:
-    raise RuntimeError("Could not find 'masteroppgave' directory")
+# if project_root:
+#     sys.path.append(project_root)
+#     print(f"Project root found: {project_root}")
+# else:
+#     raise RuntimeError("Could not find 'masteroppgave' directory")
 
 from computation import similarity
 from utils.similarity_measures import dtw, frechet, hashed_dtw, hashed_frechet
@@ -39,10 +39,6 @@ from computation.similarity import _constructDisk, _constructGrid
 
 def get_dataset_path(city: str) -> str:
     return f"../../../dataset/{city}/output/"
-
-print(get_dataset_path("porto"))
-
-
 
 sim = {
     #True cython
@@ -564,11 +560,11 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
 
     
     # --- Main Loop ---
-    for iteration in range(iterations):
-        print(f"Iteration {iteration+1}/{iterations}")
-        print(f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}")
+    with Pool(parallel_jobs) as pool:
+        for iteration in range(iterations):
+            # print(f"Iteration {iteration+1}/{iterations}")
+            print(f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}")
 
-        with Pool(parallel_jobs) as pool:
             # --- Parallel Hashing ---
             hash_results = pool.starmap(
                 compute_hash_parallel, 
@@ -606,22 +602,25 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
                 )
 
 
-        # Store runtime results
-        all_runtimes.extend([element[0] for element in execution_times])
+            # Store runtime results
+            all_runtimes.extend([element[0] for element in execution_times])
     
     # Compute overall averages
     overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
     avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
 
+    #Total time
+    total_time = format(float(overall_avg_runtime) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
 
     # Create a single-row DataFrame
     df_final = pd.DataFrame(
         {
-            "Data Size": [data_size],
+            "Size": [data_size],
             "Average Similarity Computation Time (Seconds)": [overall_avg_runtime],
             "Average Hash Generation Time (Seconds)": [avg_hash_time],
             "Average Bucket Distribution Time (Seconds)": [avg_bucket_time],
+            "Total time (Seconds)": [total_time],
         }
     )
     
