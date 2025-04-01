@@ -555,7 +555,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     
     hash_generation_times = []
     bucket_distribution_times = []
-    all_runtimes = []
+    all_similarity_runtimes=[]
 
     
     # --- Main Loop ---
@@ -574,7 +574,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
             avg_hashing_time = sum(hashing_times) / parallel_jobs  # Compute the average time
             hash_generation_times.append(avg_hashing_time)
 
-            # Parallel Bucketing 
+            # --- Parallel Bucketing --- 
             bucket_results = pool.starmap(
                 timed_bucketing, [(h, bucketing_method) for h in hashes_list]
             )
@@ -598,24 +598,24 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
                     measure_hashed_cy_bucketing_with_true_sim, 
                     [(true_coordinates, scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
+            
+            # Collect all runtime values
+            avg_sim_comp_time = sum([element[0] for element in execution_times]) / parallel_jobs  # Compute average for this iteration
+            all_similarity_runtimes.append(avg_sim_comp_time) #Add to list
 
-
-            # Store runtime results
-            all_runtimes.extend([element[0] for element in execution_times])
-    
     # Compute overall averages
-    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    overall_avg_sim_comp_time = format(sum(all_similarity_runtimes) / len(all_similarity_runtimes), ".3f")
     avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
 
-    #Total time
-    total_time = format(float(overall_avg_runtime) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
+    # Total time
+    total_time = format(float(overall_avg_sim_comp_time) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
 
     # Create a single-row DataFrame
     df_final = pd.DataFrame(
         {
             "Size": [data_size],
-            "Average Similarity Computation Time (Seconds)": [overall_avg_runtime],
+            "Average Similarity Computation Time (Seconds)": [overall_avg_sim_comp_time],
             "Average Hash Generation Time (Seconds)": [avg_hash_time],
             "Average Bucket Distribution Time (Seconds)": [avg_bucket_time],
             "Total time (Seconds)": [total_time],
@@ -623,9 +623,6 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     )
     
     return df_final
-
-
-
 
 
 def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
@@ -742,7 +739,6 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
 
     return df_final
 
-
 def filename_generator(
     measure: str,
     city: str,
@@ -785,8 +781,6 @@ def filename_generator(
 
     return file_name
 
-
-
 def measure_true_similarities_v2(
     measure: str, data_folder: str, meta_file: str, parallel_jobs: int = 10
 ):
@@ -799,7 +793,6 @@ def measure_true_similarities_v2(
             sim[measure], [[trajectories, 1, 1] for _ in range(parallel_jobs)]
         )
     return result
-
 
 def compute_true_similarity_runtimes_v2(
     city: str,
