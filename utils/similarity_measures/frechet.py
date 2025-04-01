@@ -47,12 +47,6 @@ def py_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
             if i == j:
                 break
 
-    if count > 0:
-        average_frechet = total_frechet / count
-    else:
-        average_frechet = float("nan")  # Avoid division by zero
-
-    print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
@@ -105,13 +99,6 @@ def cy_frechet(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
             count += 1
             if i == j:
                 break
-
-    if count > 0:
-        average_frechet = total_frechet / count
-    else:
-        average_frechet = float("nan")  # Avoid division by zero
-
-    print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
@@ -215,13 +202,6 @@ def cy_frechet_bucketing(trajectories: dict[str, list[list[float]]], trajectory_
             count += 1
             if i == j:
                 break
-
-    if count > 0:
-        average_frechet = total_frechet / count
-    else:
-        average_frechet = float("nan")  # Avoid division by zero
-
-    # print(f"Average Fréchet score for all pairs: {average_frechet}")
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()

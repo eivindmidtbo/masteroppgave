@@ -77,13 +77,7 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
             count += 1
             if i == j:
                 break
-    if count > 0:
-        average_dtw = total_dtw_distance / count
-    else:
-        average_dtw = float("nan")  # Avoid division by zero
-
-    # print(f"Average DTW score for all pairs: {average_dtw}")
-
+   
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
@@ -201,13 +195,7 @@ def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs
             count += 1
             if i == j:
                 break
-    if count > 0:
-        average_dtw = total_dtw_distance / count
-    else:
-        average_dtw = float("nan")  # Avoid division by zero
-
-    # print(f"Average DTW score for all pairs: {average_dtw}")
-
+    
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
