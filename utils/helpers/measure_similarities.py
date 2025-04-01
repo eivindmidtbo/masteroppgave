@@ -159,7 +159,6 @@ def compute_disk_hashes(city: str, diameter: float, layers: int, disks: int, siz
     return disk.compute_dataset_hashes_with_KD_tree_numerical()
     
 
-
 def compute_grid_hashes(city: str, res: float, layers: int, size: int):
     grid = _constructGrid(city, res, layers, size)
     return grid.compute_dataset_hashes()
@@ -420,7 +419,7 @@ def compute_hash_parallel(measure, city, data_size, diameter, layers, disks, res
         start_time = time.perf_counter()
         if measure in ["disk_dtw_cy", "disk_frechet_cy", "disk_dtw_py"]:  # -> DISK
             hashes = compute_disk_hashes(city=city, diameter=diameter, layers=layers, disks=disks, size=data_size)
-        elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]:
+        elif measure in ["grid_dtw_cy", "grid_frechet_cy", "grid_dtw_py"]: # -> GRID
             hashes = compute_grid_hashes(city=city, res=res, layers=layers, size=data_size)
         else:
             raise ValueError("Invalid measure")
@@ -553,7 +552,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
 
     # File handling
     scheme = "grid" if "grid" in measure else "disk"
-
+    
     hash_generation_times = []
     bucket_distribution_times = []
     all_runtimes = []
@@ -562,7 +561,6 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
     # --- Main Loop ---
     with Pool(parallel_jobs) as pool:
         for iteration in range(iterations):
-            # print(f"Iteration {iteration+1}/{iterations}")
             print(f"Computing {measure} for {city} with {parallel_jobs} jobs - Iteration {iteration+1}/{iterations}")
 
             # --- Parallel Hashing ---
