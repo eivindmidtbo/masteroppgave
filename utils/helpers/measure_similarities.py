@@ -386,7 +386,8 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
     # File handling
     scheme = "grid" if "grid" in measure else "disk"
   
-    hash_generation_times = []
+    hash_generation_times_bucketing = []
+    hash_generation_times_compression = []
     bucket_distribution_times = []
     all_similarity_runtimes = []
 
@@ -415,8 +416,12 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
             # Extract hashes and compute average hashing time
             hashes1_list, hashing_times1 = zip(*hash_results)  # Hashes for bucketing
             hashes2_list, hashing_times2 = zip(*comp_hash_results)  # Hashes for compression
-            avg_hashing_time = (sum(hashing_times1) + sum(hashing_times2)) / (parallel_jobs)  # Compute average
-            hash_generation_times.append(avg_hashing_time)
+
+            avg_hashing_bucketing_time = sum(hashing_times1) / parallel_jobs  # Compute average for bucketing
+            avg_hashing_compression_time = sum(hashing_times2) / parallel_jobs  # Compute average for compression
+
+            hash_generation_times_bucketing.append(avg_hashing_bucketing_time)
+            hash_generation_times_compression.append(avg_hashing_compression_time)
 
             # --- Parallel Bucketing ---
             bucket_results = pool.starmap(
@@ -442,24 +447,26 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
 
             # Collect all runtime values
 
-            avg_sim_comp_time = sum([element[0] for element in execution_times]) / parallel_jobs # Compute average
-            all_similarity_runtimes.append(avg_sim_comp_time)
+            avg_similarity_time = sum([element[0] for element in execution_times]) / parallel_jobs # Compute average
+            all_similarity_runtimes.append(avg_similarity_time)
 
             
     # Compute overall average runtime across all iterations and jobs
-    overall_avg_sim_comp_time = format(sum(all_similarity_runtimes) / len(all_similarity_runtimes), ".3f")
-    avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
+    avg_sim_comp_time = format(sum(all_similarity_runtimes) / len(all_similarity_runtimes), ".3f")
+    avg_hash_bucketing_time = format(sum(hash_generation_times_bucketing) / len(hash_generation_times_bucketing), ".3f")
+    avg_hash_compression_time = format(sum(hash_generation_times_compression) / len(hash_generation_times_compression), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
 
     #Total time
-    total_time = format(float(overall_avg_sim_comp_time) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
+    total_time = format(float(avg_sim_comp_time) + float(avg_hash_bucketing_time) + float(avg_hash_compression_time) + float(avg_bucket_time), ".3f")
 
     # Create a final DataFrame with one row
     df_final = pd.DataFrame(
         {
             "Data Size": [data_size],
-            "Average Similarity Computation Time (Seconds)": [overall_avg_sim_comp_time],
-            "Average Hash Generation Time (Seconds)": [avg_hash_time],
+            "Average Similarity Computation Time (Seconds)": [avg_sim_comp_time],
+            "Average Hash Generation Time (Seconds) - Bucketing": [avg_hash_bucketing_time],
+            "Average Hash Generation Time (Seconds) - Compression": [avg_hash_compression_time],
             "Average Bucket Distribution Time (Seconds)": [avg_bucket_time],
             "Total time (Seconds)": [total_time],
         }
