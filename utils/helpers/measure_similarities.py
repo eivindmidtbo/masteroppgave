@@ -507,24 +507,24 @@ def compute_hashed_similarity_runtimes_with_bucketing(
             # Collect all runtime values
             all_runtimes.extend([element[0] for element in execution_times])
 
-    # Compute overall average runtime across all iterations and jobs
+    # Compute overall averages
     overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
     avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
 
-    # Create a final DataFrame with one row
+    #Total time
+    total_time = format(float(overall_avg_runtime) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
+
+    # Create a single-row DataFrame
     df_final = pd.DataFrame(
         {
-            "Data Size": [data_size],
+            "Size": [data_size],
             "Average Similarity Computation Time (Seconds)": [overall_avg_runtime],
             "Average Hash Generation Time (Seconds)": [avg_hash_time],
             "Average Bucket Distribution Time (Seconds)": [avg_bucket_time],
+            "Total time (Seconds)": [total_time],
         }
     )
-
-
-    print("\nFinal Runtime Statistics:")
-    print(df_final)
 
     return df_final
 
@@ -553,9 +553,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
 
     # File handling
     scheme = "grid" if "grid" in measure else "disk"
-    output_folder = f"../../../results_hashed/runtimes/{scheme}/{city}/"
-    file_name = filename_generator(measure=measure, city=city, layers=layers, res=res, diameter=diameter, disks=disks, data_size=data_size, true_trajectories=True)
-    
+
     hash_generation_times = []
     bucket_distribution_times = []
     all_runtimes = []
@@ -626,13 +624,6 @@ def compute_hashed_similarity_runtimes_with_bucketing_with_true_sim(
         }
     )
     
-    # Ensure output directory exists and save file
-    os.makedirs(output_folder, exist_ok=True)
-    df_final.to_csv(os.path.join(output_folder, file_name), index=False)
-    
-    print("\nFinal Runtime Statistics:")
-    print(df_final)
-
     return df_final
 
 
