@@ -656,20 +656,17 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
 
     # File handling
     scheme = "grid" if "grid" in measure else "disk"
-    output_folder = f"../../../results_hashed/runtimes/{scheme}/{city}/"
-    
-    file_name = filename_generator(measure=measure, city=city, layers_bucketing=layers_bucketing, layers_compression=layers_compression,
-                                    res_bucketing=res_bucketing, res_compression=res_compression, diameter_compression=diameter_compression, 
-                                    disks_compression=disks_compression, data_size=data_size, hybrid=True)
-    
+  
     hash_generation_times = []
     bucket_distribution_times = []
-    all_runtimes = []
+    all_similarity_runtimes = []
 
-    for iteration in range(iterations):
-        print(f"Iteration {iteration+1}/{iterations}")
+    with Pool(parallel_jobs) as pool:
 
-        with Pool(parallel_jobs) as pool:
+        for iteration in range(iterations):
+            print(f"Iteration {iteration+1}/{iterations}")
+
+            
             # --- Parallel Hashing ---
             hash_results = pool.starmap(
                 compute_hash_parallel, 
@@ -689,7 +686,7 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
             # Extract hashes and compute average hashing time
             hashes1_list, hashing_times1 = zip(*hash_results)  # Hashes for bucketing
             hashes2_list, hashing_times2 = zip(*comp_hash_results)  # Hashes for compression
-            avg_hashing_time = (sum(hashing_times1) + sum(hashing_times2)) / (2 * parallel_jobs)  # Compute average
+            avg_hashing_time = (sum(hashing_times1) + sum(hashing_times2)) / (parallel_jobs)  # Compute average
             hash_generation_times.append(avg_hashing_time)
 
             # --- Parallel Bucketing ---
@@ -714,31 +711,30 @@ def compute_hashed_similarity_runtimes_with_bucketing_hybrid(
                     [(hashes2_list[i], scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
 
-        # Collect all runtime values
-        all_runtimes.extend([element[0] for element in execution_times])
+            # Collect all runtime values
 
+            avg_similarity_time = sum([element[0] for element in execution_times]) / parallel_jobs # Compute average
+            all_similarity_runtimes.append(avg_similarity_time)
+
+            
     # Compute overall average runtime across all iterations and jobs
-    overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
+    avg_sim_comp_time = format(sum(all_similarity_runtimes) / len(all_similarity_runtimes), ".3f")
     avg_hash_time = format(sum(hash_generation_times) / len(hash_generation_times), ".3f")
     avg_bucket_time = format(sum(bucket_distribution_times) / len(bucket_distribution_times), ".3f")
+
+    #Total time
+    total_time = format(float(avg_sim_comp_time) + float(avg_hash_time) + float(avg_bucket_time), ".3f")
 
     # Create a final DataFrame with one row
     df_final = pd.DataFrame(
         {
             "Data Size": [data_size],
-            "Average Similarity Computation Time (Seconds)": [overall_avg_runtime],
+            "Average Similarity Computation Time (Seconds)": [avg_sim_comp_time],
             "Average Hash Generation Time (Seconds)": [avg_hash_time],
             "Average Bucket Distribution Time (Seconds)": [avg_bucket_time],
+            "Total time (Seconds)": [total_time],
         }
     )
-
-    # Save similarity computation runtimes to file
-    os.makedirs(output_folder, exist_ok=True)
-    df_final.to_csv(os.path.join(output_folder, file_name), index=False)
-
-    # Print results
-    print("\nFinal Runtime Statistics:")
-    print(df_final)
 
     return df_final
 
