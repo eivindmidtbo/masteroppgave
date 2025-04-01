@@ -465,10 +465,12 @@ def compute_hashed_similarity_runtimes_with_bucketing(
     bucket_distribution_times = []
     all_runtimes = []
 
-    for iteration in range(iterations):
-        print(f"Iteration {iteration+1}/{iterations}")
 
-        with Pool(parallel_jobs) as pool:
+    with Pool(parallel_jobs) as pool:
+        for iteration in range(iterations):
+            print(f"Iteration {iteration+1}/{iterations}")
+
+            
             # --- Parallel Hashing ---
             hash_results = pool.starmap(
                 compute_hash_parallel, 
@@ -502,8 +504,8 @@ def compute_hashed_similarity_runtimes_with_bucketing(
                     [(hashes_list[i], scheme, "frechet", bucket_systems[i], False) for i in range(parallel_jobs)]
                 )
 
-        # Collect all runtime values
-        all_runtimes.extend([element[0] for element in execution_times])
+            # Collect all runtime values
+            all_runtimes.extend([element[0] for element in execution_times])
 
     # Compute overall average runtime across all iterations and jobs
     overall_avg_runtime = format(sum(all_runtimes) / len(all_runtimes), ".3f")
