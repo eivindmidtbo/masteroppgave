@@ -103,16 +103,10 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
             if i == j:
                 break  # This optimizes by not recalculating for identical trajectories
 
-    # print("Total comparisons", total_comparisons)
-    # print("Total skipped comparisons", total_skipped_comparisons)
-
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
 
-    # Return this when checking correlation based on various number of disks
-    # used by _fun_wrapper_corr_disks
-    # return df, total_comparisons, total_skipped_comparisons
     return df
 
 
@@ -183,7 +177,7 @@ def measure_hashed_py_dtw(hashes: dict[str, list[list[list[float]]]]):
     return measures
 
 
-def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajectory_idxs, global_matrix) -> pd.DataFrame:
+def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajectory_idxs, global_matrix,) -> pd.DataFrame:
     """
     Method for computing DTW similarity between all layers of trajectories in a given dataset using cython, and summing these similarities.
 
@@ -204,9 +198,15 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
     total_comparisons = 0
     total_skipped_comparisons = 0
     compared_trajectories = set()
-
+    
+    
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
+            print(traj_i, traj_j)
+            if i == j:
+                print("Skipped because identical trajectories")
+                M[i, j] = 0
+                break
             
             # Lookup index for traj_i, traj_j
             traj_i_index = trajectory_idxs[traj_i]
@@ -215,14 +215,16 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             # Add to compared trajectories set
             compared_trajectories.add(traj_i)
             compared_trajectories.add(traj_j)
-            
+                        
             # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
-                # skip if exist  
+                # skip if exist
+                print("Skipped because global matrix exists")  
                 total_skipped_comparisons += 1
-                continue
+                break
             
             total_dtw = 0  # Initialize total DTW similarity for this pair
+            
             for layer_i, layer_j in zip(
                 sorted_trajectories[traj_i], sorted_trajectories[traj_j]
             ):
@@ -238,19 +240,12 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
                         X, Y
                     )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
                     total_dtw += dtw
-                else:
-                    total_skipped_comparisons += 1
+                
+                
             M[i, j] = total_dtw
-            if i == j:
-                break  # This optimizes by not recalculating for identical trajectories
-
-    # print("Total comparisons", total_comparisons)
-    # print("Total skipped comparisons", total_skipped_comparisons)
 
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
 
-    # Return this when checking correlation based on various number of disks
-    # used by _fun_wrapper_corr_disks
-    return df, total_comparisons, total_skipped_comparisons, len(compared_trajectories)
+    return df, total_comparisons, total_skipped_comparisons, compared_trajectories

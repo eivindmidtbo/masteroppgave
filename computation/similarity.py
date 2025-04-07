@@ -304,11 +304,15 @@ def generate_grid_hash_similarity_with_bucketing(
     Grid = _constructGrid(city, res, layers, size)
     hashes = Grid.compute_dataset_hashes()
     bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
-    similarities = compute_hash_similarity_within_buckets(
+    
+        
+    similarities, total_comparisons, total_skipped_comparisons, num_compared_trajectories = compute_hash_similarity_within_buckets(
         hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
+    
+    print("hashed ", similarities)
 
-    return similarities, bucket_system
+    return similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories
 
 def compute_hash_similarity_within_buckets(
     hashes: dict[str, list[list[list[float]]]],
@@ -323,6 +327,11 @@ def compute_hash_similarity_within_buckets(
     Returns:
         pd.DataFrame: A global similarity matrix for all trajectories
     """
+    
+    total_comparisons_all = 0 # Total comparisons
+    total_skipped_comparisons_all = 0 # Total skipped comparisons
+    compared_trajectories_total = set() # Total compared trajectories
+    
     # 1) Gather all trajectories, give each an integer ID
     all_trajs = sorted({t for b in bucket_system.values() for t in b})
     traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
@@ -334,7 +343,7 @@ def compute_hash_similarity_within_buckets(
     # 2) Transform the hashes if the scheme is disk
     if scheme == "disk":
         hashes = transform_np_numerical_disk_hashes_to_non_np(hashes)
-    
+            
     # 3) For each bucket, compute pairwise similarities
     for bucket_id, traj_list in bucket_system.items():
         if len(traj_list) <= 1:
@@ -344,15 +353,25 @@ def compute_hash_similarity_within_buckets(
 
         bucket_data = {t: hashes[t] for t in stable_ordered_names}
         
-             
         if measure == "dtw":
-            sims = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
+            sims, total_comparisons, total_skipped_comparisons, compared_trajectories = cy_dtw_hashes_pool(bucket_data) if parallel else cy_dtw_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         elif measure == "frechet":
-            sims = cy_frechet_hashes_pool(bucket_data) if parallel else cy_frechet_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
+            sims, total_comparisons, total_skipped_comparisons, compared_trajectories  = cy_frechet_hashes_pool(bucket_data) if parallel else cy_frechet_hashes_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         else:
             raise ValueError("Unsupported measure.")
-
-         # 4) Convert to integer indices
+        
+        print(bucket_data.keys())
+        print("Bucket lenght", len(traj_list))
+        print(f"Total comparisons: {total_comparisons}")
+        print(f"Total skipped comparisons: {total_skipped_comparisons}")
+        #Total comparisons, add from each bucket
+        total_comparisons_all += total_comparisons
+        total_skipped_comparisons_all += total_skipped_comparisons
+        
+        #Total comparisons, update with the set from each bucket
+        compared_trajectories_total.update(compared_trajectories)
+        
+        # 4) Convert to integer indices
         idxs = [traj_to_idx[t] for t in stable_ordered_names]
         
         # 5) Merge the submatrix with the existing global_matrix
@@ -368,9 +387,16 @@ def compute_hash_similarity_within_buckets(
                 
         global_matrix[np.ix_(idxs, idxs)] = updated_values
     
+    print("all trajectories (fasit)", len(all_trajs))
+    print(f"Total comparisons: {len(compared_trajectories_total)}")
+    print(f"Total computations: {total_comparisons_all}")
+    print(f"Total skipped comparisons: {total_skipped_comparisons_all}")
+    
+    print("\n\n")
+    
     global_matrix = np.maximum(global_matrix, global_matrix.T)
 
-    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons, total_skipped_comparisons, 1
 
 def measure_hashed_cy_bucketing(
     hashes: dict[str, list[list[list[float]]]],
