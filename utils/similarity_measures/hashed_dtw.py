@@ -203,6 +203,7 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
 
     total_comparisons = 0
     total_skipped_comparisons = 0
+    compared_trajectories = set()
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
@@ -210,13 +211,16 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             # Lookup index for traj_i, traj_j
             traj_i_index = trajectory_idxs[traj_i]
             traj_j_index = trajectory_idxs[traj_j]
+            
+            # Add to compared trajectories set
+            compared_trajectories.add(traj_i)
+            compared_trajectories.add(traj_j)
+            
             # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist  
+                total_skipped_comparisons += 1
                 continue
-            
-           
-            
             
             total_dtw = 0  # Initialize total DTW similarity for this pair
             for layer_i, layer_j in zip(
@@ -249,5 +253,4 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
 
     # Return this when checking correlation based on various number of disks
     # used by _fun_wrapper_corr_disks
-    # return df, total_comparisons, total_skipped_comparisons
-    return df
+    return df, total_comparisons, total_skipped_comparisons, len(compared_trajectories)
