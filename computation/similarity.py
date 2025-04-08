@@ -490,6 +490,11 @@ def compute_hash_similarity_within_buckets_with_true_sim(
     Returns:
         pd.DataFrame: A global similarity matrix for all trajectories
     """
+    
+    total_comparisons_all = 0 # Total comparisons
+    total_skipped_comparisons_all = 0 # Total skipped comparisons
+    compared_trajectories_total = set() # Total compared trajectories
+    
     # 1) Gather all trajectories, give each an integer ID
     all_trajs = sorted({t for b in bucket_system.values() for t in b})
     traj_to_idx = {t: i for i, t in enumerate(all_trajs)}
@@ -509,11 +514,19 @@ def compute_hash_similarity_within_buckets_with_true_sim(
         bucket_data = {t: true_coordinates[t] for t in stable_ordered_names}
         
         if measure == "dtw":
-            sims = cy_dtw_pool(bucket_data) if parallel else cy_dtw_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
+            sims, total_comparisons, total_skipped_comparisons, compared_trajectories = cy_dtw_pool(bucket_data) if parallel else cy_dtw_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         elif measure == "frechet":
-            sims = cy_frechet_pool(bucket_data) if parallel else cy_frechet_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
+            sims, total_comparisons, total_skipped_comparisons, compared_trajectories = cy_frechet_pool(bucket_data) if parallel else cy_frechet_bucketing(bucket_data, trajectory_idxs=traj_to_idx, global_matrix=global_matrix)
         else:
             raise ValueError("Unsupported measure.")
+        
+        
+        #Total comparisons, add from each bucket
+        total_comparisons_all += total_comparisons
+        total_skipped_comparisons_all += total_skipped_comparisons
+        
+        #Total comparisons, update with the set from each bucket
+        compared_trajectories_total.update(compared_trajectories)
         
          # 4) Convert to integer indices
         idxs = [traj_to_idx[t] for t in stable_ordered_names]
@@ -534,7 +547,7 @@ def compute_hash_similarity_within_buckets_with_true_sim(
     global_matrix = np.maximum(global_matrix, global_matrix.T)
 
         
-    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs)
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons_all, total_skipped_comparisons_all, compared_trajectories_total
 
 def measure_hashed_cy_bucketing_with_true_sim(
     true_coordinates: dict[str, list[list[list[float]]]],
