@@ -360,10 +360,6 @@ def compute_hash_similarity_within_buckets(
         else:
             raise ValueError("Unsupported measure.")
         
-        print(bucket_data.keys())
-        print("Bucket lenght", len(traj_list))
-        print(f"Total comparisons: {total_comparisons}")
-        print(f"Total skipped comparisons: {total_skipped_comparisons}")
         #Total comparisons, add from each bucket
         total_comparisons_all += total_comparisons
         total_skipped_comparisons_all += total_skipped_comparisons
@@ -387,16 +383,9 @@ def compute_hash_similarity_within_buckets(
                 
         global_matrix[np.ix_(idxs, idxs)] = updated_values
     
-    print("all trajectories (fasit)", len(all_trajs))
-    print(f"Total comparisons: {len(compared_trajectories_total)}")
-    print(f"Total computations: {total_comparisons_all}")
-    print(f"Total skipped comparisons: {total_skipped_comparisons_all}")
-    
-    print("\n\n")
-    
     global_matrix = np.maximum(global_matrix, global_matrix.T)
 
-    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons, total_skipped_comparisons, 1
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons_all, total_skipped_comparisons_all, compared_trajectories_total
 
 def measure_hashed_cy_bucketing(
     hashes: dict[str, list[list[list[float]]]],

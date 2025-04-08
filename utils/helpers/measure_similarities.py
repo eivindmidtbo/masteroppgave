@@ -200,7 +200,6 @@ def compute_hashed_similarity_runtimes_with_bucketing(
         for iteration in range(iterations):
             print(f"Iteration {iteration+1}/{iterations}")
 
-            
             # --- Parallel Hashing ---
             hash_results = pool.starmap(
                 compute_hash_parallel, 
