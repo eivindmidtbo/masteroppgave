@@ -1,7 +1,5 @@
 # Sheet containing helper functions for bucket evaluation
-from decimal import DivisionImpossible
 import pandas as pd
-
 
 def get_nearest_neighbours(trajectory_name, number_of_neighbours, true_sim_matrix):
     """
