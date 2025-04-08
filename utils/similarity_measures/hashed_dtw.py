@@ -80,8 +80,10 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
             if i == j:
-                break  # This optimizes by not recalculating for identical trajectories
+                M[i, j] = 0
+                break
             
             total_dtw = 0  # Initialize total DTW similarity for this pair
             for layer_i, layer_j in zip(sorted_trajectories[traj_i], sorted_trajectories[traj_j]):
