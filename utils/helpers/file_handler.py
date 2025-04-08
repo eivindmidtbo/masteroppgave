@@ -48,7 +48,7 @@ def load_trajectories_from_meta_file(size: int, folder_path: str) -> dict:
     """
 
     try:
-        with open(folder_path + f"meta-{size}.txt", "r") as file:
+        with open(folder_path + f"META-{size}.txt", "r") as file:
             file_list = [next(file).strip() for _ in range(size)]
             file.close()
     except FileNotFoundError:
