@@ -89,7 +89,6 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
             for layer_i, layer_j in zip(sorted_trajectories[traj_i], sorted_trajectories[traj_j]):
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
-                total_comparisons += 1
                 # Ensure both X and Y are not empty and have the correct shape
                 # NOTE: If the calculation is skipped, either X or Y (or both) is empty.
                 # This usually occurs for comparisons starting on the second half of the trajectories for unknown reasons.

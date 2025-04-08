@@ -41,7 +41,6 @@ def cy_frechet_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFram
             for layer_i, layer_j in zip(sorted_trajectories[traj_i], sorted_trajectories[traj_j]):
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
-                total_comparisons += 1
                 # Ensure both X and Y are not empty and have the correct shape
                 if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
                     frechet = c_frechet(X, Y)  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
