@@ -183,7 +183,7 @@ def generate_disk_hash_similarity(
 
     Disk = _constructDisk(city, diameter, layers, disks, size)
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical()
-    similarities = compute_hash_similarity(
+    similarities, total_skipped_comparisons = compute_hash_similarity(
         hashes=hashes, scheme="disk", measure=measure, parallel=False
     )
 
@@ -196,7 +196,7 @@ def generate_grid_hash_similarity(
 
     Grid = _constructGrid(city, res, layers, size)
     hashes = Grid.compute_dataset_hashes()
-    similarities = compute_hash_similarity(
+    similarities, total_skipped_comparisons = compute_hash_similarity(
         hashes=hashes, scheme="grid", measure=measure, parallel=False
     )
 
@@ -275,11 +275,11 @@ def generate_disk_hash_similarity_with_bucketing(
     Disk = _constructDisk(city, diameter, layers, disks, size) # Construct the disk object
     hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
     bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
-    similarities = compute_hash_similarity_within_buckets(
+    similarities, total_comparisons, total_skipped_comparisons, num_compared_trajectories = compute_hash_similarity_within_buckets(
         hashes=hashes, scheme="disk", bucket_system=bucket_system, measure=measure, parallel=False
     )
 
-    return similarities, bucket_system
+    return similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories
 
 def generate_grid_hash_similarity_with_bucketing(
     city: str, res: float, layers: int, measure: str = "dtw", size: int = 50, bucketing_method: str = "original",

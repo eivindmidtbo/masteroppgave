@@ -110,7 +110,7 @@ def plot_grid_corr_varying_layers(
     
     fig, ax1 = plt.subplots(figsize=(10, 8), dpi=300)
     ax2 = ax1.twinx()
-    # fig.set_size_inches(10,8)
+    fig.set_size_inches(10,8)
     cmap = plt.get_cmap("gist_ncar")
     N = len(results)
 
@@ -121,10 +121,7 @@ def plot_grid_corr_varying_layers(
     
     ax1.plot(layers, corre, c=cmap(float(1.3 - 1) / (1.2 * N)), lw=2)
     ax2.plot(layers, std, c=cmap(float(1.3 - 1) / (1.2 * N)), ls="dashed")
-    # plt.fill_between(res, np.array(corre)+np.array(std), np.array(corre)-np.array(std))
-
-    # Now styling the figure
-    # ax1.legend(loc="lower left", ncols=3)
+    
     ax2.text(
         0.37,
         0.99,

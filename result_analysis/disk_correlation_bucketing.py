@@ -62,7 +62,7 @@ def _fun_wrapper_corr_bucketing(args):
     
     city, diameter, layers, disks, true_sim_matrix, measure, size, bucketing_method = args
     
-    hashed_similarities, bucket_system = generate_disk_hash_similarity_with_bucketing(
+    hashed_similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories = generate_disk_hash_similarity_with_bucketing(
         city=city,
         diameter=diameter,
         disks=disks,
