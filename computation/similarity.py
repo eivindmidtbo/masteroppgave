@@ -310,8 +310,6 @@ def generate_grid_hash_similarity_with_bucketing(
         hashes=hashes, scheme="grid", bucket_system=bucket_system, measure=measure, parallel=False
     )
     
-    print("hashed ", similarities)
-
     return similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories
 
 def compute_hash_similarity_within_buckets(

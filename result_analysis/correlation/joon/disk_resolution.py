@@ -217,25 +217,6 @@ def _fun_wrapper_corr(args):
     corr = np.corrcoef(hashed_array, truesim_array)[0][1]
     return corr
 
-
-# Used in the next method to verify the correlation methods
-# def _test_wrapper_corr(args):
-#     city, dia, lay, measure, reference = args
-#     Disk = _constructDisk(city, dia, lay)
-#     hashes = _compute_hashes(Disk, measure)
-#     hash_array = _mirrorDiagonal(MEASURE[measure](hashes)).flatten()
-#     truesim_array_dtw = REFERENCE[city.lower() + "dtw"]
-#     truesim_array_frechet = REFERENCE[city.lower() + "frechet"]
-#     null_values = REFERENCE["null_testset"]
-#     # spearman_corr = scipy.stats.spearmanr(hash_array, truesim_array_dtw)
-#     # print("Spearman_corr", spearman_corr)
-#     # kendall_corr = scipy.stats.kendalltau(hash_array, truesim_array_dtw)
-#     # print("Kendall_corr", kendall_corr)
-
-#     test_corr = np.corrcoef(hash_array, truesim_array_dtw)[0][1]
-#     return test_corr
-
-
 def _compute_disk_diameter_layers(
     city: str,
     layers: list[int],

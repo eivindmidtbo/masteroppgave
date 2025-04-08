@@ -86,7 +86,6 @@ def compute_grid_corr_varying_layers(
                 ],
             )
             corr = np.average(np.array(corrs))
-            print(corr)
             std = np.std(np.array(corrs))
             results.append([corr, layer, std])
 

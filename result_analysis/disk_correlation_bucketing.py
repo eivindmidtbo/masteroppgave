@@ -119,7 +119,6 @@ def compute_disk_corr_varying_layers_bucketing(
             ],
         )
         corr = np.average(np.array(corrs))
-        print(corr)
         std = np.std(np.array(corrs))
         results.append([corr, layer, std])
 
