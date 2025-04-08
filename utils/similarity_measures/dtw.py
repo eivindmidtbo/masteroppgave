@@ -180,7 +180,6 @@ def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs
         for j, traj_j in enumerate(sorted_trajectories.keys()):
             
             if i == j:
-                print("Skipped because identical trajectories")
                 M[i, j] = 0
                 break
             
@@ -195,7 +194,6 @@ def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs
             # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
-                print("Skipped because global matrix exists")  
                 total_skipped_comparisons += 1
                 break
             

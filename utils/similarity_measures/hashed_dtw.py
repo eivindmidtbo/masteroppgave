@@ -203,7 +203,6 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             print(traj_i, traj_j)
             
             if i == j:
-                print("Skipped because identical trajectories")
                 M[i, j] = 0
                 break
             
@@ -218,7 +217,6 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
-                print("Skipped because global matrix exists")  
                 total_skipped_comparisons += 1
                 break
             

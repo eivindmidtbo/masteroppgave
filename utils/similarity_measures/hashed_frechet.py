@@ -141,7 +141,6 @@ def cy_frechet_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], traj
         for j, traj_j in enumerate(sorted_trajectories.keys()):
             
             if i == j:
-                print("Skipped because identical trajectories")
                 M[i, j] = 0
                 break
             
@@ -156,7 +155,6 @@ def cy_frechet_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], traj
              # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
-                print("Skipped because global matrix exists")  
                 total_skipped_comparisons += 1
                 break
             
