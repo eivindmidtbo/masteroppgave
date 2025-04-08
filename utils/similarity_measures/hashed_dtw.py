@@ -199,7 +199,6 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
     
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
-            print(traj_i, traj_j)
             
             if i == j:
                 M[i, j] = 0
