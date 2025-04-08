@@ -294,7 +294,6 @@ class DiskLSH(LSHInterface):
             within = []  # The disks that the trajectory are currently within
             disks = self.disks[layer]
             for coordinate in trajectory:
-                print(trajectory)
                 lat, lon = coordinate
 
                 # If next point no longer in disk: Remove from within list
@@ -423,10 +422,7 @@ class DiskLSH(LSHInterface):
                 lat, lon = coordinate
                 for disk in within:
                     dsklat, dsklon = self.disks[layer][disk]
-                    # print(dsklat, dsklon)
                     if td.get_euclidean_distance([lat, lon], [dsklat, dsklon]) > radius:
-                        # print("Removing disk")
-                        # print(dsklat, dsklon)
                         within.remove(disk)
 
                 # Gives disk index

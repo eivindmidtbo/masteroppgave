@@ -125,6 +125,11 @@ def disk_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories /= parallell_jobs * iterations
     all_percentage_buckets_with_single_trajectory /= parallell_jobs * iterations
     all_correlations /= parallell_jobs * iterations
+
+    #New aggregering
+    all_total_comparisons /= parallell_jobs * iterations
+    all_total_skipped_comparisons /= parallell_jobs * iterations
+    all_num_compared_trajectories /= parallell_jobs * iterations
     
     rows = []
     for threshold in TRESHOLDS:
@@ -247,7 +252,7 @@ def grid_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories = 0
     all_percentage_buckets_with_single_trajectory = 0
     all_correlations = 0
-    threshold_results ={threshold: [0,0,0] for threshold in TRESHOLDS}
+    threshold_results = {threshold: [0,0,0] for threshold in TRESHOLDS}
     
     ##Legge til aggregering
     all_total_comparisons = 0
