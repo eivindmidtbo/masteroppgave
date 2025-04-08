@@ -64,19 +64,18 @@ def cy_dtw(trajectories: dict[str, list[list[float]]]) -> pd.DataFrame:
     num_trajectoris = len(sorted_trajectories)
 
     M = np.zeros((num_trajectoris, num_trajectoris))
-    total_dtw_distance = 0
-    count = 0
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
+            if i == j:
+                M[i, j] = 0
+                break
+             
             X = np.array(sorted_trajectories[traj_i])
             Y = np.array(sorted_trajectories[traj_j])
             dtw = c_dtw(X, Y)
             M[i, j] = dtw
-            total_dtw_distance += dtw
-            count += 1
-            if i == j:
-                break
    
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
@@ -171,33 +170,43 @@ def cy_dtw_bucketing(trajectories: dict[str, list[list[float]]], trajectory_idxs
     num_trajectoris = len(sorted_trajectories)
 
     M = np.zeros((num_trajectoris, num_trajectoris))
-    total_dtw_distance = 0
-    count = 0
-
+    
+    total_comparisons = 0
+    total_skipped_comparisons = 0
+    compared_trajectories = set()
+    
+    
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
+            
+            if i == j:
+                print("Skipped because identical trajectories")
+                M[i, j] = 0
+                break
             
             # Lookup index for traj_i, traj_j
             traj_i_index = trajectory_idxs[traj_i]
             traj_j_index = trajectory_idxs[traj_j]
+            
+            # Add to compared trajectories set
+            compared_trajectories.add(traj_i)
+            compared_trajectories.add(traj_j)
+            
             # Check global index
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
-                # skip if exist  
-                continue
-            
-            
+                # skip if exist
+                print("Skipped because global matrix exists")  
+                total_skipped_comparisons += 1
+                break
             
             X = np.array(sorted_trajectories[traj_i])
             Y = np.array(sorted_trajectories[traj_j])
             dtw = c_dtw(X, Y)
             M[i, j] = dtw
-            total_dtw_distance += dtw
-            count += 1
-            if i == j:
-                break
+            total_comparisons += 1
     
     df = pd.DataFrame(
         M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
     )
 
-    return df
+    return df, total_comparisons, total_skipped_comparisons, compared_trajectories
