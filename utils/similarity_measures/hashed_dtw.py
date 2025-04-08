@@ -103,7 +103,7 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
   
     df = pd.DataFrame(M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys())
 
-    return df
+    return df, total_skipped_comparisons
 
 
 def _fun_wrapper_hashes(args):
@@ -199,6 +199,7 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
             print(traj_i, traj_j)
+            
             if i == j:
                 print("Skipped because identical trajectories")
                 M[i, j] = 0
