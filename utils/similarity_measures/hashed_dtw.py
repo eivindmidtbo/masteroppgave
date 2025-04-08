@@ -76,15 +76,15 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
 
     M = np.zeros((num_trajectories, num_trajectories))
 
-    total_comparisons = 0
     total_skipped_comparisons = 0
 
     for i, traj_i in enumerate(sorted_trajectories.keys()):
         for j, traj_j in enumerate(sorted_trajectories.keys()):
+            if i == j:
+                break  # This optimizes by not recalculating for identical trajectories
+            
             total_dtw = 0  # Initialize total DTW similarity for this pair
-            for layer_i, layer_j in zip(
-                sorted_trajectories[traj_i], sorted_trajectories[traj_j]
-            ):
+            for layer_i, layer_j in zip(sorted_trajectories[traj_i], sorted_trajectories[traj_j]):
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
                 total_comparisons += 1
@@ -93,19 +93,15 @@ def cy_dtw_hashes(hashes: dict[str, list[list[list[float]]]]) -> pd.DataFrame:
                 # This usually occurs for comparisons starting on the second half of the trajectories for unknown reasons.
                 # We normally use sizes so big that the number of skipped comparisons can be neglected as it does not affect the correlation.
                 if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
-                    dtw = c_dtw(
-                        X, Y
-                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    dtw = c_dtw(X, Y)  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
                     total_dtw += dtw
                 else:
                     total_skipped_comparisons += 1
+                
             M[i, j] = total_dtw
-            if i == j:
-                break  # This optimizes by not recalculating for identical trajectories
-
-    df = pd.DataFrame(
-        M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys()
-    )
+            
+  
+    df = pd.DataFrame(M, index=sorted_trajectories.keys(), columns=sorted_trajectories.keys())
 
     return df
 
@@ -225,9 +221,7 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             
             total_dtw = 0  # Initialize total DTW similarity for this pair
             
-            for layer_i, layer_j in zip(
-                sorted_trajectories[traj_i], sorted_trajectories[traj_j]
-            ):
+            for layer_i, layer_j in zip(sorted_trajectories[traj_i], sorted_trajectories[traj_j]):
                 X = np.array(layer_i)
                 Y = np.array(layer_j)
                 total_comparisons += 1
@@ -236,9 +230,7 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
                 # This usually occurs for comparisons starting on the second half of the trajectories for unknown reasons.
                 # We normally use sizes so big that the number of skipped comparisons can be neglected as it does not affect the correlation.
                 if X.size > 0 and Y.size > 0 and X.ndim == 2 and Y.ndim == 2:
-                    dtw = c_dtw(
-                        X, Y
-                    )  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
+                    dtw = c_dtw(X, Y)  # Assuming c_dtw is defined elsewhere to calculate DTW similarity
                     total_dtw += dtw
                 
                 
