@@ -383,7 +383,7 @@ def compute_hash_similarity_within_buckets(
     
     global_matrix = np.maximum(global_matrix, global_matrix.T)
 
-    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons_all, total_skipped_comparisons_all, compared_trajectories_total
+    return pd.DataFrame(global_matrix, index=all_trajs, columns=all_trajs), total_comparisons_all, total_skipped_comparisons_all, len(compared_trajectories_total)
 
 def measure_hashed_cy_bucketing(
     hashes: dict[str, list[list[list[float]]]],
