@@ -14,7 +14,7 @@ def disk_compute_single_evaluation_scores(city, diameter, layers, disks, measure
         )
         corr = 1
     else:
-        hashed_similarities, bucket_system = generate_disk_hash_similarity_with_bucketing(
+        hashed_similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories = generate_disk_hash_similarity_with_bucketing(
             city=city, diameter=diameter, layers=layers, disks=disks, measure=measure, size=size, bucketing_method=bucketing_method
         )
         corr = fun_wrapper_corr_bucketing(hashed_similarities, true_sim_matrix)
@@ -46,7 +46,7 @@ def disk_compute_single_evaluation_scores(city, diameter, layers, disks, measure
         
         threshold_results_for_p_r_f1[threshold] = [precision, recall, f1_score]
         
-    return threshold_results_for_p_r_f1, bucket_evaluation, corr
+    return threshold_results_for_p_r_f1, bucket_evaluation, corr, total_comparisons, total_skipped_comparisons, num_compared_trajectories
 
 def disk_compute_evaluation_scores(
     CITY, 
@@ -73,6 +73,11 @@ def disk_compute_evaluation_scores(
     all_percentage_buckets_with_single_trajectory = 0
     all_correlations = 0
     threshold_results ={threshold: [0,0,0] for threshold in TRESHOLDS}
+
+    ##Legge til aggregering
+    all_total_comparisons = 0
+    all_total_skipped_comparisons = 0
+    all_num_compared_trajectories = 0
     
     #Iterations
     with Pool(parallell_jobs) as pool:
@@ -86,7 +91,7 @@ def disk_compute_evaluation_scores(
                 
                 
             # Extract hashes and compute average hashing time
-            threshold_results_for_p_r_f1, bucket_evaluation, corr = zip(*evaluation_scores)  # Unpack results
+            threshold_results_for_p_r_f1, bucket_evaluation, corr, total_comparisons, total_skipped_comparisons, num_compared_trajectories = zip(*evaluation_scores)  # Unpack results
                 
                 
             for threshold in TRESHOLDS:
@@ -108,6 +113,11 @@ def disk_compute_evaluation_scores(
                 all_percentage_buckets_with_several_trajectories += bucket_evaluation[i][5]
                 all_percentage_buckets_with_single_trajectory += bucket_evaluation[i][6]
                 all_correlations += corr[i]
+
+                #New aggregering
+                all_total_comparisons += total_comparisons[i]
+                all_total_skipped_comparisons += total_skipped_comparisons[i]
+                all_num_compared_trajectories += num_compared_trajectories[i]
         
     # for each threshold, divide by the number of parallel jobs * iterations
     for threshold in TRESHOLDS:
@@ -155,7 +165,10 @@ def disk_compute_evaluation_scores(
             "Avg Buckets with 1 Trajectory": format(all_buckets_with_single_trajectory, ".3f"),
             "Avg Percentage >1 Trajectory": format(all_percentage_buckets_with_several_trajectories, ".3f"),
             "Avg Percentage 1 Trajectory": format(all_percentage_buckets_with_single_trajectory, ".3f"),
-            "Avg Correlation Coefficient": format(all_correlations, ".3f")
+            "Avg Correlation Coefficient": format(all_correlations, ".3f"),
+            "Avg Total Comparisons": format(all_total_comparisons, ".3f"),
+            "Avg Total Skipped Comparisons": format(all_total_skipped_comparisons, ".3f"),
+            "Avg Num Compared Trajectories": format(all_num_compared_trajectories, ".3f")
         }
         rows.append(row_dict)
 
@@ -181,7 +194,10 @@ def disk_compute_evaluation_scores(
             "Avg Buckets with 1 Trajectory",
             "Avg Percentage >1 Trajectory", 
             "Avg Percentage 1 Trajectory",
-            "Avg Correlation Coefficient"
+            "Avg Correlation Coefficient",
+            "Avg Total Comparisons",
+            "Avg Total Skipped Comparisons",
+            "Avg Num Compared Trajectories"
     ]
     df_result = df_result[column_order]
 
