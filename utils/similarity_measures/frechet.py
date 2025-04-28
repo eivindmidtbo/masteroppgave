@@ -204,7 +204,7 @@ def cy_frechet_bucketing(trajectories: dict[str, list[list[float]]], trajectory_
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
                 total_skipped_comparisons += 1
-                break
+                continue
             
             X = np.array(sorted_trajectories[traj_i])
             Y = np.array(sorted_trajectories[traj_j])

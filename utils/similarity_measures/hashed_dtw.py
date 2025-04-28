@@ -216,7 +216,7 @@ def cy_dtw_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], trajecto
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
                 total_skipped_comparisons += 1
-                break
+                continue
             
             total_dtw = 0  # Initialize total DTW similarity for this pair
             

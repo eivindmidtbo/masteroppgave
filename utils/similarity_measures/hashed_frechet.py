@@ -155,7 +155,7 @@ def cy_frechet_hashes_bucketing(hashes: dict[str, list[list[list[float]]]], traj
             if not np.isnan(global_matrix[traj_i_index, traj_j_index]):
                 # skip if exist
                 total_skipped_comparisons += 1
-                break
+                continue
             
             total_frechet = 0  # Initialize total frechet similarity for this pair
             
