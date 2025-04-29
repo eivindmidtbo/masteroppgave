@@ -235,26 +235,29 @@ def plot_grid_corr_varying_resolution(
 
 
 
-# Varying diameter and layersimport numpy as np
+import numpy as np
 import pandas as pd
 from multiprocessing import Pool
 
 def compute_grid_corr_varying_resolution_and_layers(
     city: str,
-    layers: list[int],
+    layers: list[int],  # Varying parameter
     true_sim_matrix,
-    resolution: list[float],  # Now a list of float values, e.g., [0.1, 0.2, 0.3]
+    resolution: list[float],  # List of float values
     size: int = 50,
     measure: str = "dtw",
     parallel_jobs: int = 20,
 ):
-    """Computes correlation for resolution/layer configs and writes to CSV after each config."""
+    """Computes correlation for resolution/layer configs and writes to CSV via DataFrame."""
 
+    results = []
     df = pd.DataFrame(columns=["Resolution", "Layers", "Correlation"])
 
     with Pool(parallel_jobs) as pool:
         for layer in layers:
-            for res in resolution:  # Direct iteration over list of float values
+            result = []
+
+            for res in resolution:
                 print(f"L: {layer}", "{:.2f}".format(res), end="\r")
 
                 corrs = pool.map(
@@ -266,14 +269,24 @@ def compute_grid_corr_varying_resolution_and_layers(
                 )
 
                 corr = np.average(np.array(corrs))
-                corr_formatted = format(corr, ".3f")  # Fixed-point format with 3 decimals
+                std = np.std(np.array(corrs))
+                result.append([corr, res, std])
 
-                new_row = {"Resolution": res, "Layers": layer, "Correlation": corr_formatted}
-                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                df = pd.concat(
+                    [df, pd.DataFrame([{
+                        "Resolution": res,
+                        "Layers": layer,
+                        "Correlation": f"{corr:.3f}"
+                    }])],
+                    ignore_index=True
+                )
 
                 df.to_csv("correlation_results_resolution_layers.csv", index=False)
 
-    return df
+            results.append([result, layer])
+
+    return results
+
 
 
 def plot_grid_corr_varying_resolution_and_layers(
