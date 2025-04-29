@@ -268,7 +268,6 @@ def compute_grid_corr_varying_resolution_and_layers(
             results.append([result, layer])
 
     return results
-
 def plot_grid_corr_varying_resolution_and_layers(
     city: str,
     layers: list[int], #Varying parameter
@@ -337,6 +336,13 @@ def plot_grid_corr_varying_resolution_and_layers(
     # Dynamic y-axis limits based on values
     ax2.set_ylim([0, ax2.get_ylim()[1] * 2])
     # ax2.set_ylim([0.0, 0.1])
+    
+    # Set more frequent ticks
+    ax1.xaxis.set_major_locator(plt.MultipleLocator(0.5))  # X-axis major ticks every 0.1
+    ax1.xaxis.set_minor_locator(plt.MultipleLocator(0.1))  # X-axis major ticks every 0.1
+    ax1.yaxis.set_major_locator(plt.MultipleLocator(0.1))  # Left Y-axis major ticks every 0.1
+    ax2.yaxis.set_major_locator(plt.MultipleLocator(0.01)) # Right Y-axis major ticks every 0.01
+    
     ax1.tick_params(axis="both", which="major", labelsize=16)
     ax2.tick_params(axis="both", which="major", labelsize=16)
 
