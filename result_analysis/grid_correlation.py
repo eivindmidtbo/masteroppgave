@@ -281,7 +281,10 @@ def compute_grid_corr_varying_resolution_and_layers(
                     ignore_index=True
                 )
 
-                df.to_csv("correlation_results_resolution_layers.csv", index=False)
+                output_dir = "./no_bucketing_correlation_values"
+                os.makedirs(output_dir, exist_ok=True)
+                output_file = os.path.join(output_dir, f"correlation_results_{city}_grid_no_bucketing.csv")
+                df.to_csv(output_file, index=False)
 
             results.append([result, layer])
 
