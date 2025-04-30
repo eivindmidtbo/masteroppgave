@@ -72,6 +72,7 @@ def disk_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories = 0
     all_percentage_buckets_with_single_trajectory = 0
     all_correlations = 0
+    all_avg_trajectories_in_buckets = 0
     threshold_results ={threshold: [0,0,0] for threshold in TRESHOLDS}
 
     ##Legge til aggregering
@@ -113,6 +114,8 @@ def disk_compute_evaluation_scores(
                 all_percentage_buckets_with_several_trajectories += bucket_evaluation[i][5]
                 all_percentage_buckets_with_single_trajectory += bucket_evaluation[i][6]
                 all_correlations += corr[i]
+                all_avg_trajectories_in_buckets += bucket_evaluation[i][7]
+
 
                 #New aggregering
                 all_total_comparisons += total_comparisons[i]
@@ -135,6 +138,7 @@ def disk_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories /= parallell_jobs * iterations
     all_percentage_buckets_with_single_trajectory /= parallell_jobs * iterations
     all_correlations /= parallell_jobs * iterations
+    all_avg_trajectories_in_buckets /= parallell_jobs * iterations
 
     #New aggregering
     all_total_comparisons /= parallell_jobs * iterations
@@ -158,17 +162,11 @@ def disk_compute_evaluation_scores(
             "Avg Precision": format(precision_val, ".3f"),
             "Avg Recall": format(recall_val, ".3f"),
             "Avg F1 Score": format(f1_val, ".3f"),
-            "Avg Total Buckets": format(all_total_buckets, ".3f"),
+            "Avg Number of buckets": format(all_total_buckets, ".3f"),
+            "Avg Bucket size": format(all_avg_trajectories_in_buckets, ".3f"),
             "Avg Largest Bucket Size": format(all_largest_bucket_sizes, ".3f"),
-            "Avg Smallest Bucket Size": format(all_smallest_bucket_sizes, ".3f"),
             "Avg Buckets with >1 Trajectory": format(all_buckets_with_multiple_trajectories, ".3f"),
-            "Avg Buckets with 1 Trajectory": format(all_buckets_with_single_trajectory, ".3f"),
-            "Avg Percentage >1 Trajectory": format(all_percentage_buckets_with_several_trajectories, ".3f"),
-            "Avg Percentage 1 Trajectory": format(all_percentage_buckets_with_single_trajectory, ".3f"),
             "Avg Correlation Coefficient": format(all_correlations, ".3f"),
-            "Avg Total Comparisons": format(all_total_comparisons, ".3f"),
-            "Avg Total Skipped Comparisons": format(all_total_skipped_comparisons, ".3f"),
-            "Avg Num Compared Trajectories": format(all_num_compared_trajectories, ".3f")
         }
         rows.append(row_dict)
 
@@ -187,17 +185,11 @@ def disk_compute_evaluation_scores(
             "Avg Precision", 
             "Avg Recall", 
             "Avg F1 Score",
-            "Avg Total Buckets", 
-            "Avg Largest Bucket Size", 
-            "Avg Smallest Bucket Size",
+            "Avg Number of buckets",
+            "Avg Bucket size", 
             "Avg Buckets with >1 Trajectory", 
-            "Avg Buckets with 1 Trajectory",
-            "Avg Percentage >1 Trajectory", 
-            "Avg Percentage 1 Trajectory",
+            "Avg Largest Bucket Size", 
             "Avg Correlation Coefficient",
-            "Avg Total Comparisons",
-            "Avg Total Skipped Comparisons",
-            "Avg Num Compared Trajectories"
     ]
     df_result = df_result[column_order]
 
@@ -268,6 +260,7 @@ def grid_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories = 0
     all_percentage_buckets_with_single_trajectory = 0
     all_correlations = 0
+    all_avg_trajectories_in_buckets = 0
     threshold_results = {threshold: [0,0,0] for threshold in TRESHOLDS}
     
     ##Legge til aggregering
@@ -308,6 +301,7 @@ def grid_compute_evaluation_scores(
                 all_percentage_buckets_with_several_trajectories += bucket_evaluation[i][5]
                 all_percentage_buckets_with_single_trajectory += bucket_evaluation[i][6]
                 all_correlations += corr[i]
+                all_avg_trajectories_in_buckets += bucket_evaluation[i][7]
                 
                 #New aggregering
                 all_total_comparisons += total_comparisons[i]
@@ -330,6 +324,7 @@ def grid_compute_evaluation_scores(
     all_percentage_buckets_with_several_trajectories /= parallell_jobs * iterations
     all_percentage_buckets_with_single_trajectory /= parallell_jobs * iterations
     all_correlations /= parallell_jobs * iterations
+    all_avg_trajectories_in_buckets /= parallell_jobs * iterations
     
     #New aggregering
     all_total_comparisons /= parallell_jobs * iterations
@@ -352,17 +347,11 @@ def grid_compute_evaluation_scores(
             "Avg Precision": format(precision_val, ".3f"),
             "Avg Recall": format(recall_val, ".3f"),
             "Avg F1 Score": format(f1_val, ".3f"),
-            "Avg Total Buckets": format(all_total_buckets, ".3f"),
+            "Avg Number of buckets": format(all_total_buckets, ".3f"),
+            "Avg Bucket size": format(all_avg_trajectories_in_buckets, ".3f"),
             "Avg Largest Bucket Size": format(all_largest_bucket_sizes, ".3f"),
-            "Avg Smallest Bucket Size": format(all_smallest_bucket_sizes, ".3f"),
             "Avg Buckets with >1 Trajectory": format(all_buckets_with_multiple_trajectories, ".3f"),
-            "Avg Buckets with 1 Trajectory": format(all_buckets_with_single_trajectory, ".3f"),
-            "Avg Percentage >1 Trajectory": format(all_percentage_buckets_with_several_trajectories, ".3f"),
-            "Avg Percentage 1 Trajectory": format(all_percentage_buckets_with_single_trajectory, ".3f"),
             "Avg Correlation Coefficient": format(all_correlations, ".3f"),
-            "Avg Total Comparisons": format(all_total_comparisons, ".3f"),
-            "Avg Total Skipped Comparisons": format(all_total_skipped_comparisons, ".3f"),
-            "Avg Num Compared Trajectories": format(all_num_compared_trajectories, ".3f")
         }
         rows.append(row_dict)
 
@@ -380,17 +369,12 @@ def grid_compute_evaluation_scores(
             "Avg Precision", 
             "Avg Recall", 
             "Avg F1 Score",
-            "Avg Total Buckets", 
-            "Avg Largest Bucket Size", 
-            "Avg Smallest Bucket Size",
+            "Avg Number of buckets",
+            "Avg Bucket size", 
             "Avg Buckets with >1 Trajectory", 
-            "Avg Buckets with 1 Trajectory",
-            "Avg Percentage >1 Trajectory", 
-            "Avg Percentage 1 Trajectory",
+            "Avg Largest Bucket Size", 
             "Avg Correlation Coefficient",
-            "Avg Total Comparisons",
-            "Avg Total Skipped Comparisons",
-            "Avg Num Compared Trajectories"
+            
     ]
     df_result = df_result[column_order]
 

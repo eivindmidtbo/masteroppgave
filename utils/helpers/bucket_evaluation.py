@@ -162,10 +162,16 @@ def evaluate_bucket_system_to_list(bucket_system):
     buckets_with_single = total_buckets - buckets_with_multiple
     largest_bucket_size = max(len(trajectories) for trajectories in bucket_system.values())
     smallest_bucket_size = min(len(trajectories) for trajectories in bucket_system.values())
+    avg_trajectories_in_buckets = sum(len(trajectories) for trajectories in bucket_system.values()) / total_buckets if total_buckets > 0 else 0
+    
+    
+    
+    #avg trajectories per bucket
+    
 
     # Compute distribution percentages
     multiple_bucket_percentage = (buckets_with_multiple / total_buckets) * 100 if total_buckets > 0 else 0
     single_bucket_percentage = (buckets_with_single / total_buckets) * 100 if total_buckets > 0 else 0
 
-    results = [total_buckets, largest_bucket_size, smallest_bucket_size, buckets_with_multiple, buckets_with_single, multiple_bucket_percentage, single_bucket_percentage]
+    results = [total_buckets, largest_bucket_size, smallest_bucket_size, buckets_with_multiple, buckets_with_single, multiple_bucket_percentage, single_bucket_percentage, avg_trajectories_in_buckets]
     return results
