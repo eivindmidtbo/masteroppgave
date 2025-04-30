@@ -346,7 +346,7 @@ def plot_grid_corr_varying_resolution_and_layers(
     ax2.text(
         0.01,
         0.99,
-        f"{city.capitalize()}: {measure.upper()} (Grid) - {measure} True\nSize: {size}\nJobs: {parallel_jobs} \n No bucketing",
+        f"{city.capitalize()}: {measure.upper()} (Grid) - {measure} True\nSize: {size}\nJobs: {parallel_jobs} \nNo bucketing",
         ha="left",
         va="top",
         transform=ax2.transAxes,
