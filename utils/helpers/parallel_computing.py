@@ -1,7 +1,7 @@
 from multiprocessing import Pool, pool
 import pandas as pd
 
-from computation.similarity import generate_disk_hash_similarity_with_bucketing, generate_disk_hash_similarity_with_bucketing_hybrid, generate_disk_hash_similarity_with_bucketing_with_true_sim, generate_grid_hash_similarity_with_bucketing, generate_grid_hash_similarity_with_bucketing_hybrid, generate_grid_hash_similarity_with_bucketing_with_true_sim
+from computation.similarity import bucket_evaluation_only_disk, bucket_evaluation_only_grid, generate_disk_hash_similarity_with_bucketing, generate_disk_hash_similarity_with_bucketing_hybrid, generate_disk_hash_similarity_with_bucketing_with_true_sim, generate_grid_hash_similarity_with_bucketing, generate_grid_hash_similarity_with_bucketing_hybrid, generate_grid_hash_similarity_with_bucketing_with_true_sim
 from result_analysis.disk_correlation_bucketing import fun_wrapper_corr_bucketing
 from schemes.lsh_bucketing import *
 from utils.helpers.bucket_evaluation import calculate_false_negatives, calculate_false_positives, calculate_true_positives, compute_bucket_system_f1_score, compute_bucket_system_precision, compute_bucket_system_recall, evaluate_bucket_system, evaluate_bucket_system_to_list, find_predicted_similar_trajectories, get_nearest_neighbour_under_threshold
@@ -9,10 +9,13 @@ from utils.helpers.bucket_evaluation import calculate_false_negatives, calculate
 def disk_compute_single_evaluation_scores(city, diameter, layers, disks, measure, size, true_trajectories, true_sim_matrix, bucketing_method, THRESHOLDS):
     
     if true_trajectories:
-        hashed_similarities, bucket_system = generate_disk_hash_similarity_with_bucketing_with_true_sim(
+        bucket_system = bucket_evaluation_only_disk(
             city=city, diameter=diameter, layers=layers, disks=disks, measure=measure, size=size, bucketing_method=bucketing_method
         )
         corr = 1
+        total_comparisons = 1
+        total_skipped_comparisons = 1
+        num_compared_trajectories = 1
     else:
         hashed_similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories = generate_disk_hash_similarity_with_bucketing(
             city=city, diameter=diameter, layers=layers, disks=disks, measure=measure, size=size, bucketing_method=bucketing_method
@@ -26,9 +29,18 @@ def disk_compute_single_evaluation_scores(city, diameter, layers, disks, measure
     # Precision, recall, f1 score for each threshold   
     threshold_results_for_p_r_f1 ={}
 
+    if true_trajectories:
+        all_trajectory_names = set()
+        for bucket in bucket_system.values():
+            all_trajectory_names.update(bucket)
+
+
+    else:
+        all_trajectory_names = list(hashed_similarities.keys())  # List of trajectories
+
+
     # Loop through each threshold
     for threshold in THRESHOLDS:
-        all_trajectory_names = list(hashed_similarities.keys())  # List of trajectories
         true_positives, false_positives, false_negatives = 0, 0, 0
 
         # Compute precision, recall, and F1 score
@@ -198,10 +210,14 @@ def disk_compute_evaluation_scores(
 def grid_compute_single_evaluation_scores(city, resolution, layers, measure, size, true_trajectories, true_sim_matrix, bucketing_method, THRESHOLDS):
     
     if true_trajectories:
-        hashed_similarities, bucket_system = generate_grid_hash_similarity_with_bucketing_with_true_sim(
+        bucket_system = bucket_evaluation_only_grid(
             city=city, res=resolution, layers=layers, measure=measure, size=size, bucketing_method=bucketing_method
         )
         corr = 1
+        total_comparisons = 1
+        total_skipped_comparisons = 1
+        num_compared_trajectories = 1
+
     else:
         hashed_similarities, bucket_system, total_comparisons, total_skipped_comparisons, num_compared_trajectories = generate_grid_hash_similarity_with_bucketing(
             city=city, res=resolution, layers=layers, measure=measure, size=size, bucketing_method=bucketing_method
@@ -215,9 +231,17 @@ def grid_compute_single_evaluation_scores(city, resolution, layers, measure, siz
     # Precision, recall, f1 score for each threshold   
     threshold_results_for_p_r_f1 ={}
 
+    if true_trajectories:
+        all_trajectory_names = set()
+        for bucket in bucket_system.values():
+            all_trajectory_names.update(bucket)
+
+
+    else:
+        all_trajectory_names = list(hashed_similarities.keys())  # List of trajectories
+
     # Loop through each threshold
     for threshold in THRESHOLDS:
-        all_trajectory_names = list(hashed_similarities.keys())  # List of trajectories
         true_positives, false_positives, false_negatives = 0, 0, 0
 
         # Compute precision, recall, and F1 score

@@ -403,6 +403,43 @@ def measure_hashed_cy_bucketing(
 
 
 ################################################################################################################ With true coordinates ################################################################################################################
+
+
+def bucket_evaluation_only_disk(
+    city: str,
+    diameter: float,
+    layers: int,
+    disks: int,
+    measure: str = "dtw",
+    size: int = 50,
+    bucketing_method: str = "original",
+    
+) -> pd.DataFrame:
+    """
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket and creates a dataframe
+
+
+    Args:
+        city (str): The city to use. Either "porto" or "rome".
+        diameter (float): The disks diameter
+        layers (int): number of layers in the disk.
+        disks (int): number of disks in each layer.
+        measure (str, optional): Measure to use. Defaults to "dtw".
+        size (int, optional): Number of trajectories to use. Defaults to 50.
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
+    Disk = _constructDisk(city, diameter, layers, disks, size) # Construct the disk object
+    hashes = Disk.compute_dataset_hashes_with_KD_tree_numerical() # Compute the hashes
+    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
+
+    return bucket_system
+
+
 def generate_disk_hash_similarity_with_bucketing_with_true_sim(
     city: str,
     diameter: float,
@@ -474,6 +511,32 @@ def generate_grid_hash_similarity_with_bucketing_with_true_sim(
     )
 
     return similarities, bucket_system
+
+def bucket_evaluation_only_grid(
+    city: str, res: float, layers: int, measure: str = "dtw", size: int = 50, bucketing_method: str = "original",
+) -> pd.DataFrame:
+    """
+    - Hashes the dataset
+    - Places the hashes into buckets
+    - Computes the hash similarity values for trajectories within the same bucket
+
+    Args:
+        city (str): The city to use. Either "porto" or "rome".
+        res (float): resolution of the grid.
+        layers (int): number of layers in the grid.
+        measure (str, optional): Measure to use. Defaults to "dtw".
+        size (int, optional): Number of trajectories to use. Defaults to 50.
+
+    Returns:
+        bucketing_system: dict[int, list[str]]: A dictionary containing the bucket system
+        pd.DataFrame: The similarity values for the trajectories within the same bucket
+    """
+
+    Grid = _constructGrid(city, res, layers, size) 
+    hashes = Grid.compute_dataset_hashes()
+    bucket_system = BUCKETING_FUNCTION_MAP[bucketing_method](hashes)
+    
+    return bucket_system
 
 def compute_hash_similarity_within_buckets_with_true_sim(
     true_coordinates: dict[str, list[list[list[float]]]],
