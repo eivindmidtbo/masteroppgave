@@ -425,49 +425,58 @@ def plot_disk_corr_varying_size(
 
 
 
-
-
-
-
-# Varying diameter and layers
 def compute_disk_corr_varying_diameter_and_layers(
     city: str,
-    layers: list[int], #Varying parameter
+    layers: list[int],  # Varying parameter
     true_sim_matrix,
-    diameter: list[float], #Varying parameter
+    diameter: list[float],  # Varying parameter (list of float values)
     disks: int = 100,
     size: int = 50,
     measure: str = "dtw",
-    parallel_jobs: int = 20,
+    parallel_jobs: int = 24,
 ):
-    """Computations for the visualisation with varying diameter and layers"""
+    """Computes correlation for disk diameter/layer configs and writes to CSV via DataFrame."""
 
-    pool = Pool()
-    
     results = []
-    
-    for layer in layers: # Varying parameter
-        
-        result = []
-        
-        for dia in np.arange(*diameter):
-            print(f"L: {layer}", "{:.2f}".format(dia), end="\r")
-            
-            corrs = pool.map(
-                _fun_wrapper_corr,
-                [
-                    (city, dia, layer, disks, true_sim_matrix, measure, size)
-                    for _ in range(parallel_jobs)
-                ],
-            )
-            
-            corr = np.average(np.array(corrs))
-            std = np.std(np.array(corrs))
-            result.append([corr, dia, std])
-        
-        results.append([result, layer])
+    df = pd.DataFrame(columns=["Diameter", "Layers", "Correlation"])
+
+    with Pool(parallel_jobs) as pool:
+        for layer in layers:
+            result = []
+
+            for dia in diameter:
+                print(f"L: {layer}", "{:.2f}".format(dia), end="\r")
+
+                corrs = pool.map(
+                    _fun_wrapper_corr,
+                    [
+                        (city, dia, layer, disks, true_sim_matrix, measure, size)
+                        for _ in range(parallel_jobs)
+                    ],
+                )
+
+                corr = sum(corrs) / len(corrs)
+                std = (sum((x - corr) ** 2 for x in corrs) / len(corrs)) ** 0.5
+                result.append([corr, dia, std])
+
+                df = pd.concat(
+                    [df, pd.DataFrame([{
+                        "Diameter": dia,
+                        "Layers": layer,
+                        "Correlation": f"{corr:.3f}"
+                    }])],
+                    ignore_index=True
+                )
+
+                output_dir = "./no_bucketing_correlation_values"
+                os.makedirs(output_dir, exist_ok=True)
+                output_file = os.path.join(output_dir, f"correlation_results_{city}_disk_no_bucketing_{size}.csv")
+                df.to_csv(output_file, index=False)
+
+            results.append([result, layer])
 
     return results
+
 
 def plot_disk_corr_varying_diameter_and_layers(
     city: str,
