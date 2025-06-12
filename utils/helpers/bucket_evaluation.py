@@ -160,8 +160,8 @@ def evaluate_bucket_system_to_list(bucket_system):
     total_buckets = len(bucket_system)
     buckets_with_multiple = sum(1 for trajectories in bucket_system.values() if len(trajectories) > 1)
     buckets_with_single = total_buckets - buckets_with_multiple
-    largest_bucket_size = max(len(trajectories) for trajectories in bucket_system.values())
-    smallest_bucket_size = min(len(trajectories) for trajectories in bucket_system.values())
+    largest_bucket_size = max((len(trajectories) for trajectories in bucket_system.values()), default=0)
+    smallest_bucket_size = min((len(trajectories) for trajectories in bucket_system.values()), default=0)
     avg_trajectories_in_buckets = sum(len(trajectories) for trajectories in bucket_system.values()) / total_buckets if total_buckets > 0 else 0
     
     
