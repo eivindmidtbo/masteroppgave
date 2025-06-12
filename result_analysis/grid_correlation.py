@@ -246,7 +246,7 @@ def compute_grid_corr_varying_resolution_and_layers(
     resolution: list[float],  # List of float values
     size: int = 50,
     measure: str = "dtw",
-    parallel_jobs: int = 20,
+    parallel_jobs: int = 24,
 ):
     """Computes correlation for resolution/layer configs and writes to CSV via DataFrame."""
 
@@ -283,7 +283,7 @@ def compute_grid_corr_varying_resolution_and_layers(
 
                 output_dir = "./no_bucketing_correlation_values"
                 os.makedirs(output_dir, exist_ok=True)
-                output_file = os.path.join(output_dir, f"correlation_results_{city}_grid_no_bucketing.csv")
+                output_file = os.path.join(output_dir, f"correlation_results_{city}_grid_no_bucketing_{size}.csv")
                 df.to_csv(output_file, index=False)
 
             results.append([result, layer])
