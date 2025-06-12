@@ -4,7 +4,7 @@ Brukt for masteroppgaven IT3920 vår 2024 til Eivind Midtbø Øyulvstad og Thoma
 
 
 
-hahahahhahah
+
 # Setup
 
 - Install GCC
@@ -19,34 +19,6 @@ hahahahhahah
 - Fixed traj-dist package issues by following: https://github.com/bguillouet/traj-dist/issues/28
   - Forced integer division in frechet.pyx as shown in: https://stackoverflow.com/questions/64932145/cython-compile-error-cannot-assign-type-double-to-int-using-mingw64-in-win
 
-## Finding the Project Root Dynamically
-
-You can use the following Python code to dynamically locate the `masteroppgave/root` folder:
-
-```python
-import os
-import sys
-
-def find_project_root(target_folder="masteroppgave"):
-    """Find the absolute path of a folder by searching upward."""
-    currentdir = os.path.abspath("__file__")  # Get absolute script path
-    while True:
-        if os.path.basename(currentdir) == target_folder:
-            return currentdir  # Found the target folder
-        parentdir = os.path.dirname(currentdir)
-        if parentdir == currentdir:  # Stop at filesystem root
-            return None
-        currentdir = parentdir  # Move one level up
-
-# Example usage
-project_root = find_project_root("masteroppgave")
-
-if project_root:
-    sys.path.append(project_root)
-    print(f"Project root found: {project_root}")
-else:
-    raise RuntimeError("Could not find 'masteroppgave' directory")
-```
 
 ### Folder structure
 
