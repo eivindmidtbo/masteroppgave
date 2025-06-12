@@ -1,6 +1,9 @@
 # Masteroppgave
 
-Brukt for masteroppgaven IT3920 vår 2024 til Eivind Midtbø Øyulvstad og Thomas Nitsche. Mye er likt fra dette repoet https://github.com/bjorafla/master , og vårt repo er i praksis en fork.
+Used for the master's thesis IT3920, spring 2025, by Eivind Midtbø Øyulvstad and Thomas Nitsche. Much is the same as in this repo: https://github.com/bjorafla/master, and our repo is essentially a fork.
+
+In our thesis paper, the bucketing strategy referred to as *strict* is called *original* in the codebase.
+
 
 
 
@@ -25,7 +28,6 @@ Brukt for masteroppgaven IT3920 vår 2024 til Eivind Midtbø Øyulvstad og Thoma
 | **Folder Name**    | **Description**                             |
 | ------------------ | ------------------------------------------- |
 | `computation`      | Contains all computational processes.       |
-| `correlation`      | Stores correlation figures.                 |
 | `dataset`          | Includes all datasets and generated hashes. |
 | `results_hashed`   | Results of computations on hashed data.     |
 | `results_analysis`   | Analysis **notebooks**.     |
